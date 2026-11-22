@@ -1,18 +1,42 @@
 {
-  "name": "shadow-claw-template",
+  "name": "shadow-claw-draw",
   "version": "1.0.0",
-  "description": "Template repository for creating ShadowClaw-powered progressive web applications and static sites.",
+  "description": "ShadowClaw Draw — In-browser Vector & Bitmap Drawing Studio powered by ShadowClaw.",
   "type": "module",
+  "homepage": "https://xt-ml.github.io/shadow-claw-draw/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xt-ml/shadow-claw-draw.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xt-ml/shadow-claw-draw/issues"
+  },
   "scripts": {
-    "format": "npx -y prettier -w .",
-    "test": "node --test test/*.test.mjs"
+    "build": "npx shadow-claw build --prod",
+    "format": "npx prettier -w .",
+    "start": "npx shadow-claw dev --open -y",
+    "dev": "npx shadow-claw dev --open -y",
+    "test": "node --test test/*.test.mjs",
+    "check": "npm run check:compat && npm run check:tools",
+    "check:compat": "node bin/check-namespace.mjs",
+    "check:namespace": "node bin/check-namespace.mjs",
+    "check:tools": "node bin/generate-tools.mjs --check",
+    "build:tools": "node bin/generate-tools.mjs",
+    "skills:index": "node bin/generate-skills-index.mjs"
   },
   "keywords": [
     "shadow-claw",
-    "template",
-    "pwa"
+    "draw",
+    "svg",
+    "vector",
+    "bitmap",
+    "canvas",
+    "inkscape",
+    "gimp",
+    "mcp",
+    "webmcp"
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "devDependencies": {
     "prettier": "^3.9.10"
   }

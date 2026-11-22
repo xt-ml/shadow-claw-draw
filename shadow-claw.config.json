@@ -1,24 +1,34 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "site": {
-    "title": "ShadowClaw Template",
-    "description": "Published with ShadowClaw",
-    "themeColor": "#121212",
-    "lang": "en"
+    "title": "ShadowClaw Draw",
+    "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
+    "themeColor": "#0f1419",
+    "lang": "en-US"
   },
   "branding": {
-    "titleText": "ShadowClaw Template",
-    "siteUrl": "https://xt-ml.github.io/shadow-claw-template/",
-    "repoUrl": "https://github.com/xt-ml/shadow-claw-template",
-    "repoLabel": "ShadowClaw Template on GitHub",
+    "titleText": "ShadowClaw Draw",
+    "siteUrl": "https://xt-ml.github.io/shadow-claw-draw/",
+    "repoUrl": "https://github.com/xt-ml/shadow-claw-draw",
+    "repoLabel": "ShadowClaw Draw on GitHub",
     "faviconPath": "assets/icons/favicon.svg",
     "appleTouchIconPath": "assets/icons/180.png",
+    "ogImagePath": "assets/icons/512.png",
     "notFoundPath": "404.html",
-    "logoSlotHtml": "<svg class=\"header-title-logo\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#111827\"/><path d=\"M16 6 L26 12 L16 18 L6 12 Z\" fill=\"#3b82f6\"/><path d=\"M6 12 L16 18 L16 26 L6 20 Z\" fill=\"#1d4ed8\"/><path d=\"M16 18 L26 12 L26 20 L16 26 Z\" fill=\"#1e40af\"/></svg>"
+    "logoSlotHtml": "<svg class=\"header-title-logo\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#0f172a\" stroke=\"#334155\" stroke-width=\"1.5\"/><rect x=\"5\" y=\"5\" width=\"9\" height=\"9\" rx=\"2\" fill=\"#38bdf8\" opacity=\"0.3\" stroke=\"#38bdf8\" stroke-width=\"1.2\"/><path d=\"M18 6 L26 14 L15 25 L9 27 L11 21 Z\" fill=\"#f59e0b\"/><circle cx=\"9\" cy=\"27\" r=\"1.5\" fill=\"#38bdf8\"/></svg>"
+  },
+  "theme": {
+    "stylesheet": "pages/main/theme.css"
   },
   "pwa": {
+    "id": "shadow-claw-draw",
+    "name": "ShadowClaw Draw",
+    "shortName": "ShadowClaw Draw",
+    "themeColor": "#0f1419",
+    "backgroundColor": "#0f1419",
     "manifestPath": "manifest.json"
   },
+  "sitemapPath": "sitemap.xml",
   "assets": ["assets"],
   "sidebar": {
     "pagesHidden": false,
@@ -27,7 +37,98 @@
     "filesHidden": false,
     "defaultPage": "pages"
   },
+  "pages": {
+    "sortOrder": "asc",
+    "defaultPinnedPage": "/pages/main/index.html",
+    "directPages": [
+      "/pages/main/index.html",
+      "/pages/main/~/content/01-bitmap.html"
+    ],
+    "iframe": true
+  },
+  "customElements": {
+    "allowedElements": [
+      "scdraw-vector-workbench",
+      "scdraw-bitmap-workbench",
+      "scdraw-toolbox",
+      "scdraw-vector-canvas",
+      "scdraw-bitmap-canvas",
+      "scdraw-layers-panel",
+      "scdraw-inspector",
+      "scdraw-filter-panel",
+      "scdraw-statusbar",
+      "scdraw-resize-handle"
+    ],
+    "allowedDomains": ["localhost", "127.0.0.1", "cdn.jsdelivr.net", "esm.sh"],
+    "scripts": [
+      {
+        "id": "scdraw-element",
+        "name": "scdraw-vector-workbench",
+        "src": ".agents/scripts/scdraw-element.js",
+        "global": true,
+        "autoload": true,
+        "hasInit": false
+      },
+      {
+        "id": "scdraw-adapter",
+        "name": "scdraw-adapter",
+        "src": ".agents/scripts/scdraw-adapter.js",
+        "global": true,
+        "autoload": true,
+        "hasInit": true
+      }
+    ]
+  },
+  "security": {
+    "iframeSandbox": [
+      "allow-modals",
+      "allow-scripts",
+      "allow-popups",
+      "allow-popups-to-escape-sandbox"
+    ],
+    "workerSrc": ["'self'", "blob:", "data:"],
+    "connectSrc": [
+      "'self'",
+      "blob:",
+      "data:",
+      "https://localhost:3000",
+      "http://localhost:3000",
+      "https://127.0.0.1:3000",
+      "http://127.0.0.1:3000"
+    ]
+  },
   "settings": {
-    "defaultToolsProfile": "__builtin_default"
-  }
+    "assistantName": "ShadowClaw Draw",
+    "defaultToolsProfile": "none",
+    "internetAccess": true,
+    "vm_bash_full_internet_access": true
+  },
+  "enabledTools": [
+    "scdraw_get_status",
+    "scdraw_new_vector",
+    "scdraw_get_vector",
+    "scdraw_import_svg",
+    "scdraw_export_svg",
+    "scdraw_add_shape",
+    "scdraw_update_element",
+    "scdraw_delete_elements",
+    "scdraw_manage_layer",
+    "scdraw_transform_elements",
+    "scdraw_undo",
+    "scdraw_redo",
+    "scdraw_save_file",
+    "scdraw_load_file",
+    "scdraw_list_files",
+    "scdraw_new_bitmap",
+    "scdraw_get_bitmap_status",
+    "scdraw_bitmap_draw_stroke",
+    "scdraw_bitmap_fill",
+    "scdraw_bitmap_set_filter",
+    "scdraw_bitmap_transform",
+    "scdraw_bitmap_manage_layer",
+    "scdraw_bitmap_selection",
+    "scdraw_export_png",
+    "scdraw_rasterize_vector_to_bitmap",
+    "scdraw_embed_bitmap_in_vector"
+  ]
 }

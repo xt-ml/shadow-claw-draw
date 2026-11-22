@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "scdraw_get_vector",
+  "description": "Return the current Vector Studio document either as structured JSON or serialized W3C SVG markup.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "view": {
+        "type": "string",
+        "enum": [
+          "json",
+          "svg"
+        ],
+        "description": "Output format: 'json' (default) or 'svg'"
+      }
+    },
+    "additionalProperties": false
+  },
+  "annotations": {
+    "readOnlyHint": true,
+    "consequentialHint": false
+  },
+  "execution": {
+    "type": "javascript",
+    "code": "let toolParams = {};\ntry {\n  toolParams = typeof input !== \"undefined\" && input && typeof input === \"object\"\n    ? input\n    : (typeof $PIPE_DATA !== \"undefined\" && $PIPE_DATA ? (typeof $PIPE_DATA === \"string\" ? JSON.parse($PIPE_DATA) : $PIPE_DATA) : (typeof data !== \"undefined\" && data ? (typeof data === \"string\" ? JSON.parse(data) : data) : {}));\n} catch (_) {}\n\nconst cmdCh = new BroadcastChannel(\"scdraw-commands\");\nconst resCh = new BroadcastChannel(\"scdraw-results\");\nconst reqId = \"req_\" + Math.random().toString(36).slice(2);\n\nconst timeout = new Promise((_, reject) =>\n  setTimeout(() => {\n    cmdCh.close();\n    resCh.close();\n    reject(new Error(\"Timeout awaiting ShadowClaw Draw response for scdraw_get_vector. Ensure a Draw workbench page is open.\"));\n  }, 5000)\n);\n\nconst reply = new Promise((resolve, reject) => {\n  const handler = (e) => {\n    if (e.data && e.data.requestId === reqId) {\n      if (e.data.ack) return;\n      resCh.removeEventListener(\"message\", handler);\n      cmdCh.close();\n      resCh.close();\n      if (e.data.error) reject(new Error(e.data.error));\n      else resolve(e.data.result);\n    }\n  };\n  resCh.addEventListener(\"message\", handler);\n  cmdCh.postMessage({ type: \"scdraw_get_vector\", requestId: reqId, params: toolParams || {} });\n});\n\nreturn await Promise.race([reply, timeout]);"
+  }
+}

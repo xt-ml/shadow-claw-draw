@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "scdraw_transform_elements",
+  "description": "Move, scale, rotate, flip, align, distribute, group, ungroup, or change z-order of vector elements.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": [
+          "move",
+          "transform",
+          "align",
+          "distribute",
+          "group",
+          "ungroup",
+          "z_order"
+        ]
+      },
+      "ids": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "id": {
+        "type": "string"
+      },
+      "dx": {
+        "type": "number"
+      },
+      "dy": {
+        "type": "number"
+      },
+      "rotate": {
+        "type": "number"
+      },
+      "scaleX": {
+        "type": "number"
+      },
+      "scaleY": {
+        "type": "number"
+      },
+      "flipH": {
+        "type": "boolean"
+      },
+      "flipV": {
+        "type": "boolean"
+      },
+      "align": {
+        "type": "string",
+        "enum": [
+          "left",
+          "center",
+          "right",
+          "top",
+          "middle",
+          "bottom"
+        ]
+      },
+      "relativeTo": {
+        "type": "string",
+        "enum": [
+          "selection",
+          "canvas"
+        ]
+      },
+      "axis": {
+        "type": "string",
+        "enum": [
+          "horizontal",
+          "vertical"
+        ]
+      },
+      "zAction": {
+        "type": "string",
+        "enum": [
+          "bring_to_front",
+          "send_to_back",
+          "step_forward",
+          "step_backward"
+        ]
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "action"
+    ],
+    "additionalProperties": false
+  },
+  "annotations": {
+    "readOnlyHint": false,
+    "consequentialHint": false
+  },
+  "execution": {
+    "type": "javascript",
+    "code": "let toolParams = {};\ntry {\n  toolParams = typeof input !== \"undefined\" && input && typeof input === \"object\"\n    ? input\n    : (typeof $PIPE_DATA !== \"undefined\" && $PIPE_DATA ? (typeof $PIPE_DATA === \"string\" ? JSON.parse($PIPE_DATA) : $PIPE_DATA) : (typeof data !== \"undefined\" && data ? (typeof data === \"string\" ? JSON.parse(data) : data) : {}));\n} catch (_) {}\n\nconst cmdCh = new BroadcastChannel(\"scdraw-commands\");\nconst resCh = new BroadcastChannel(\"scdraw-results\");\nconst reqId = \"req_\" + Math.random().toString(36).slice(2);\n\nconst timeout = new Promise((_, reject) =>\n  setTimeout(() => {\n    cmdCh.close();\n    resCh.close();\n    reject(new Error(\"Timeout awaiting ShadowClaw Draw response for scdraw_transform_elements. Ensure a Draw workbench page is open.\"));\n  }, 5000)\n);\n\nconst reply = new Promise((resolve, reject) => {\n  const handler = (e) => {\n    if (e.data && e.data.requestId === reqId) {\n      if (e.data.ack) return;\n      resCh.removeEventListener(\"message\", handler);\n      cmdCh.close();\n      resCh.close();\n      if (e.data.error) reject(new Error(e.data.error));\n      else resolve(e.data.result);\n    }\n  };\n  resCh.addEventListener(\"message\", handler);\n  cmdCh.postMessage({ type: \"scdraw_transform_elements\", requestId: reqId, params: toolParams || {} });\n});\n\nreturn await Promise.race([reply, timeout]);"
+  }
+}

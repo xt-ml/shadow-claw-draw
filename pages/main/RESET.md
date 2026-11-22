@@ -1,5 +1,5 @@
 ---
-title: "ShadowClaw Pages - Reset"
+title: "ShadowClaw Draw - Reset"
 created: "0000-01-01T00:00:00Z"
 updated: "0000-01-01T00:00:00Z"
 slug: "shadow-claw--purge-pages"

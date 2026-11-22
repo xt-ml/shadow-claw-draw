@@ -1,8 +1,15 @@
 {
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
-  "name": "ShadowClaw Template",
-  "description": "Published with ShadowClaw",
+  "name": "ShadowClaw Draw",
+  "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
   "skills": [
+    {
+      "name": "bitmap-editing",
+      "type": "skill-md",
+      "description": "Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and convert between Vector and Bitmap studios.",
+      "url": "../../.agents/skills/bitmap-editing/SKILL.md",
+      "digest": "sha256:001d1621db0fee8af35557d583971044241031b5c5867e9d50f3466d96189d1f"
+    },
     {
       "name": "skill-creator",
       "type": "skill-md",
@@ -17,38 +24,364 @@
       ]
     },
     {
-      "name": "toast-random-number",
+      "name": "vector-illustration",
       "type": "skill-md",
-      "description": "Generate a random integer from 1 to 1000000 and show it in a ShadowClaw toast notification.",
-      "url": "../../.agents/skills/toast-random-number/SKILL.md",
-      "digest": "sha256:e5310af2083048d34619a6ffcfdc22ff7e0f818f1c8aa56991540dab3d62cc99",
-      "tools": [
-        {
-          "name": "generate_random_number",
-          "url": "../../.agents/tools/generate_random_number.json",
-          "digest": "sha256:daf69f22c7c852b10122ef06812f760d97a31dde098450e41a4b4a65549c030c"
-        }
-      ]
+      "description": "Create, edit, align, layer, and export W3C SVG vector illustrations in ShadowClaw Draw Vector Studio using declarative scdraw_* tools.",
+      "url": "../../.agents/skills/vector-illustration/SKILL.md",
+      "digest": "sha256:0e85b76dacf8a8be8f423cddf7a955c55014f59bfdfc7118075daf9623546ca2"
     }
   ],
   "tools": [
     {
-      "name": "generate_random_number",
-      "description": "Generate a random integer within a specified range (min through max, inclusive).",
-      "url": "../../.agents/tools/generate_random_number.json",
-      "digest": "sha256:daf69f22c7c852b10122ef06812f760d97a31dde098450e41a4b4a65549c030c"
+      "name": "scdraw_add_shape",
+      "description": "Add a vector shape (rect, ellipse, circle, line, polygon, star, polyline, path, text, image) to a vector layer.",
+      "url": "../../.agents/tools/scdraw_add_shape.json",
+      "digest": "sha256:104be5d4159b54abf8872ea8b39ef0f301095ac4f0f20d308889f2594eed84aa"
+    },
+    {
+      "name": "scdraw_bitmap_draw_stroke",
+      "description": "Paint a brush, pencil, or eraser stroke onto a Bitmap Studio layer.",
+      "url": "../../.agents/tools/scdraw_bitmap_draw_stroke.json",
+      "digest": "sha256:f83c312a331e39703ad911f896044e29617d54f344be2685b18d4f9f0697cc63"
+    },
+    {
+      "name": "scdraw_bitmap_fill",
+      "description": "Flood-fill a contiguous or global color region at (x, y) in a Bitmap Studio layer.",
+      "url": "../../.agents/tools/scdraw_bitmap_fill.json",
+      "digest": "sha256:31bc4ec1227858a1055b8813b8cf78dd169cf050e020c5ca420b0a01127899c0"
+    },
+    {
+      "name": "scdraw_bitmap_manage_layer",
+      "description": "Add, remove, update, reorder, merge_down, or flatten layers in Bitmap Studio.",
+      "url": "../../.agents/tools/scdraw_bitmap_manage_layer.json",
+      "digest": "sha256:9f8234db210cc86a780fa219eb65b214c6d67f1567a1d4239b5895a20934ef39"
+    },
+    {
+      "name": "scdraw_bitmap_selection",
+      "description": "Manage rectangular or inverted bitmap selections and clipboard operations (set, clear, all, invert, cut, copy, copy_merged, paste, delete_pixels, fill_pixels) in Bitmap Studio.",
+      "url": "../../.agents/tools/scdraw_bitmap_selection.json",
+      "digest": "sha256:22684ea5ab36073fcc603dc0d9d320e4cf7b8bbe92441bb47c1db43495db66d2"
+    },
+    {
+      "name": "scdraw_bitmap_set_filter",
+      "description": "Adjust or reset real-time Canvas image filters (blur, brightness, contrast, saturation, grayscale, hueRotate, invert, opacity, sepia, shadowX, shadowY, shadowBlur, shadowColor).",
+      "url": "../../.agents/tools/scdraw_bitmap_set_filter.json",
+      "digest": "sha256:da68d178bb4c917fed2e2b04994f6b389676095c37d5c9f8e9c694adf72fd0b8"
+    },
+    {
+      "name": "scdraw_bitmap_transform",
+      "description": "Apply crop, horizontal/vertical flip, 90-degree rotation, resize, desaturate, levels, or reset_all in Bitmap Studio.",
+      "url": "../../.agents/tools/scdraw_bitmap_transform.json",
+      "digest": "sha256:3d45153cfb8b6c24e26de4067a50ad011b809b33a85be738a26c65d5710702bd"
+    },
+    {
+      "name": "scdraw_delete_elements",
+      "description": "Delete one or more vector elements by ID.",
+      "url": "../../.agents/tools/scdraw_delete_elements.json",
+      "digest": "sha256:429f0495dfc4b82fa06a6d80e2cf2f4dd5f3380a7ad9d33647429085e95401a2"
+    },
+    {
+      "name": "scdraw_embed_bitmap_in_vector",
+      "description": "Export the current Page 2 Bitmap Studio image as PNG and embed it as an <image> layer in Page 1 Vector Studio.",
+      "url": "../../.agents/tools/scdraw_embed_bitmap_in_vector.json",
+      "digest": "sha256:3a9961553e9b71fcfba920b488f9cf6179eabe1739e14bde74b33abfcfe527d8"
+    },
+    {
+      "name": "scdraw_export_png",
+      "description": "Composite and filter the active Bitmap Studio document and export a PNG data URL (optionally saving to OPFS).",
+      "url": "../../.agents/tools/scdraw_export_png.json",
+      "digest": "sha256:c7c61eb3bdd7a2a8d5662b89245d51e7eb210406a0c2226f8b694e22f2d20ffa"
+    },
+    {
+      "name": "scdraw_export_svg",
+      "description": "Serialize the current Vector Studio document to clean W3C SVG XML.",
+      "url": "../../.agents/tools/scdraw_export_svg.json",
+      "digest": "sha256:9eb641bbce4d021af692cda194ff71764a8628504d95180ee467b65448b9cf0f"
+    },
+    {
+      "name": "scdraw_get_bitmap_status",
+      "description": "Return Bitmap Studio canvas dimensions, layer stack summary, active filter controls, and transform flags.",
+      "url": "../../.agents/tools/scdraw_get_bitmap_status.json",
+      "digest": "sha256:b26d352ab092591443058a2b0f9af46cd2fe4d3ca17a801d960b5552d7f2eda3"
+    },
+    {
+      "name": "scdraw_get_status",
+      "description": "Return current ShadowClaw Draw engine state including active studio mode, vector document summary, zoom, selection, and dirty status.",
+      "url": "../../.agents/tools/scdraw_get_status.json",
+      "digest": "sha256:28524f9b012e8a8987e57340982a802a3e4927b610af8c064b88d63f6b225a9a"
+    },
+    {
+      "name": "scdraw_get_vector",
+      "description": "Return the current Vector Studio document either as structured JSON or serialized W3C SVG markup.",
+      "url": "../../.agents/tools/scdraw_get_vector.json",
+      "digest": "sha256:caf1fe54f1597a709bf139f8485df673cdbc225cf750cc7c45a0d08ad352a9d9"
+    },
+    {
+      "name": "scdraw_import_svg",
+      "description": "Import and sanitize an SVG XML string into the Vector Studio document.",
+      "url": "../../.agents/tools/scdraw_import_svg.json",
+      "digest": "sha256:850c58fb7a36b224234a2b926d176d59e18f257d7dc15eead40f62b895a558c2"
+    },
+    {
+      "name": "scdraw_list_files",
+      "description": "List drawing files (.svg, .png, .scdraw.json) saved in the OPFS workspace.",
+      "url": "../../.agents/tools/scdraw_list_files.json",
+      "digest": "sha256:776ae1606a188770966cd9ee8bcbe7af03fb2a9dadf49bb442c6fa249ef4790d"
+    },
+    {
+      "name": "scdraw_load_file",
+      "description": "Load an .svg or .scdraw.json file from OPFS workspace storage into ShadowClaw Draw.",
+      "url": "../../.agents/tools/scdraw_load_file.json",
+      "digest": "sha256:e23da3df01537319267602e6cb1b0fed3bfaa075d96a5b6c75225f7afdbd297d"
+    },
+    {
+      "name": "scdraw_manage_layer",
+      "description": "Add, remove, update, or reorder layers in the Vector Studio document.",
+      "url": "../../.agents/tools/scdraw_manage_layer.json",
+      "digest": "sha256:628effa9b5a7e2df090ed9f9ddfba4b2e22e2ed4ee9370138cf19457d8d6ad98"
+    },
+    {
+      "name": "scdraw_new_bitmap",
+      "description": "Create and reset the Bitmap Studio pixel canvas with specified width, height, background color, and name.",
+      "url": "../../.agents/tools/scdraw_new_bitmap.json",
+      "digest": "sha256:6cd0400ec9621142b240b350d9b81032ceefba69072d509bcf04c2ebb5ea9501"
+    },
+    {
+      "name": "scdraw_new_vector",
+      "description": "Create and reset the Vector Studio artboard with specified width, height, background color, and document name.",
+      "url": "../../.agents/tools/scdraw_new_vector.json",
+      "digest": "sha256:2e10a92502cd00821317ebcd486e9f4acf38665cfa8595df86d6bb06593b7907"
+    },
+    {
+      "name": "scdraw_rasterize_vector_to_bitmap",
+      "description": "Rasterize the current Page 1 Vector Studio SVG artwork into a new layer in Page 2 Bitmap Studio.",
+      "url": "../../.agents/tools/scdraw_rasterize_vector_to_bitmap.json",
+      "digest": "sha256:87d31eb01f478879e4255c84786bf138ed00b711377561aa7c3651abc5b70f40"
+    },
+    {
+      "name": "scdraw_redo",
+      "description": "Redo the previously undone operation in ShadowClaw Draw.",
+      "url": "../../.agents/tools/scdraw_redo.json",
+      "digest": "sha256:0d4898ddc638fbe4e2b18dcb55dfcfd1eb2c4637c7367abb8a9e99678891bf18"
+    },
+    {
+      "name": "scdraw_save_file",
+      "description": "Save the active vector drawing (.svg or .scdraw.json) into OPFS workspace storage.",
+      "url": "../../.agents/tools/scdraw_save_file.json",
+      "digest": "sha256:6830a4d31098717d617ab357543f5aa00d0ea0266a6d05f75e674df803858edc"
+    },
+    {
+      "name": "scdraw_transform_elements",
+      "description": "Move, scale, rotate, flip, align, distribute, group, ungroup, or change z-order of vector elements.",
+      "url": "../../.agents/tools/scdraw_transform_elements.json",
+      "digest": "sha256:f7d95f1f05ea2adb019756df1c55c2a46d6bea2f50ca7748e16ff7fa0c3174cd"
+    },
+    {
+      "name": "scdraw_undo",
+      "description": "Undo the last editing operation in ShadowClaw Draw.",
+      "url": "../../.agents/tools/scdraw_undo.json",
+      "digest": "sha256:22ac9bcd9fb66117b95478c9f0df6bb7dd05fb1df41999a48ef1978afc98330d"
+    },
+    {
+      "name": "scdraw_update_element",
+      "description": "Update geometry, fill, stroke, opacity, or transform properties of an existing vector element.",
+      "url": "../../.agents/tools/scdraw_update_element.json",
+      "digest": "sha256:0027135e8a54f8dbe387b3290d20c30142370ee0d06d308f21ce510cfd9e0488"
     }
   ],
   "scripts": [
     {
-      "name": "starter-tools",
-      "description": "Portable ESM engine logic and tool execution handler for starter-tools.",
-      "url": "../../.agents/scripts/starter-tools.js",
-      "digest": "sha256:a31d699969cf4afdb61c5b84b084a51587dad1b0e087ac5d408168756cbf1bc0"
+      "name": "scdraw-bitmap-canvas",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-canvas.",
+      "url": "../../.agents/scripts/components/scdraw-bitmap-canvas.js",
+      "digest": "sha256:3ed56de6d13e64af16f6227280e32cebd28fe6f638725fd6fa5730559eb52a02"
+    },
+    {
+      "name": "scdraw-bitmap-workbench",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-workbench.",
+      "url": "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
+      "digest": "sha256:7b7140aa7b606c09738dd682443b5d4b1a0951d15e9b000ccf4a4a7e0799768a"
+    },
+    {
+      "name": "scdraw-filter-panel",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-filter-panel.",
+      "url": "../../.agents/scripts/components/scdraw-filter-panel.js",
+      "digest": "sha256:91b5e976d3c9d5cbe01a35b85c2500fee71f086227ccb67f6dafe78717e87a1f"
+    },
+    {
+      "name": "scdraw-inspector",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-inspector.",
+      "url": "../../.agents/scripts/components/scdraw-inspector.js",
+      "digest": "sha256:2dd828c3fa52114921da2f0677c8ea39891496744953259137075db49a5c1dbb"
+    },
+    {
+      "name": "scdraw-layers-panel",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-layers-panel.",
+      "url": "../../.agents/scripts/components/scdraw-layers-panel.js",
+      "digest": "sha256:3644d51008d19f78cfaeeeb034e54ce98a049934f7cf31b7736dad4a0962384e"
+    },
+    {
+      "name": "scdraw-resize-handle",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-resize-handle.",
+      "url": "../../.agents/scripts/components/scdraw-resize-handle.js",
+      "digest": "sha256:7cb3069465b323e4c6a53e50b04fdec8cdbc28f57bcec359cc1f88000006702a"
+    },
+    {
+      "name": "scdraw-statusbar",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-statusbar.",
+      "url": "../../.agents/scripts/components/scdraw-statusbar.js",
+      "digest": "sha256:e3e13ee9efd85b29c81132f069a193a15666f4d7233119ee1c862baf7d1bef74"
+    },
+    {
+      "name": "scdraw-styles",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-styles.",
+      "url": "../../.agents/scripts/components/scdraw-styles.js",
+      "digest": "sha256:ff503f6c896e2e4a74b32d2713f35d5d40bf98b61b9b08d2e4c055fb6e8ec62e"
+    },
+    {
+      "name": "scdraw-toolbox",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-toolbox.",
+      "url": "../../.agents/scripts/components/scdraw-toolbox.js",
+      "digest": "sha256:3d6952a859f7143adb1b2e8ebabaf7eccd1728b8a7ad0808f17f0f1d8f7fa897"
+    },
+    {
+      "name": "scdraw-vector-canvas",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-canvas.",
+      "url": "../../.agents/scripts/components/scdraw-vector-canvas.js",
+      "digest": "sha256:fb46703729c6138c58c729e8946fbe9d2bf47a1d4a921953b1cc6980ef92ba6a"
+    },
+    {
+      "name": "scdraw-vector-workbench",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-workbench.",
+      "url": "../../.agents/scripts/components/scdraw-vector-workbench.js",
+      "digest": "sha256:6e47f721d18a2783752760bae7f0fc0841bc964946a59999596e54c01e3d7889"
+    },
+    {
+      "name": "scdraw-adapter",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-adapter.",
+      "url": "../../.agents/scripts/scdraw-adapter.js",
+      "digest": "sha256:58fa870a2b54ca8637cd8db0dc9e8b351cccd8ea7bd74d01045184b611a265c2"
+    },
+    {
+      "name": "scdraw-bitmap",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap.",
+      "url": "../../.agents/scripts/scdraw-bitmap.js",
+      "digest": "sha256:985c8e94701c17e9cccefc48d27c32c3588be3c35e7201c3a51982a1185fecd8"
+    },
+    {
+      "name": "scdraw-element",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-element.",
+      "url": "../../.agents/scripts/scdraw-element.js",
+      "digest": "sha256:fefdfce0f4acfcee6df739f6e5cc3a12bb926a399aa04e9c868b415c2c38e6ef"
+    },
+    {
+      "name": "scdraw-engine",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
+      "url": "../../.agents/scripts/scdraw-engine.js",
+      "digest": "sha256:c19945ba97c1424032d109d413e1391c1e028542b19015a2af93e22fa83ce61e"
+    },
+    {
+      "name": "scdraw-filters",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-filters.",
+      "url": "../../.agents/scripts/scdraw-filters.js",
+      "digest": "sha256:afb744ba5710b822997aa5b40dcae7ecb406ffb78e8368e26c28831d5f8a4490"
+    },
+    {
+      "name": "scdraw-fs",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-fs.",
+      "url": "../../.agents/scripts/scdraw-fs.js",
+      "digest": "sha256:e6cdc49686bb1a651653e5966a61ee80b9e34ad6fb1354a64ca424ef03ba1d1a"
+    },
+    {
+      "name": "scdraw-schema",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-schema.",
+      "url": "../../.agents/scripts/scdraw-schema.js",
+      "digest": "sha256:542e4ac721c8d59a72af205f8887cd715c4e0a327d1089006fad71bc559b7deb"
+    },
+    {
+      "name": "scdraw-signals",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-signals.",
+      "url": "../../.agents/scripts/scdraw-signals.js",
+      "digest": "sha256:5b322fb0bd7805df2a2c4aec6a51ea361bb1bfe8063c83566991b32ce2839a18"
+    },
+    {
+      "name": "scdraw-svg-codec",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-svg-codec.",
+      "url": "../../.agents/scripts/scdraw-svg-codec.js",
+      "digest": "sha256:2801e9160e6fe3dafb68f0b87abf37fc3748fa51854ae0f894b1b0c8a0117281"
+    },
+    {
+      "name": "scdraw-tools-metadata",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-tools-metadata.",
+      "url": "../../.agents/scripts/scdraw-tools-metadata.js",
+      "digest": "sha256:890d5553f7f67730a03c3405d22a4e9e1fe242f5b6270808b7b82aef549cf8ef"
+    },
+    {
+      "name": "scdraw-vector",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-vector.",
+      "url": "../../.agents/scripts/scdraw-vector.js",
+      "digest": "sha256:2241a031688aa74a2e6a38d40057f3458bc5e591b81d2a5886200202bcf6657d"
+    },
+    {
+      "name": "signal-polyfill",
+      "description": "Portable ESM engine logic and tool execution handler for signal-polyfill.",
+      "url": "../../.agents/scripts/vendor/signal-polyfill.js",
+      "digest": "sha256:750faabce6cdcb667fa99adf2095db90f46cc2ae83428b905c3fb4f781a7e71a"
     }
   ],
   "dependencies": {
-    "tools": ["../../.agents/tools/generate_random_number.json"],
-    "scripts": ["../../.agents/scripts/starter-tools.js"]
+    "tools": [
+      "../../.agents/tools/scdraw_add_shape.json",
+      "../../.agents/tools/scdraw_bitmap_draw_stroke.json",
+      "../../.agents/tools/scdraw_bitmap_fill.json",
+      "../../.agents/tools/scdraw_bitmap_manage_layer.json",
+      "../../.agents/tools/scdraw_bitmap_selection.json",
+      "../../.agents/tools/scdraw_bitmap_set_filter.json",
+      "../../.agents/tools/scdraw_bitmap_transform.json",
+      "../../.agents/tools/scdraw_delete_elements.json",
+      "../../.agents/tools/scdraw_embed_bitmap_in_vector.json",
+      "../../.agents/tools/scdraw_export_png.json",
+      "../../.agents/tools/scdraw_export_svg.json",
+      "../../.agents/tools/scdraw_get_bitmap_status.json",
+      "../../.agents/tools/scdraw_get_status.json",
+      "../../.agents/tools/scdraw_get_vector.json",
+      "../../.agents/tools/scdraw_import_svg.json",
+      "../../.agents/tools/scdraw_list_files.json",
+      "../../.agents/tools/scdraw_load_file.json",
+      "../../.agents/tools/scdraw_manage_layer.json",
+      "../../.agents/tools/scdraw_new_bitmap.json",
+      "../../.agents/tools/scdraw_new_vector.json",
+      "../../.agents/tools/scdraw_rasterize_vector_to_bitmap.json",
+      "../../.agents/tools/scdraw_redo.json",
+      "../../.agents/tools/scdraw_save_file.json",
+      "../../.agents/tools/scdraw_transform_elements.json",
+      "../../.agents/tools/scdraw_undo.json",
+      "../../.agents/tools/scdraw_update_element.json"
+    ],
+    "scripts": [
+      "../../.agents/scripts/components/scdraw-bitmap-canvas.js",
+      "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
+      "../../.agents/scripts/components/scdraw-filter-panel.js",
+      "../../.agents/scripts/components/scdraw-inspector.js",
+      "../../.agents/scripts/components/scdraw-layers-panel.js",
+      "../../.agents/scripts/components/scdraw-resize-handle.js",
+      "../../.agents/scripts/components/scdraw-statusbar.js",
+      "../../.agents/scripts/components/scdraw-styles.js",
+      "../../.agents/scripts/components/scdraw-toolbox.js",
+      "../../.agents/scripts/components/scdraw-vector-canvas.js",
+      "../../.agents/scripts/components/scdraw-vector-workbench.js",
+      "../../.agents/scripts/scdraw-adapter.js",
+      "../../.agents/scripts/scdraw-bitmap.js",
+      "../../.agents/scripts/scdraw-element.js",
+      "../../.agents/scripts/scdraw-engine.js",
+      "../../.agents/scripts/scdraw-filters.js",
+      "../../.agents/scripts/scdraw-fs.js",
+      "../../.agents/scripts/scdraw-schema.js",
+      "../../.agents/scripts/scdraw-signals.js",
+      "../../.agents/scripts/scdraw-svg-codec.js",
+      "../../.agents/scripts/scdraw-tools-metadata.js",
+      "../../.agents/scripts/scdraw-vector.js",
+      "../../.agents/scripts/vendor/signal-polyfill.js"
+    ]
   }
 }

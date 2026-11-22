@@ -3,8 +3,20 @@
     "/pages/main/index.html": {
       "prettyPath": "/main/"
     },
-    "/pages/main/~/content/01-about.md": {
-      "prettyPath": "/main/about/"
+    "/pages/main/~/content/01-bitmap.html": {
+      "prettyPath": "/main/bitmap/"
+    },
+    "/pages/main/~/content/02-architecture-and-tools.md": {
+      "prettyPath": "/main/architecture/"
+    },
+    "/pages/main/~/content/03-vector-studio-tools.md": {
+      "prettyPath": "/main/vector-studio-tools/"
+    },
+    "/pages/main/~/content/04-bitmap-studio-tools.md": {
+      "prettyPath": "/main/bitmap-studio-tools/"
+    },
+    "/pages/main/~/content/05-porting-and-attribution.md": {
+      "prettyPath": "/main/porting-and-attribution/"
     },
     "/pages/main/MEMORY.md": {
       "prettyPath": "/main/memory/"

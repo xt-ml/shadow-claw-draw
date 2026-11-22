@@ -1,0 +1,241 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@500;700&display=swap");
+
+/* ==========================================================================
+   Material 3 Theme System — ShadowClaw Draw
+   Palette: Deep Slate Canvas, Luminous Sky Blue & Amber Pen Nib Accents
+   ========================================================================== */
+
+:root,
+.dark,
+.dark-mode {
+  --md-sys-color-primary: rgb(56 189 248);
+  --md-sys-color-surface-tint: rgb(56 189 248);
+  --md-sys-color-on-primary: rgb(8 47 73);
+  --md-sys-color-primary-container: rgb(12 74 110);
+  --md-sys-color-on-primary-container: rgb(186 230 253);
+  --md-sys-color-secondary: rgb(245 158 11);
+  --md-sys-color-on-secondary: rgb(69 26 3);
+  --md-sys-color-secondary-container: rgb(120 53 15);
+  --md-sys-color-on-secondary-container: rgb(254 243 199);
+  --md-sys-color-tertiary: rgb(167 139 250);
+  --md-sys-color-on-tertiary: rgb(46 16 101);
+  --md-sys-color-error: rgb(255 180 171);
+  --md-sys-color-on-error: rgb(105 0 5);
+  --md-sys-color-background: rgb(15 20 25);
+  --md-sys-color-on-background: rgb(226 232 240);
+  --md-sys-color-surface: rgb(15 20 25);
+  --md-sys-color-on-surface: rgb(226 232 240);
+  --md-sys-color-surface-variant: rgb(51 65 85);
+  --md-sys-color-on-surface-variant: rgb(148 163 184);
+  --md-sys-color-outline: rgb(100 116 139);
+  --md-sys-color-outline-variant: rgb(51 65 85);
+  --md-sys-color-surface-container-lowest: rgb(9 13 18);
+  --md-sys-color-surface-container-low: rgb(20 26 33);
+  --md-sys-color-surface-container: rgb(24 32 42);
+  --md-sys-color-surface-container-high: rgb(33 43 56);
+  --md-sys-color-surface-container-highest: rgb(45 57 73);
+
+  --shadow-claw-font-sans:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --shadow-claw-font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --scdraw-font-display: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+
+  --shadow-claw-bg-primary: var(--md-sys-color-background, rgb(15 20 25));
+  --shadow-claw-bg-secondary: var(
+    --md-sys-color-surface-container,
+    rgb(24 32 42)
+  );
+  --shadow-claw-bg-tertiary: var(
+    --md-sys-color-surface-container-high,
+    rgb(33 43 56)
+  );
+  --shadow-claw-bg-primary-reverse: var(
+    --md-sys-color-on-background,
+    rgb(226 232 240)
+  );
+  --shadow-claw-border-color: var(
+    --md-sys-color-outline-variant,
+    rgb(51 65 85)
+  );
+
+  --shadow-claw-accent-primary: var(--md-sys-color-primary, rgb(56 189 248));
+  --shadow-claw-accent-secondary: var(
+    --md-sys-color-primary-container,
+    rgb(12 74 110)
+  );
+  --shadow-claw-accent-hover: var(
+    --md-sys-color-on-primary-container,
+    rgb(186 230 253)
+  );
+  --shadow-claw-on-primary: var(--md-sys-color-on-primary, rgb(8 47 73));
+
+  --shadow-claw-text-primary: var(--md-sys-color-on-surface, rgb(226 232 240));
+  --shadow-claw-text-secondary: var(
+    --md-sys-color-on-surface-variant,
+    rgb(148 163 184)
+  );
+  --shadow-claw-text-tertiary: var(--md-sys-color-outline, rgb(100 116 139));
+
+  --shadow-claw-link: var(--md-sys-color-primary, rgb(56 189 248));
+  --shadow-claw-link-hover: var(
+    --md-sys-color-on-primary-container,
+    rgb(186 230 253)
+  );
+
+  --shadow-claw-success-color: rgb(74 222 128);
+  --shadow-claw-warning-color: rgb(245 158 11);
+  --shadow-claw-error-color: var(--md-sys-color-error, rgb(255 180 171));
+
+  /* ShadowClaw Draw Icon Accent Tokens */
+  --shadow-claw-icon-accent-dark: var(
+    --md-sys-color-primary-container,
+    rgb(12 74 110)
+  );
+  --shadow-claw-icon-body: var(--md-sys-color-primary, rgb(56 189 248));
+  --shadow-claw-icon-claw-inner: var(--md-sys-color-secondary, rgb(245 158 11));
+  --shadow-claw-icon-claw-main: var(
+    --md-sys-color-on-primary-container,
+    rgb(186 230 253)
+  );
+  --shadow-claw-icon-body-segment: var(--md-sys-color-primary, rgb(56 189 248));
+  --shadow-claw-icon-body-shine: rgba(255, 255, 255, 0.72);
+  --shadow-claw-icon-eye: var(--md-sys-color-on-primary, rgb(8 47 73));
+  --shadow-claw-icon-eye-shine: var(--md-sys-color-secondary, rgb(245 158 11));
+
+  --shadow-claw-radius-s: 0.375rem;
+  --shadow-claw-radius-m: 0.625rem;
+  --shadow-claw-radius-l: 1rem;
+  --shadow-claw-radius-pill: 9999px;
+  --shadow-claw-logo-margin: 0;
+  --shadow-claw-logo-size: 1.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --md-sys-color-primary: rgb(2 132 199);
+    --md-sys-color-on-primary: rgb(255 255 255);
+    --md-sys-color-primary-container: rgb(224 242 254);
+    --md-sys-color-on-primary-container: rgb(12 74 110);
+    --md-sys-color-secondary: rgb(217 119 6);
+    --md-sys-color-background: rgb(248 250 252);
+    --md-sys-color-on-background: rgb(15 23 42);
+    --md-sys-color-surface: rgb(248 250 252);
+    --md-sys-color-on-surface: rgb(15 23 42);
+    --md-sys-color-surface-container: rgb(255 255 255);
+    --md-sys-color-surface-container-high: rgb(241 245 249);
+    --md-sys-color-outline: rgb(100 116 139);
+    --md-sys-color-outline-variant: rgb(203 213 225);
+
+    --shadow-claw-bg-primary: rgb(248 250 252);
+    --shadow-claw-bg-secondary: rgb(255 255 255);
+    --shadow-claw-bg-tertiary: rgb(241 245 249);
+    --shadow-claw-bg-primary-reverse: rgb(15 23 42);
+    --shadow-claw-border-color: rgb(203 213 225);
+    --shadow-claw-accent-primary: rgb(2 132 199);
+    --shadow-claw-accent-secondary: rgb(224 242 254);
+    --shadow-claw-accent-hover: rgb(3 105 161);
+    --shadow-claw-on-primary: rgb(255 255 255);
+    --shadow-claw-text-primary: rgb(15 23 42);
+    --shadow-claw-text-secondary: rgb(71 85 105);
+    --shadow-claw-text-tertiary: rgb(100 116 139);
+    --shadow-claw-link: rgb(2 132 199);
+    --shadow-claw-link-hover: rgb(3 105 161);
+  }
+}
+
+.light,
+.light-mode {
+  --md-sys-color-primary: rgb(2 132 199);
+  --md-sys-color-on-primary: rgb(255 255 255);
+  --md-sys-color-primary-container: rgb(224 242 254);
+  --md-sys-color-on-primary-container: rgb(12 74 110);
+  --md-sys-color-secondary: rgb(217 119 6);
+  --md-sys-color-background: rgb(248 250 252);
+  --md-sys-color-on-background: rgb(15 23 42);
+  --md-sys-color-surface: rgb(248 250 252);
+  --md-sys-color-on-surface: rgb(15 23 42);
+  --md-sys-color-surface-container: rgb(255 255 255);
+  --md-sys-color-surface-container-high: rgb(241 245 249);
+  --md-sys-color-outline: rgb(100 116 139);
+  --md-sys-color-outline-variant: rgb(203 213 225);
+
+  --shadow-claw-bg-primary: rgb(248 250 252);
+  --shadow-claw-bg-secondary: rgb(255 255 255);
+  --shadow-claw-bg-tertiary: rgb(241 245 249);
+  --shadow-claw-bg-primary-reverse: rgb(15 23 42);
+  --shadow-claw-border-color: rgb(203 213 225);
+  --shadow-claw-accent-primary: rgb(2 132 199);
+  --shadow-claw-accent-secondary: rgb(224 242 254);
+  --shadow-claw-accent-hover: rgb(3 105 161);
+  --shadow-claw-on-primary: rgb(255 255 255);
+  --shadow-claw-text-primary: rgb(15 23 42);
+  --shadow-claw-text-secondary: rgb(71 85 105);
+  --shadow-claw-text-tertiary: rgb(100 116 139);
+  --shadow-claw-link: rgb(2 132 199);
+  --shadow-claw-link-hover: rgb(3 105 161);
+}
+
+/* ==========================================================================
+   ShadowClaw Draw Workbench Mobile-First Responsive Page Styles
+   ========================================================================== */
+
+.scdraw-workbench-page {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  overscroll-behavior-x: contain;
+}
+
+.scdraw-workbench-page scdraw-vector-workbench,
+.scdraw-workbench-page scdraw-bitmap-workbench {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.pages__rendered:has(.scdraw-workbench-page) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.scdraw-workbench-page.scdraw-workbench-page--fullscreen,
+.scdraw-workbench-page:fullscreen,
+.pages__rendered:has(.scdraw-workbench-page--fullscreen) {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  width: 100dvw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: 100vw !important;
+  max-width: 100dvw !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  z-index: 99999 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--shadow-claw-bg-primary, #0f1419) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.scdraw-workbench-page.scdraw-workbench-page--fullscreen
+  scdraw-vector-workbench,
+.scdraw-workbench-page:fullscreen scdraw-vector-workbench,
+.scdraw-workbench-page.scdraw-workbench-page--fullscreen
+  scdraw-bitmap-workbench,
+.scdraw-workbench-page:fullscreen scdraw-bitmap-workbench {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
