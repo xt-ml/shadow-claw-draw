@@ -1,0 +1,4 @@
+.cache
+.lighthouseci
+dist
+node_modules

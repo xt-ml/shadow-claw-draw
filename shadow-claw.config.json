@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "site": {
+    "title": "ShadowClaw Template",
+    "description": "Published with ShadowClaw",
+    "themeColor": "#121212",
+    "lang": "en"
+  },
+  "branding": {
+    "titleText": "ShadowClaw Template",
+    "siteUrl": "https://xt-ml.github.io/shadow-claw-template/",
+    "repoUrl": "https://github.com/xt-ml/shadow-claw-template",
+    "repoLabel": "ShadowClaw Template on GitHub",
+    "faviconPath": "assets/icons/favicon.svg",
+    "appleTouchIconPath": "assets/icons/180.png",
+    "notFoundPath": "404.html",
+    "logoSlotHtml": "<svg class=\"header-title-logo\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"32\" height=\"32\" rx=\"8\" fill=\"#111827\"/><path d=\"M16 6 L26 12 L16 18 L6 12 Z\" fill=\"#3b82f6\"/><path d=\"M6 12 L16 18 L16 26 L6 20 Z\" fill=\"#1d4ed8\"/><path d=\"M16 18 L26 12 L26 20 L16 26 Z\" fill=\"#1e40af\"/></svg>"
+  },
+  "pwa": {
+    "manifestPath": "manifest.json"
+  },
+  "assets": ["assets"],
+  "sidebar": {
+    "pagesHidden": false,
+    "chatHidden": false,
+    "tasksHidden": false,
+    "filesHidden": false,
+    "defaultPage": "pages"
+  },
+  "settings": {
+    "defaultToolsProfile": "__builtin_default"
+  }
+}
