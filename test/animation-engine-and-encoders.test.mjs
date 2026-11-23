@@ -307,3 +307,24 @@ test("DrawEngine Animation: Send to Anim works from Bitmap Studio even when anim
   });
   assert.ok(fillCalls.some((c) => c.fillStyle === "#112233"));
 });
+
+test("DrawEngine.setActiveStudio updates default Ready status message and preserves non-Ready messages", () => {
+  const engine = new DrawEngine();
+  assert.equal(engine.statusMessage.get(), "Ready — Vector Studio");
+
+  engine.setActiveStudio("animation");
+  assert.equal(engine.statusMessage.get(), "Ready — Animation Studio");
+
+  engine.setActiveStudio("bitmap");
+  assert.equal(engine.statusMessage.get(), "Ready — Bitmap Studio");
+
+  engine.setActiveStudio("vector");
+  assert.equal(engine.statusMessage.get(), "Ready — Vector Studio");
+
+  engine.statusMessage.set("Added vector frame to Animation Studio");
+  engine.setActiveStudio("animation");
+  assert.equal(
+    engine.statusMessage.get(),
+    "Added vector frame to Animation Studio",
+  );
+});

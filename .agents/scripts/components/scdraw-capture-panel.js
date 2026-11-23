@@ -196,19 +196,42 @@ export class DrawCapturePanelElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
+        :host {
+          display: block;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
         .scdraw-capture__body {
+          flex: 1 1 0;
+          min-height: 0;
+          min-width: 0;
           padding: 0.55rem;
           display: flex;
           flex-direction: column;
           gap: 0.45rem;
           overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
           font-size: 0.76rem;
+        }
+        .scdraw-capture__body > * {
+          flex-shrink: 0;
         }
         .scdraw-capture__row {
           display: grid;
           grid-template-columns: 92px minmax(0, 1fr);
           align-items: center;
           gap: 0.35rem;
+          min-width: 0;
+        }
+        .scdraw-capture__row input {
+          width: 100%;
+          min-width: 0;
         }
         .scdraw-capture__btns {
           display: flex;

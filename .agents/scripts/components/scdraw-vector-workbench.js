@@ -111,7 +111,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
   }
 
   connectedCallback() {
-    scdraw.activeStudio.set("vector");
+    scdraw.setActiveStudio("vector");
     this._cleanupSwipeGuard = installPageSwipeGuard(this);
     this.render();
     this._attachListeners();

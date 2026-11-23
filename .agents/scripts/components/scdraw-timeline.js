@@ -463,23 +463,32 @@ export class DrawTimelineElement extends BaseElement {
         ${SHARED_STYLES}
         :host {
           display: block;
+          width: 100%;
           min-width: 0;
           min-height: 0;
-          height: 100%;
+          height: auto;
+          max-height: 100%;
+          overflow: hidden;
         }
         .scdraw-timeline {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.35rem;
           padding: 0.45rem 0.55rem;
           background: var(--bg-card);
           border: 1px solid var(--border);
           border-radius: 8px;
-          height: 100%;
+          height: auto;
+          max-height: 100%;
           min-width: 0;
           min-height: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          touch-action: pan-y;
         }
         .scdraw-timeline__controls {
+          flex: 0 0 auto;
           display: flex;
           flex-wrap: wrap;
           align-items: center;
@@ -509,8 +518,8 @@ export class DrawTimelineElement extends BaseElement {
           overscroll-behavior: contain;
           scrollbar-gutter: stable;
           padding: 0.25rem 0.1rem;
-          min-height: 92px;
-          flex: 1 1 auto;
+          min-height: 84px;
+          flex: 0 0 auto;
           align-items: stretch;
         }
         .scdraw-timeline__card {
@@ -563,6 +572,7 @@ export class DrawTimelineElement extends BaseElement {
           object-fit: contain;
         }
         .scdraw-timeline__trim {
+          flex: 0 0 auto;
           display: flex;
           flex-wrap: wrap;
           align-items: center;
@@ -570,6 +580,7 @@ export class DrawTimelineElement extends BaseElement {
           padding-top: 0.2rem;
           border-top: 1px solid var(--border-subtle);
           font-size: 0.72rem;
+          min-width: 0;
         }
         .scdraw-timeline__trim label {
           display: inline-flex;
@@ -578,6 +589,11 @@ export class DrawTimelineElement extends BaseElement {
           min-width: 110px;
           flex: 1 1 120px;
         }
+        .scdraw-timeline__trim input[type="range"] {
+          flex: 1 1 60px;
+          min-width: 0;
+          width: 100%;
+        }
         @media (pointer: coarse) {
           .scdraw-timeline .scdraw-btn,
           .scdraw-timeline__card {
@@ -585,7 +601,7 @@ export class DrawTimelineElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-timeline" role="region" aria-label="Animation Timeline">
+      <div class="scdraw-timeline scdraw-scrollable" role="region" aria-label="Animation Timeline">
         <div class="scdraw-timeline__controls">
           <div class="scdraw-timeline__group" role="toolbar" aria-label="Playback transport">
             <button type="button" id="scdraw-tl-first" class="scdraw-btn scdraw-btn--sm" aria-label="First frame">⏮</button>

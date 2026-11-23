@@ -211,10 +211,19 @@ export class DrawEngine {
         : studio === "animation"
           ? "animation"
           : "vector";
+    const readyMessages = {
+      vector: "Ready — Vector Studio",
+      bitmap: "Ready — Bitmap Studio",
+      animation: "Ready — Animation Studio",
+    };
     batch(() => {
       this.activeStudio.set(next);
       if (next === "animation") {
         this._projectActiveFrameToStudioDoc();
+      }
+      const curMsg = this.statusMessage.get();
+      if (!curMsg || curMsg.startsWith("Ready")) {
+        this.statusMessage.set(readyMessages[next]);
       }
       this._syncHistoryFlags();
     });

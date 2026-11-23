@@ -114,4 +114,60 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(exportSrc, /scdraw-exp-bg-transparent/);
   assert.match(exportSrc, /scdraw-exp-bg-color/);
   assert.match(exportSrc, /set_background/);
+
+  // Layout & overflow regression checks
+  assert.doesNotMatch(
+    wbSrc,
+    /\.scdraw-anim-wb__timeline-dock\s*\{[^}]*height:\s*196px/,
+  );
+  assert.match(
+    wbSrc,
+    /\.scdraw-anim-wb__timeline-dock\s*\{[^}]*height:\s*auto[^}]*flex:\s*0\s+0\s+auto/,
+  );
+  assert.doesNotMatch(wbSrc, /\.scdraw-anim-wb__pane\s*>\s*\*\s*\{/);
+  assert.match(
+    wbSrc,
+    /\.scdraw-anim-wb__right-tabs\s*\{[^}]*flex:\s*0\s+0\s+auto/,
+  );
+  assert.match(wbSrc, /:host\s*\{[^}]*overflow-y:\s*visible/);
+  assert.match(
+    wbSrc,
+    /:host\(\.scdraw-workbench--fullscreen\)\s+\.scdraw-anim-wb[\s\S]*?overflow-y:\s*auto/,
+  );
+  assert.match(
+    wbSrc,
+    /\.scdraw-anim-wb__workspace\s*\{[^}]*flex:\s*1\s+0\s+clamp\(/,
+  );
+
+  assert.match(timelineSrc, /class="scdraw-timeline scdraw-scrollable"/);
+  assert.match(
+    timelineSrc,
+    /\.scdraw-timeline\s*\{[^}]*height:\s*auto[^}]*overflow-y:\s*auto/,
+  );
+  assert.match(
+    timelineSrc,
+    /\.scdraw-timeline__trim\s*\{[^}]*flex:\s*0\s+0\s+auto/,
+  );
+
+  const captureSrc = readFileSync(
+    resolve(ROOT, ".agents/scripts/components/scdraw-capture-panel.js"),
+    "utf8",
+  );
+  for (const [label, src, bodyCls] of [
+    ["scdraw-export-panel.js", exportSrc, "scdraw-export__body"],
+    ["scdraw-capture-panel.js", captureSrc, "scdraw-capture__body"],
+  ]) {
+    assert.match(
+      src,
+      /:host\s*\{[^}]*height:\s*100%[^}]*min-height:\s*0[^}]*overflow:\s*hidden/,
+      `${label} :host must constrain height cleanly for scrolling`,
+    );
+    assert.match(
+      src,
+      new RegExp(
+        `\\.${bodyCls}\\s*\\{[^}]*flex:\\s*1\\s+1\\s+0[^}]*overflow-y:\\s*auto[^}]*touch-action:\\s*pan-y[^}]*scrollbar-gutter:\\s*stable`,
+      ),
+      `${label} .${bodyCls} must scroll vertically`,
+    );
+  }
 });

@@ -492,7 +492,8 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           width: 100%;
           max-width: 100%;
           min-width: 0;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: visible;
         }
         .scdraw-anim-wb {
           display: flex;
@@ -506,6 +507,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           --right-width: 280px;
         }
         .scdraw-anim-wb__topbar {
+          flex: 0 0 auto;
           display: flex;
           flex-direction: column;
           gap: 0.4rem;
@@ -569,8 +571,11 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
         }
         .scdraw-anim-wb__timeline-dock {
           display: none;
+          height: auto;
           min-width: 0;
-          min-height: 170px;
+          min-height: 0;
+          flex: 0 0 auto;
+          overflow: hidden;
         }
         .scdraw-anim-wb[data-mobile-tab="stage"] .scdraw-anim-wb__pane--stage {
           display: flex;
@@ -589,23 +594,27 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           flex-direction: column;
         }
         .scdraw-anim-wb__right-tabs {
+          flex: 0 0 auto;
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 0.25rem;
           margin-bottom: 0.35rem;
-          flex-shrink: 0;
         }
         .scdraw-anim-wb__right-body {
           flex: 1 1 0;
+          min-width: 0;
           min-height: 0;
+          overflow: hidden;
           display: flex;
           flex-direction: column;
         }
         .scdraw-anim-wb__right-body > * {
           flex: 1 1 0;
           min-height: 0;
+          height: 100%;
         }
         .scdraw-anim-wb__tabs {
+          flex: 0 0 auto;
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
           gap: 0.25rem;
@@ -614,10 +623,15 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
         .scdraw-panel-toggle--dock {
           display: none;
         }
-        .scdraw-anim-wb__pane > * {
+        .scdraw-anim-wb__pane--toolbox > *,
+        .scdraw-anim-wb__pane--stage > *,
+        .scdraw-anim-wb__pane--layers > * {
           flex: 1 1 0;
           min-height: 0;
           height: 100%;
+        }
+        scdraw-statusbar {
+          flex: 0 0 auto;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -631,13 +645,15 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
 
         @container scdraw-animation-workbench (min-width: 640px) {
           .scdraw-anim-wb {
-            height: calc(100dvh - 180px);
-            min-height: 560px;
+            height: auto;
+            min-height: calc(100dvh - 140px);
           }
           .scdraw-anim-wb__tabs { display: none; }
           .scdraw-panel-toggle--dock { display: inline-flex; }
           .scdraw-anim-wb__workspace {
-            flex: 1 1 0;
+            flex: 1 0 clamp(320px, calc(100dvh - 420px), 680px);
+            min-height: 300px;
+            overflow: hidden;
             display: grid;
             grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--right-width));
             grid-template-rows: minmax(0, 1fr);
@@ -656,8 +672,10 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           }
           .scdraw-anim-wb__timeline-dock {
             display: block;
-            height: 196px;
-            flex-shrink: 0;
+            height: auto;
+            min-height: 0;
+            flex: 0 0 auto;
+            overflow: hidden;
           }
           .scdraw-anim-wb[data-show-toolbox="false"] .scdraw-anim-wb__pane--toolbox { display: none; }
           .scdraw-anim-wb[data-show-timeline="false"] .scdraw-anim-wb__timeline-dock { display: none; }
@@ -691,19 +709,45 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
 
         @supports not (container-type: inline-size) {
           @media (min-width: 640px) {
-            .scdraw-anim-wb { height: calc(100dvh - 180px); min-height: 560px; }
+            .scdraw-anim-wb {
+              height: auto;
+              min-height: calc(100dvh - 140px);
+            }
             .scdraw-anim-wb__tabs { display: none; }
             .scdraw-panel-toggle--dock { display: inline-flex; }
             .scdraw-anim-wb__workspace {
-              flex: 1 1 0;
+              flex: 1 0 clamp(320px, calc(100dvh - 420px), 680px);
+              min-height: 300px;
+              overflow: hidden;
               display: grid;
               grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--right-width));
               grid-template-rows: minmax(0, 1fr);
+              align-items: stretch;
+            }
+            .scdraw-anim-wb__pane {
+              order: 0;
+              height: 100%;
+              min-height: 0;
             }
             .scdraw-anim-wb__pane--toolbox,
             .scdraw-anim-wb__pane--stage,
             .scdraw-anim-wb__pane--right { display: flex; flex-direction: column; }
-            .scdraw-anim-wb__timeline-dock { display: block; height: 196px; }
+            .scdraw-anim-wb__timeline-dock {
+              display: block;
+              height: auto;
+              min-height: 0;
+              flex: 0 0 auto;
+              overflow: hidden;
+            }
+            .scdraw-anim-wb[data-show-toolbox="false"] .scdraw-anim-wb__pane--toolbox { display: none; }
+            .scdraw-anim-wb[data-show-timeline="false"] .scdraw-anim-wb__timeline-dock { display: none; }
+            .scdraw-anim-wb[data-show-layers="true"] .scdraw-anim-wb__pane--layers { display: flex; flex-direction: column; }
+            .scdraw-anim-wb[data-show-layers="true"] .scdraw-anim-wb__handle--layers { display: inline-flex; }
+            .scdraw-anim-wb[data-show-layers="false"] .scdraw-anim-wb__pane--layers,
+            .scdraw-anim-wb[data-show-layers="false"] .scdraw-anim-wb__handle--layers { display: none; }
+            .scdraw-anim-wb[data-show-right="false"] .scdraw-anim-wb__pane--right,
+            .scdraw-anim-wb[data-show-right="false"] .scdraw-anim-wb__handle--right { display: none; }
+            .scdraw-anim-wb__handle--right { display: inline-flex; }
           }
           @media (min-width: 1024px) {
             .scdraw-anim-wb__more-toggle { display: none; }
@@ -746,6 +790,13 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           height: 100%;
           min-height: 0;
           box-sizing: border-box;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+        :host(.scdraw-workbench--fullscreen) .scdraw-anim-wb__workspace,
+        :host(:fullscreen) .scdraw-anim-wb__workspace {
+          flex: 1 0 280px;
+          min-height: 280px;
         }
       </style>
       <div class="scdraw-anim-wb" data-mobile-tab="stage" data-show-toolbox="true" data-show-timeline="true" data-show-layers="true" data-show-right="true" data-no-swipe="true" data-no-nav="true">

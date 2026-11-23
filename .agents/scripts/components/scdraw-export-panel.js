@@ -293,19 +293,46 @@ export class DrawExportPanelElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
+        :host {
+          display: block;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
         .scdraw-export__body {
+          flex: 1 1 0;
+          min-height: 0;
+          min-width: 0;
           padding: 0.55rem;
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
           font-size: 0.76rem;
+        }
+        .scdraw-export__body > * {
+          flex-shrink: 0;
         }
         .scdraw-export__row {
           display: grid;
-          grid-template-columns: 96px minmax(0, 1fr);
+          grid-template-columns: 88px minmax(0, 1fr);
           align-items: center;
           gap: 0.35rem;
+          min-width: 0;
+        }
+        .scdraw-export__row > * {
+          min-width: 0;
+        }
+        .scdraw-export__row select,
+        .scdraw-export__row input[type="number"] {
+          width: 100%;
+          min-width: 0;
         }
         .scdraw-export__actions {
           display: flex;

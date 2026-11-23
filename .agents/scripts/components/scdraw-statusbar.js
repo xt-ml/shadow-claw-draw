@@ -90,6 +90,11 @@ export class DrawStatusBarElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
+        :host {
+          display: block;
+          flex: 0 0 auto;
+          min-width: 0;
+        }
         .scdraw-statusbar {
           display: flex;
           flex-wrap: wrap;
@@ -113,6 +118,7 @@ export class DrawStatusBarElement extends BaseElement {
         }
         .scdraw-statusbar__metrics {
           display: flex;
+          flex-wrap: wrap;
           align-items: center;
           gap: 0.4rem;
           font-family: var(--mono);
