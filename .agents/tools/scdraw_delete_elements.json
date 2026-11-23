@@ -12,9 +12,7 @@
         }
       }
     },
-    "required": [
-      "ids"
-    ],
+    "required": ["ids"],
     "additionalProperties": false
   },
   "annotations": {

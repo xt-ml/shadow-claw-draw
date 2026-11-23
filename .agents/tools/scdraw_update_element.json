@@ -12,10 +12,7 @@
         "type": "object"
       }
     },
-    "required": [
-      "id",
-      "patch"
-    ],
+    "required": ["id", "patch"],
     "additionalProperties": false
   },
   "annotations": {

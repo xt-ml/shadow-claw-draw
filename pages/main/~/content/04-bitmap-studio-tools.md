@@ -168,6 +168,6 @@ AI agents can inspect and drive every Bitmap Studio feature using:
 
 ## See Also
 
-- [Architecture & Declarative WebMCP Tools](../architecture/) — System architecture, all 26 `scdraw_*` tools, and extension workflow
-- [Vector Studio Tools & Pen Editing](../vector-studio-tools/) — Vector paths, Bezier nodes, Inspector, and XML workflow
-- [Porting & Upstream Attribution](../porting-and-attribution/) — GIMP, Inkscape, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance
+- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 26 `scdraw_*` tools, and extension workflow
+- [Vector Studio Tools & Pen Editing](03-vector-studio-tools.md) (`/main/vector-studio-tools/`) — Vector paths, Bezier nodes, Inspector, and XML workflow
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — GIMP, Inkscape, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance

@@ -132,6 +132,6 @@ Agents can inspect, script, or compose illustrations programmatically without po
 
 ## See Also
 
-- [Architecture & Declarative WebMCP Tools](../architecture/) — System architecture, all 26 `scdraw_*` tools, and extension workflow
-- [Bitmap Studio Tools & Pixel Painting](../bitmap-studio-tools/) — Raster layers, moved-layer coordinates, selections/clipboard, and 10-group filter pipeline
-- [Porting & Upstream Attribution](../porting-and-attribution/) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance
+- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 26 `scdraw_*` tools, and extension workflow
+- [Bitmap Studio Tools & Pixel Painting](04-bitmap-studio-tools.md) (`/main/bitmap-studio-tools/`) — Raster layers, moved-layer coordinates, selections/clipboard, and 10-group filter pipeline
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance

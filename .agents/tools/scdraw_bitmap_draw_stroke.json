@@ -10,11 +10,7 @@
       },
       "tool": {
         "type": "string",
-        "enum": [
-          "brush",
-          "pencil",
-          "eraser"
-        ]
+        "enum": ["brush", "pencil", "eraser"]
       },
       "size": {
         "type": "number",
@@ -41,9 +37,7 @@
         }
       }
     },
-    "required": [
-      "points"
-    ],
+    "required": ["points"],
     "additionalProperties": false
   },
   "annotations": {

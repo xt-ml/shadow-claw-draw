@@ -49,28 +49,15 @@
       },
       "align": {
         "type": "string",
-        "enum": [
-          "left",
-          "center",
-          "right",
-          "top",
-          "middle",
-          "bottom"
-        ]
+        "enum": ["left", "center", "right", "top", "middle", "bottom"]
       },
       "relativeTo": {
         "type": "string",
-        "enum": [
-          "selection",
-          "canvas"
-        ]
+        "enum": ["selection", "canvas"]
       },
       "axis": {
         "type": "string",
-        "enum": [
-          "horizontal",
-          "vertical"
-        ]
+        "enum": ["horizontal", "vertical"]
       },
       "zAction": {
         "type": "string",
@@ -85,9 +72,7 @@
         "type": "string"
       }
     },
-    "required": [
-      "action"
-    ],
+    "required": ["action"],
     "additionalProperties": false
   },
   "annotations": {

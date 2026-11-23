@@ -114,9 +114,7 @@
         "type": "number"
       }
     },
-    "required": [
-      "type"
-    ],
+    "required": ["type"],
     "additionalProperties": true
   },
   "annotations": {

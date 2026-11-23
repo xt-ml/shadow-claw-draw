@@ -13,11 +13,16 @@
 
 import {
   SHARED_STYLES,
+  computeWorkspaceGridColumns,
   installPageSwipeGuard,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
 } from "./scdraw-styles.js";
-export { resolveWorkbenchFullscreenState, setupWorkbenchFullscreen };
+export {
+  computeWorkspaceGridColumns,
+  resolveWorkbenchFullscreenState,
+  setupWorkbenchFullscreen,
+};
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { getAppBasePath } from "../scdraw-fs.js";
@@ -33,6 +38,7 @@ const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
 export function resolveDrawResponsiveLayout({
   containerWidth = 1200,
   mobileTab = "canvas",
+  panelVisibility = {},
 } = {}) {
   const tier =
     containerWidth < 640
@@ -41,10 +47,23 @@ export function resolveDrawResponsiveLayout({
         ? "tablet"
         : "desktop";
 
+  const toolboxOverride =
+    typeof panelVisibility?.toolbox === "boolean"
+      ? panelVisibility.toolbox
+      : null;
+  const layersOverride =
+    typeof panelVisibility?.layers === "boolean"
+      ? panelVisibility.layers
+      : null;
+  const inspectorOverride =
+    typeof panelVisibility?.inspector === "boolean"
+      ? panelVisibility.inspector
+      : null;
+
   if (tier === "mobile") {
     return {
       tier,
-      showToolbox: true,
+      showToolbox: toolboxOverride ?? true,
       showCanvas: mobileTab === "canvas",
       showLayers: mobileTab === "layers",
       showInspector: mobileTab === "inspector" || mobileTab === "xml",
@@ -53,18 +72,18 @@ export function resolveDrawResponsiveLayout({
   if (tier === "tablet") {
     return {
       tier,
-      showToolbox: true,
+      showToolbox: toolboxOverride ?? true,
       showCanvas: true,
-      showLayers: mobileTab === "layers",
-      showInspector: true,
+      showLayers: layersOverride ?? mobileTab === "layers",
+      showInspector: inspectorOverride ?? true,
     };
   }
   return {
     tier,
-    showToolbox: true,
+    showToolbox: toolboxOverride ?? true,
     showCanvas: true,
-    showLayers: true,
-    showInspector: true,
+    showLayers: layersOverride ?? true,
+    showInspector: inspectorOverride ?? true,
   };
 }
 
@@ -80,6 +99,12 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     this._fullscreenController = null;
     this._isFullscreen = false;
     this._mobileTab = "canvas";
+    this._containerWidth = null;
+    this._panelOverrides = {
+      toolbox: null,
+      layers: null,
+      inspector: null,
+    };
     this._moreOpen = false;
     this._inspectorWidth = 280;
     this._layersWidth = 230;
@@ -90,6 +115,9 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     this._cleanupSwipeGuard = installPageSwipeGuard(this);
     this.render();
     this._attachListeners();
+    const initialWidth = this.getBoundingClientRect?.().width ?? 0;
+    if (initialWidth > 0) this._containerWidth = initialWidth;
+    this._syncPanelVisibility({ applyGrid: initialWidth > 0 });
     this._initFullscreen();
     this._setupResizeObserver();
     this._dispose = effect(() => {
@@ -159,12 +187,90 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     return Boolean(this._isFullscreen);
   }
 
+  _getCurrentLayout() {
+    const width =
+      this._containerWidth ??
+      (typeof window !== "undefined" && window.innerWidth
+        ? window.innerWidth
+        : 1200);
+    return resolveDrawResponsiveLayout({
+      containerWidth: width,
+      mobileTab: this._mobileTab,
+      panelVisibility: this._panelOverrides,
+    });
+  }
+
+  _syncPanelVisibility({ applyGrid = true } = {}) {
+    const layout = this._getCurrentLayout();
+    const wb = this.shadowRoot?.querySelector(".scdraw-vector-wb");
+    if (wb) {
+      wb.dataset.showToolbox = String(layout.showToolbox);
+      wb.dataset.showLayers = String(layout.showLayers);
+      wb.dataset.showInspector = String(layout.showInspector);
+      if (applyGrid) {
+        wb.style.setProperty(
+          "--workspace-columns",
+          computeWorkspaceGridColumns({
+            showToolbox: layout.showToolbox,
+            showLayers: layout.showLayers,
+            showSecondary: layout.showInspector,
+            secondaryVar: "var(--inspector-width)",
+          }),
+        );
+      }
+    }
+    const toggleMap = [
+      ["scdraw-vec-toggle-toolbox", layout.showToolbox],
+      ["scdraw-vec-toggle-layers", layout.showLayers],
+      ["scdraw-vec-toggle-inspector", layout.showInspector],
+    ];
+    for (const [id, visible] of toggleMap) {
+      const btn = this.shadowRoot?.getElementById(id);
+      if (btn) btn.setAttribute("aria-pressed", String(visible));
+    }
+    return layout;
+  }
+
+  togglePanel(panel, force) {
+    const labels = {
+      toolbox: "Tools & Colors",
+      layers: "Layers",
+      inspector: "Inspector",
+    };
+    if (!Object.hasOwn(labels, panel)) return;
+    const layout = this._getCurrentLayout();
+    const currentMap = {
+      toolbox: layout.showToolbox,
+      layers: layout.showLayers,
+      inspector: layout.showInspector,
+    };
+    const nextVisible = typeof force === "boolean" ? force : !currentMap[panel];
+    this._panelOverrides[panel] = nextVisible;
+    this._syncPanelVisibility({ applyGrid: true });
+    scdraw.statusMessage.set(
+      `${nextVisible ? "Shown" : "Hidden"} ${labels[panel]} panel`,
+    );
+  }
+
+  get panelVisibility() {
+    const layout = this._getCurrentLayout();
+    return {
+      toolbox: layout.showToolbox,
+      layers: layout.showLayers,
+      inspector: layout.showInspector,
+    };
+  }
+
   _setupResizeObserver() {
     const toolbox = this.shadowRoot?.querySelector("scdraw-toolbox");
     if (typeof ResizeObserver !== "undefined" && toolbox) {
       this._resizeObserver = new ResizeObserver((entries) => {
         const w =
           entries[0]?.contentRect?.width ?? this.getBoundingClientRect().width;
+        if (w > 0) {
+          this._containerWidth = w;
+          this._syncPanelVisibility({ applyGrid: true });
+        }
         if (w >= 640) {
           toolbox.setAttribute("layout", "vertical");
         } else {
@@ -188,6 +294,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     if (inspector && typeof inspector.setXmlMode === "function") {
       inspector.setXmlMode(tab === "xml");
     }
+    this._syncPanelVisibility({ applyGrid: this._containerWidth !== null });
   }
 
   _attachListeners() {
@@ -281,6 +388,14 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     for (const btn of root.querySelectorAll(".scdraw-vector-wb__tab")) {
       btn.addEventListener("click", () => {
         this._setMobileTab(btn.dataset.tab);
+      });
+    }
+
+    for (const btn of root.querySelectorAll(
+      ".scdraw-panel-toggle[data-panel-toggle]",
+    )) {
+      btn.addEventListener("click", () => {
+        this.togglePanel(btn.dataset.panelToggle);
       });
     }
 
@@ -423,6 +538,19 @@ export class DrawVectorWorkbenchElement extends BaseElement {
         .scdraw-vector-wb__handle {
           display: none;
         }
+        .scdraw-panel-toggle--dock {
+          display: none;
+        }
+        .scdraw-vector-wb__pane--canvas > *,
+        .scdraw-vector-wb__pane--layers > *,
+        .scdraw-vector-wb__pane--inspector > * {
+          flex: 1 1 0;
+          min-height: 0;
+          height: 100%;
+        }
+        .scdraw-vector-wb[data-show-toolbox="false"] .scdraw-vector-wb__pane--toolbox {
+          display: none;
+        }
 
         @container scdraw-vector-workbench (min-width: 640px) {
           .scdraw-vector-wb {
@@ -432,23 +560,36 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           .scdraw-vector-wb__tabs {
             display: none;
           }
+          .scdraw-panel-toggle--dock {
+            display: inline-flex;
+          }
           .scdraw-vector-wb__workspace {
             flex: 1;
             display: grid;
-            grid-template-columns: 156px minmax(0, 1fr) auto var(--inspector-width);
+            grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--inspector-width));
+            grid-template-rows: minmax(0, 1fr);
             align-items: stretch;
           }
           .scdraw-vector-wb__pane {
             order: 0;
-            height: auto;
+            height: 100%;
             min-height: 0;
+          }
+          .scdraw-vector-wb__pane > * {
+            flex: 1 1 0;
+            min-height: 0;
+            height: 100%;
           }
           .scdraw-vector-wb__pane--toolbox,
           .scdraw-vector-wb__pane--canvas,
           .scdraw-vector-wb__pane--inspector {
-            display: block;
+            display: flex;
+            flex-direction: column;
           }
           .scdraw-vector-wb__pane--layers {
+            display: none;
+          }
+          .scdraw-vector-wb__handle--layers {
             display: none;
           }
           .scdraw-vector-wb__handle--inspector {
@@ -475,13 +616,42 @@ export class DrawVectorWorkbenchElement extends BaseElement {
             margin-left: auto;
           }
           .scdraw-vector-wb__workspace {
-            grid-template-columns: 156px minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width);
+            grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width));
           }
           .scdraw-vector-wb__pane--layers {
-            display: block;
+            display: flex;
+            flex-direction: column;
           }
           .scdraw-vector-wb__handle {
             display: inline-flex;
+          }
+        }
+
+        @container scdraw-vector-workbench (min-width: 640px) {
+          .scdraw-vector-wb[data-show-toolbox="false"] .scdraw-vector-wb__pane--toolbox {
+            display: none;
+          }
+          .scdraw-vector-wb[data-show-layers="true"] .scdraw-vector-wb__pane--layers {
+            display: flex;
+            flex-direction: column;
+          }
+          .scdraw-vector-wb[data-show-layers="true"] .scdraw-vector-wb__handle--layers {
+            display: inline-flex;
+          }
+          .scdraw-vector-wb[data-show-layers="false"] .scdraw-vector-wb__pane--layers,
+          .scdraw-vector-wb[data-show-layers="false"] .scdraw-vector-wb__handle--layers {
+            display: none;
+          }
+          .scdraw-vector-wb[data-show-inspector="true"] .scdraw-vector-wb__pane--inspector {
+            display: flex;
+            flex-direction: column;
+          }
+          .scdraw-vector-wb[data-show-inspector="true"] .scdraw-vector-wb__handle--inspector {
+            display: inline-flex;
+          }
+          .scdraw-vector-wb[data-show-inspector="false"] .scdraw-vector-wb__pane--inspector,
+          .scdraw-vector-wb[data-show-inspector="false"] .scdraw-vector-wb__handle--inspector {
+            display: none;
           }
         }
 
@@ -489,26 +659,61 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           @media (min-width: 640px) {
             .scdraw-vector-wb { height: calc(100dvh - 180px); min-height: 480px; }
             .scdraw-vector-wb__tabs { display: none; }
+            .scdraw-panel-toggle--dock { display: inline-flex; }
             .scdraw-vector-wb__workspace {
               flex: 1;
               display: grid;
-              grid-template-columns: 156px minmax(0, 1fr) auto var(--inspector-width);
+              grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--inspector-width));
+              grid-template-rows: minmax(0, 1fr);
+              align-items: stretch;
             }
-            .scdraw-vector-wb__pane { order: 0; height: auto; min-height: 0; }
+            .scdraw-vector-wb__pane { order: 0; height: 100%; min-height: 0; }
+            .scdraw-vector-wb__pane > * { flex: 1 1 0; min-height: 0; height: 100%; }
+            .scdraw-vector-wb__pane--toolbox,
             .scdraw-vector-wb__pane--canvas,
             .scdraw-vector-wb__pane--inspector {
-              display: block;
+              display: flex;
+              flex-direction: column;
             }
+            .scdraw-vector-wb__pane--layers { display: none; }
+            .scdraw-vector-wb__handle--layers { display: none; }
             .scdraw-vector-wb__handle--inspector { display: inline-flex; }
           }
           @media (min-width: 1024px) {
             .scdraw-vector-wb__more-toggle { display: none; }
             .scdraw-vector-wb__secondary-bar { display: flex; padding-top: 0; border-top: none; margin-left: auto; }
             .scdraw-vector-wb__workspace {
-              grid-template-columns: 156px minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width);
+              grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width));
             }
-            .scdraw-vector-wb__pane--layers { display: block; }
+            .scdraw-vector-wb__pane--layers { display: flex; flex-direction: column; }
             .scdraw-vector-wb__handle { display: inline-flex; }
+          }
+          @media (min-width: 640px) {
+            .scdraw-vector-wb[data-show-toolbox="false"] .scdraw-vector-wb__pane--toolbox {
+              display: none;
+            }
+            .scdraw-vector-wb[data-show-layers="true"] .scdraw-vector-wb__pane--layers {
+              display: flex;
+              flex-direction: column;
+            }
+            .scdraw-vector-wb[data-show-layers="true"] .scdraw-vector-wb__handle--layers {
+              display: inline-flex;
+            }
+            .scdraw-vector-wb[data-show-layers="false"] .scdraw-vector-wb__pane--layers,
+            .scdraw-vector-wb[data-show-layers="false"] .scdraw-vector-wb__handle--layers {
+              display: none;
+            }
+            .scdraw-vector-wb[data-show-inspector="true"] .scdraw-vector-wb__pane--inspector {
+              display: flex;
+              flex-direction: column;
+            }
+            .scdraw-vector-wb[data-show-inspector="true"] .scdraw-vector-wb__handle--inspector {
+              display: inline-flex;
+            }
+            .scdraw-vector-wb[data-show-inspector="false"] .scdraw-vector-wb__pane--inspector,
+            .scdraw-vector-wb[data-show-inspector="false"] .scdraw-vector-wb__handle--inspector {
+              display: none;
+            }
           }
         }
 
@@ -565,7 +770,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-vector-wb" data-mobile-tab="canvas" data-no-swipe="true" data-no-nav="true">
+      <div class="scdraw-vector-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="true" data-show-inspector="true" data-no-swipe="true" data-no-nav="true">
         <header class="scdraw-vector-wb__topbar" role="region" aria-label="Vector Studio Toolbar">
           <div class="scdraw-vector-wb__primary-row">
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
@@ -591,12 +796,50 @@ export class DrawVectorWorkbenchElement extends BaseElement {
                 </span>
                 <span class="scdraw-fullscreen-label">Full Screen</span>
               </button>
+              <div class="scdraw-panel-toggles" role="group" aria-label="Panel visibility">
+                <button
+                  type="button"
+                  id="scdraw-vec-toggle-toolbox"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle"
+                  data-panel-toggle="toolbox"
+                  aria-pressed="true"
+                  aria-controls="scdraw-vec-pane-toolbox"
+                  aria-label="Tools and Colors panel"
+                  title="Show or hide Tools &amp; Colors panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><line x1="5.5" y1="2.5" x2="5.5" y2="13.5"/></svg>
+                  <span>Tools</span>
+                </button>
+                <button
+                  type="button"
+                  id="scdraw-vec-toggle-layers"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
+                  data-panel-toggle="layers"
+                  aria-pressed="true"
+                  aria-controls="scdraw-vec-pane-layers"
+                  aria-label="Layers panel"
+                  title="Show or hide Layers panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 14,5.5 8,9 2,5.5"/><polyline points="2,8.5 8,12 14,8.5"/><polyline points="2,11.5 8,15 14,11.5"/></svg>
+                  <span>Layers</span>
+                </button>
+                <button
+                  type="button"
+                  id="scdraw-vec-toggle-inspector"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
+                  data-panel-toggle="inspector"
+                  aria-pressed="true"
+                  aria-controls="scdraw-vec-pane-inspector"
+                  aria-label="Inspector panel"
+                  title="Show or hide Inspector panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><line x1="10.5" y1="2.5" x2="10.5" y2="13.5"/></svg>
+                  <span>Inspector</span>
+                </button>
+              </div>
               <button
                 type="button"
                 id="scdraw-vector-more-toggle"
                 class="scdraw-btn scdraw-btn--sm scdraw-vector-wb__more-toggle"
                 aria-expanded="false"
-                aria-controls="scdraw-vector-secondary-bar">Tools ▾</button>
+                aria-controls="scdraw-vector-secondary-bar">More ▾</button>
             </div>
           </div>
 
@@ -619,7 +862,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
         </header>
 
         <main class="scdraw-vector-wb__workspace">
-          <aside class="scdraw-vector-wb__pane scdraw-vector-wb__pane--toolbox">
+          <aside id="scdraw-vec-pane-toolbox" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--toolbox">
             <scdraw-toolbox mode="vector"></scdraw-toolbox>
           </aside>
           <section class="scdraw-vector-wb__pane scdraw-vector-wb__pane--canvas">
@@ -627,14 +870,14 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           </section>
           <scdraw-resize-handle
             id="scdraw-layers-handle"
-            class="scdraw-vector-wb__handle"
+            class="scdraw-vector-wb__handle scdraw-vector-wb__handle--layers"
             orientation="vertical"
             invert="true"
             value="230"
             min="170"
             max="400"
             label="Resize Layers Panel"></scdraw-resize-handle>
-          <aside class="scdraw-vector-wb__pane scdraw-vector-wb__pane--layers">
+          <aside id="scdraw-vec-pane-layers" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--layers">
             <scdraw-layers-panel mode="vector"></scdraw-layers-panel>
           </aside>
           <scdraw-resize-handle
@@ -646,7 +889,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
             min="210"
             max="460"
             label="Resize Inspector Panel"></scdraw-resize-handle>
-          <aside class="scdraw-vector-wb__pane scdraw-vector-wb__pane--inspector">
+          <aside id="scdraw-vec-pane-inspector" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--inspector">
             <scdraw-inspector></scdraw-inspector>
           </aside>
         </main>

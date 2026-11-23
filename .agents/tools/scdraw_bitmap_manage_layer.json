@@ -7,14 +7,7 @@
     "properties": {
       "action": {
         "type": "string",
-        "enum": [
-          "add",
-          "remove",
-          "update",
-          "reorder",
-          "merge_down",
-          "flatten"
-        ]
+        "enum": ["add", "remove", "update", "reorder", "merge_down", "flatten"]
       },
       "layerId": {
         "type": "string"
@@ -38,9 +31,7 @@
         "type": "integer"
       }
     },
-    "required": [
-      "action"
-    ],
+    "required": ["action"],
     "additionalProperties": false
   },
   "annotations": {

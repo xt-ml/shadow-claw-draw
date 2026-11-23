@@ -10,10 +10,7 @@
       },
       "format": {
         "type": "string",
-        "enum": [
-          "svg",
-          "scdraw-json"
-        ]
+        "enum": ["svg", "scdraw-json"]
       },
       "conversationId": {
         "type": "string"

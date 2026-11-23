@@ -26,11 +26,7 @@
         "type": "boolean"
       }
     },
-    "required": [
-      "x",
-      "y",
-      "color"
-    ],
+    "required": ["x", "y", "color"],
     "additionalProperties": false
   },
   "annotations": {

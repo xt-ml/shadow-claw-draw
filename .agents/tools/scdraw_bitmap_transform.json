@@ -44,9 +44,7 @@
         "type": "boolean"
       }
     },
-    "required": [
-      "action"
-    ],
+    "required": ["action"],
     "additionalProperties": false
   },
   "annotations": {

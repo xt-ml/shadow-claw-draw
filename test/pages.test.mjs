@@ -397,3 +397,29 @@ test("Branding & Theme Identity: strictly identifies as ShadowClaw Draw (no temp
   const agentsMd = readFileSync(resolve(ROOT, "AGENTS.md"), "utf8");
   assert.doesNotMatch(agentsMd, /ShadowClaw template/i);
 });
+
+test("Documentation Links: relative links in pages/main/~/content/*.md resolve to existing files", () => {
+  const contentDir = resolve(ROOT, "pages/main/~/content");
+  const mdFiles = readdirSync(contentDir).filter((f) => f.endsWith(".md"));
+  assert.ok(mdFiles.length > 0, "Expected markdown documentation files");
+
+  for (const file of mdFiles) {
+    const raw = readFileSync(resolve(contentDir, file), "utf8");
+    const stripped = raw.replace(/```[\s\S]*?```/g, "").replace(/`[^`]*`/g, "");
+    for (const match of stripped.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
+      const href = match[1].trim();
+      if (!href || href.startsWith("#") || /^(?:https?:|mailto:)/i.test(href)) {
+        continue;
+      }
+      assert.ok(
+        !href.startsWith("../"),
+        `${file}: broken relative slug link "${href}" should reference sibling .md filename`,
+      );
+      const target = href.split(/[?#]/, 1)[0];
+      assert.ok(
+        existsSync(resolve(contentDir, target)),
+        `${file}: relative link "${href}" points to missing file ${target}`,
+      );
+    }
+  }
+});

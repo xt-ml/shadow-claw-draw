@@ -22,6 +22,7 @@ import {
 } from "../.agents/scripts/components/scdraw-vector-canvas.js";
 import {
   DrawVectorWorkbenchElement,
+  computeWorkspaceGridColumns,
   resolveDrawResponsiveLayout,
 } from "../.agents/scripts/components/scdraw-vector-workbench.js";
 import {
@@ -251,6 +252,115 @@ test("Vector Workbench layout resolver: mobile-first stacked vs tablet/desktop s
   assert.equal(desktop.showCanvas, true);
   assert.equal(desktop.showLayers, true);
   assert.equal(desktop.showInspector, true);
+
+  const desktopFullStage = resolveDrawResponsiveLayout({
+    containerWidth: 1280,
+    panelVisibility: { toolbox: false, layers: false, inspector: false },
+  });
+  assert.deepEqual(desktopFullStage, {
+    tier: "desktop",
+    showToolbox: false,
+    showCanvas: true,
+    showLayers: false,
+    showInspector: false,
+  });
+
+  const tabletLayersShown = resolveDrawResponsiveLayout({
+    containerWidth: 768,
+    panelVisibility: { layers: true },
+  });
+  assert.equal(tabletLayersShown.showLayers, true);
+  assert.equal(tabletLayersShown.showInspector, true);
+
+  const mobileNoToolbox = resolveDrawResponsiveLayout({
+    containerWidth: 390,
+    mobileTab: "inspector",
+    panelVisibility: { toolbox: false },
+  });
+  assert.equal(mobileNoToolbox.showToolbox, false);
+  assert.equal(mobileNoToolbox.showCanvas, false);
+  assert.equal(mobileNoToolbox.showInspector, true);
+});
+
+test("DrawVectorWorkbenchElement exposes togglePanel, panelVisibility, and computeWorkspaceGridColumns for full-width stage", () => {
+  assert.equal(typeof computeWorkspaceGridColumns, "function");
+  assert.equal(
+    typeof DrawVectorWorkbenchElement.prototype.togglePanel,
+    "function",
+  );
+  assert.equal(
+    typeof Object.getOwnPropertyDescriptor(
+      DrawVectorWorkbenchElement.prototype,
+      "panelVisibility",
+    )?.get,
+    "function",
+  );
+
+  const makeBtn = () => {
+    const attrs = new Map([["aria-pressed", "true"]]);
+    return {
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+    };
+  };
+  const props = new Map();
+  const wbNode = {
+    dataset: {},
+    style: {
+      setProperty: (k, v) => props.set(k, String(v)),
+      getPropertyValue: (k) => props.get(k) ?? "",
+    },
+  };
+  const btns = {
+    "scdraw-vec-toggle-toolbox": makeBtn(),
+    "scdraw-vec-toggle-layers": makeBtn(),
+    "scdraw-vec-toggle-inspector": makeBtn(),
+  };
+
+  const wb = new DrawVectorWorkbenchElement();
+  wb._containerWidth = 1280;
+  wb.shadowRoot = {
+    querySelector: (sel) => (sel === ".scdraw-vector-wb" ? wbNode : null),
+    getElementById: (id) => btns[id] || null,
+  };
+
+  wb.togglePanel("toolbox");
+  wb.togglePanel("layers");
+  wb.togglePanel("inspector");
+  assert.equal(wbNode.dataset.showToolbox, "false");
+  assert.equal(wbNode.dataset.showLayers, "false");
+  assert.equal(wbNode.dataset.showInspector, "false");
+  assert.equal(
+    btns["scdraw-vec-toggle-toolbox"].getAttribute("aria-pressed"),
+    "false",
+  );
+  assert.equal(
+    btns["scdraw-vec-toggle-layers"].getAttribute("aria-pressed"),
+    "false",
+  );
+  assert.equal(
+    btns["scdraw-vec-toggle-inspector"].getAttribute("aria-pressed"),
+    "false",
+  );
+  assert.equal(props.get("--workspace-columns"), "minmax(0, 1fr)");
+  assert.deepEqual(wb.panelVisibility, {
+    toolbox: false,
+    layers: false,
+    inspector: false,
+  });
+
+  wb.togglePanel("toolbox", true);
+  wb.togglePanel("layers", true);
+  wb.togglePanel("inspector", true);
+  assert.equal(
+    props.get("--workspace-columns"),
+    "156px minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width)",
+  );
+  assert.deepEqual(wb.panelVisibility, {
+    toolbox: true,
+    layers: true,
+    inspector: true,
+  });
 });
 
 test("Page swipe guard: ref-counts ancestor data-no-swipe and data-no-nav and restores on cleanup", () => {
@@ -551,7 +661,9 @@ test("setupWorkbenchFullscreen manages native fullscreen, Escape order, fallback
   );
 
   // Neutralizes enclosing ShadowClaw .page transform containing block and restores on exit & dispose
-  const hostPageStyles = new Map([["transform", { value: "translateY(0px)", priority: "" }]]);
+  const hostPageStyles = new Map([
+    ["transform", { value: "translateY(0px)", priority: "" }],
+  ]);
   const enclosingHostPage = {
     classList: makeClassList(),
     parentElement: null,
@@ -569,9 +681,18 @@ test("setupWorkbenchFullscreen manages native fullscreen, Escape order, fallback
   };
   enclosingHostPage.classList.add("page");
   enclosingHostPage.classList.add("active");
-  const mockPagesEl = { parentElement: enclosingHostPage, getRootNode: () => null };
-  const mockShadowDiv = { parentElement: null, getRootNode: () => ({ host: mockPagesEl }) };
-  const mockWrapper = { classList: makeClassList(), parentElement: mockShadowDiv };
+  const mockPagesEl = {
+    parentElement: enclosingHostPage,
+    getRootNode: () => null,
+  };
+  const mockShadowDiv = {
+    parentElement: null,
+    getRootNode: () => ({ host: mockPagesEl }),
+  };
+  const mockWrapper = {
+    classList: makeClassList(),
+    parentElement: mockShadowDiv,
+  };
   const mockWb = { classList: makeClassList(), parentElement: mockWrapper };
 
   const ancestorCtrl = setupWorkbenchFullscreen({
@@ -581,14 +702,23 @@ test("setupWorkbenchFullscreen manages native fullscreen, Escape order, fallback
     documentObj: null,
   });
   ancestorCtrl.toggle(true);
-  assert.deepEqual(hostPageStyles.get("transform"), { value: "none", priority: "important" });
+  assert.deepEqual(hostPageStyles.get("transform"), {
+    value: "none",
+    priority: "important",
+  });
   ancestorCtrl.toggle(false);
-  assert.deepEqual(hostPageStyles.get("transform"), { value: "translateY(0px)", priority: "" });
+  assert.deepEqual(hostPageStyles.get("transform"), {
+    value: "translateY(0px)",
+    priority: "",
+  });
 
   // Also test empty initial transform removal on dispose()
   hostPageStyles.delete("transform");
   ancestorCtrl.toggle(true);
-  assert.deepEqual(hostPageStyles.get("transform"), { value: "none", priority: "important" });
+  assert.deepEqual(hostPageStyles.get("transform"), {
+    value: "none",
+    priority: "important",
+  });
   ancestorCtrl.dispose();
   assert.equal(hostPageStyles.has("transform"), false);
 

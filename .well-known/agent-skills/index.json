@@ -36,31 +36,31 @@
       "name": "scdraw_add_shape",
       "description": "Add a vector shape (rect, ellipse, circle, line, polygon, star, polyline, path, text, image) to a vector layer.",
       "url": "../../.agents/tools/scdraw_add_shape.json",
-      "digest": "sha256:104be5d4159b54abf8872ea8b39ef0f301095ac4f0f20d308889f2594eed84aa"
+      "digest": "sha256:de08757dc576aa79f6ebe0670ab32be483127b35a5708be63f9c9f1badf1e0fe"
     },
     {
       "name": "scdraw_bitmap_draw_stroke",
       "description": "Paint a brush, pencil, or eraser stroke onto a Bitmap Studio layer.",
       "url": "../../.agents/tools/scdraw_bitmap_draw_stroke.json",
-      "digest": "sha256:f83c312a331e39703ad911f896044e29617d54f344be2685b18d4f9f0697cc63"
+      "digest": "sha256:338883230a4625dd7b0f7b8a1f5aa9557d15f4c32c9ea432eee23c5b0bceb27b"
     },
     {
       "name": "scdraw_bitmap_fill",
       "description": "Flood-fill a contiguous or global color region at (x, y) in a Bitmap Studio layer.",
       "url": "../../.agents/tools/scdraw_bitmap_fill.json",
-      "digest": "sha256:31bc4ec1227858a1055b8813b8cf78dd169cf050e020c5ca420b0a01127899c0"
+      "digest": "sha256:bd50729a2cca849c457ee88d9092e9135058eaecbb05e5442b12448347497ca9"
     },
     {
       "name": "scdraw_bitmap_manage_layer",
       "description": "Add, remove, update, reorder, merge_down, or flatten layers in Bitmap Studio.",
       "url": "../../.agents/tools/scdraw_bitmap_manage_layer.json",
-      "digest": "sha256:9f8234db210cc86a780fa219eb65b214c6d67f1567a1d4239b5895a20934ef39"
+      "digest": "sha256:9a8617bc4498e135c228010755c0c191d9c5e0ddd551507b56d8f97e3892bfea"
     },
     {
       "name": "scdraw_bitmap_selection",
       "description": "Manage rectangular or inverted bitmap selections and clipboard operations (set, clear, all, invert, cut, copy, copy_merged, paste, delete_pixels, fill_pixels) in Bitmap Studio.",
       "url": "../../.agents/tools/scdraw_bitmap_selection.json",
-      "digest": "sha256:22684ea5ab36073fcc603dc0d9d320e4cf7b8bbe92441bb47c1db43495db66d2"
+      "digest": "sha256:61bc546aec57fa111df846a9c5a2fe1528615374e4c10ac486c93bed40f05886"
     },
     {
       "name": "scdraw_bitmap_set_filter",
@@ -72,13 +72,13 @@
       "name": "scdraw_bitmap_transform",
       "description": "Apply crop, horizontal/vertical flip, 90-degree rotation, resize, desaturate, levels, or reset_all in Bitmap Studio.",
       "url": "../../.agents/tools/scdraw_bitmap_transform.json",
-      "digest": "sha256:3d45153cfb8b6c24e26de4067a50ad011b809b33a85be738a26c65d5710702bd"
+      "digest": "sha256:d40badca53257908f5586b6e20eb6e5ca33d248af357844c68bb293b25570a88"
     },
     {
       "name": "scdraw_delete_elements",
       "description": "Delete one or more vector elements by ID.",
       "url": "../../.agents/tools/scdraw_delete_elements.json",
-      "digest": "sha256:429f0495dfc4b82fa06a6d80e2cf2f4dd5f3380a7ad9d33647429085e95401a2"
+      "digest": "sha256:79e442416d179648828ef3eb9ba473526791612e6b9e1f41b208763ffbbd7979"
     },
     {
       "name": "scdraw_embed_bitmap_in_vector",
@@ -114,13 +114,13 @@
       "name": "scdraw_get_vector",
       "description": "Return the current Vector Studio document either as structured JSON or serialized W3C SVG markup.",
       "url": "../../.agents/tools/scdraw_get_vector.json",
-      "digest": "sha256:caf1fe54f1597a709bf139f8485df673cdbc225cf750cc7c45a0d08ad352a9d9"
+      "digest": "sha256:27de2bd5dffc8f5c5de88b2f6806b775b6d89dfd279ef33bbaa98ce0f270dabc"
     },
     {
       "name": "scdraw_import_svg",
       "description": "Import and sanitize an SVG XML string into the Vector Studio document.",
       "url": "../../.agents/tools/scdraw_import_svg.json",
-      "digest": "sha256:850c58fb7a36b224234a2b926d176d59e18f257d7dc15eead40f62b895a558c2"
+      "digest": "sha256:db843f8502dd1eaf02adf146616bdaea71986cc56c01a6fa552cd798a8aa6d37"
     },
     {
       "name": "scdraw_list_files",
@@ -132,13 +132,13 @@
       "name": "scdraw_load_file",
       "description": "Load an .svg or .scdraw.json file from OPFS workspace storage into ShadowClaw Draw.",
       "url": "../../.agents/tools/scdraw_load_file.json",
-      "digest": "sha256:e23da3df01537319267602e6cb1b0fed3bfaa075d96a5b6c75225f7afdbd297d"
+      "digest": "sha256:8330e33fd212b4f0f1eda30e0a814db1ed24eade8e2aad75ce4c19775c514e4a"
     },
     {
       "name": "scdraw_manage_layer",
       "description": "Add, remove, update, or reorder layers in the Vector Studio document.",
       "url": "../../.agents/tools/scdraw_manage_layer.json",
-      "digest": "sha256:628effa9b5a7e2df090ed9f9ddfba4b2e22e2ed4ee9370138cf19457d8d6ad98"
+      "digest": "sha256:f88eb6c9f02409ddba1e0ef4898c8510bb8e557b06d27aeb6d7a07983b7628b4"
     },
     {
       "name": "scdraw_new_bitmap",
@@ -168,13 +168,13 @@
       "name": "scdraw_save_file",
       "description": "Save the active vector drawing (.svg or .scdraw.json) into OPFS workspace storage.",
       "url": "../../.agents/tools/scdraw_save_file.json",
-      "digest": "sha256:6830a4d31098717d617ab357543f5aa00d0ea0266a6d05f75e674df803858edc"
+      "digest": "sha256:4a78018a7da568192df52818fa29d94edb7014038c51b20ae1a9351ad562e68a"
     },
     {
       "name": "scdraw_transform_elements",
       "description": "Move, scale, rotate, flip, align, distribute, group, ungroup, or change z-order of vector elements.",
       "url": "../../.agents/tools/scdraw_transform_elements.json",
-      "digest": "sha256:f7d95f1f05ea2adb019756df1c55c2a46d6bea2f50ca7748e16ff7fa0c3174cd"
+      "digest": "sha256:b64fa5e979d39e14e1f991de52f68f3d1b0c456ce35447560f75e2369c61c097"
     },
     {
       "name": "scdraw_undo",
@@ -186,7 +186,7 @@
       "name": "scdraw_update_element",
       "description": "Update geometry, fill, stroke, opacity, or transform properties of an existing vector element.",
       "url": "../../.agents/tools/scdraw_update_element.json",
-      "digest": "sha256:0027135e8a54f8dbe387b3290d20c30142370ee0d06d308f21ce510cfd9e0488"
+      "digest": "sha256:5f2d18ea45e0d01a618a144bbb477b1ed1ae5b06b579690556318258af247b73"
     }
   ],
   "scripts": [
@@ -200,25 +200,25 @@
       "name": "scdraw-bitmap-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-workbench.",
       "url": "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
-      "digest": "sha256:7b7140aa7b606c09738dd682443b5d4b1a0951d15e9b000ccf4a4a7e0799768a"
+      "digest": "sha256:0b431210474b50e9a8975e0097df8df09c090a8705aea58f05ff4c4eb9c7f426"
     },
     {
       "name": "scdraw-filter-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-filter-panel.",
       "url": "../../.agents/scripts/components/scdraw-filter-panel.js",
-      "digest": "sha256:91b5e976d3c9d5cbe01a35b85c2500fee71f086227ccb67f6dafe78717e87a1f"
+      "digest": "sha256:f47dfed2d25e11841bd37e1a0c73bc04d657304531d7e5db8bf1f8a503102e73"
     },
     {
       "name": "scdraw-inspector",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-inspector.",
       "url": "../../.agents/scripts/components/scdraw-inspector.js",
-      "digest": "sha256:2dd828c3fa52114921da2f0677c8ea39891496744953259137075db49a5c1dbb"
+      "digest": "sha256:cfb1395c29f41b428b65c3b2149ef6f67e6bd2780b4e0e059df04e6fd671cab5"
     },
     {
       "name": "scdraw-layers-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-layers-panel.",
       "url": "../../.agents/scripts/components/scdraw-layers-panel.js",
-      "digest": "sha256:3644d51008d19f78cfaeeeb034e54ce98a049934f7cf31b7736dad4a0962384e"
+      "digest": "sha256:a3d601455e71597b824f7eaf2d19c0df0b6bf5dc7baaa8e3404b079a1e015d6d"
     },
     {
       "name": "scdraw-resize-handle",
@@ -236,13 +236,13 @@
       "name": "scdraw-styles",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-styles.",
       "url": "../../.agents/scripts/components/scdraw-styles.js",
-      "digest": "sha256:ff503f6c896e2e4a74b32d2713f35d5d40bf98b61b9b08d2e4c055fb6e8ec62e"
+      "digest": "sha256:5730440fd8d68593dfee83921447e84e4748b70165902150670f60178e888570"
     },
     {
       "name": "scdraw-toolbox",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-toolbox.",
       "url": "../../.agents/scripts/components/scdraw-toolbox.js",
-      "digest": "sha256:3d6952a859f7143adb1b2e8ebabaf7eccd1728b8a7ad0808f17f0f1d8f7fa897"
+      "digest": "sha256:fc2d515d270c0bdb9539ca80f48b33b538410acfa6d90801a4246cc8cabe5e8a"
     },
     {
       "name": "scdraw-vector-canvas",
@@ -254,7 +254,7 @@
       "name": "scdraw-vector-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-workbench.",
       "url": "../../.agents/scripts/components/scdraw-vector-workbench.js",
-      "digest": "sha256:6e47f721d18a2783752760bae7f0fc0841bc964946a59999596e54c01e3d7889"
+      "digest": "sha256:67370ab82a2d92bf59a91edb740cb725fcfb38769ff13d1b6657d3c18167a217"
     },
     {
       "name": "scdraw-adapter",
@@ -314,7 +314,7 @@
       "name": "scdraw-tools-metadata",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-tools-metadata.",
       "url": "../../.agents/scripts/scdraw-tools-metadata.js",
-      "digest": "sha256:890d5553f7f67730a03c3405d22a4e9e1fe242f5b6270808b7b82aef549cf8ef"
+      "digest": "sha256:76dfc1bf1183420041c3918ed57e128f14a87fac7f46d2bba8be86f3d7dc2703"
     },
     {
       "name": "scdraw-vector",

@@ -14,6 +14,7 @@ import {
 } from "../.agents/scripts/components/scdraw-bitmap-canvas.js";
 import {
   DrawBitmapWorkbenchElement,
+  computeWorkspaceGridColumns,
   resolveBitmapResponsiveLayout,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
@@ -121,4 +122,198 @@ test("Bitmap Workbench layout resolver: mobile tabs vs tablet/desktop multi-pane
   assert.equal(desktop.showCanvas, true);
   assert.equal(desktop.showLayers, true);
   assert.equal(desktop.showFilters, true);
+
+  const desktopNoToolbox = resolveBitmapResponsiveLayout({
+    containerWidth: 1280,
+    panelVisibility: { toolbox: false },
+  });
+  assert.equal(desktopNoToolbox.showToolbox, false);
+  assert.equal(desktopNoToolbox.showLayers, true);
+  assert.equal(desktopNoToolbox.showFilters, true);
+
+  const desktopNoLayers = resolveBitmapResponsiveLayout({
+    containerWidth: 1280,
+    panelVisibility: { layers: false },
+  });
+  assert.equal(desktopNoLayers.showToolbox, true);
+  assert.equal(desktopNoLayers.showLayers, false);
+  assert.equal(desktopNoLayers.showFilters, true);
+
+  const desktopNoFilters = resolveBitmapResponsiveLayout({
+    containerWidth: 1280,
+    panelVisibility: { filters: false },
+  });
+  assert.equal(desktopNoFilters.showToolbox, true);
+  assert.equal(desktopNoFilters.showLayers, true);
+  assert.equal(desktopNoFilters.showFilters, false);
+
+  const desktopFullStage = resolveBitmapResponsiveLayout({
+    containerWidth: 1280,
+    panelVisibility: { toolbox: false, layers: false, filters: false },
+  });
+  assert.deepEqual(desktopFullStage, {
+    tier: "desktop",
+    showToolbox: false,
+    showCanvas: true,
+    showLayers: false,
+    showFilters: false,
+  });
+
+  const tabletLayersShown = resolveBitmapResponsiveLayout({
+    containerWidth: 768,
+    panelVisibility: { layers: true },
+  });
+  assert.equal(tabletLayersShown.showLayers, true);
+  assert.equal(tabletLayersShown.showFilters, true);
+
+  const tabletPanelsHidden = resolveBitmapResponsiveLayout({
+    containerWidth: 768,
+    panelVisibility: { toolbox: false, filters: false },
+  });
+  assert.equal(tabletPanelsHidden.showToolbox, false);
+  assert.equal(tabletPanelsHidden.showFilters, false);
+  assert.equal(tabletPanelsHidden.showCanvas, true);
+
+  const mobileNoToolbox = resolveBitmapResponsiveLayout({
+    containerWidth: 390,
+    mobileTab: "layers",
+    panelVisibility: { toolbox: false },
+  });
+  assert.equal(mobileNoToolbox.showToolbox, false);
+  assert.equal(mobileNoToolbox.showCanvas, false);
+  assert.equal(mobileNoToolbox.showLayers, true);
+  assert.equal(mobileNoToolbox.showFilters, false);
+});
+
+test("computeWorkspaceGridColumns builds exact CSS grid columns for every panel visibility combination", () => {
+  assert.equal(
+    computeWorkspaceGridColumns({
+      showToolbox: true,
+      showLayers: true,
+      showSecondary: true,
+      secondaryVar: "var(--filters-width)",
+    }),
+    "156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width)",
+  );
+  assert.equal(
+    computeWorkspaceGridColumns({
+      showToolbox: false,
+      showLayers: true,
+      showSecondary: true,
+      secondaryVar: "var(--filters-width)",
+    }),
+    "minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width)",
+  );
+  assert.equal(
+    computeWorkspaceGridColumns({
+      showToolbox: true,
+      showLayers: false,
+      showSecondary: true,
+      secondaryVar: "var(--filters-width)",
+    }),
+    "156px minmax(0, 1fr) auto var(--filters-width)",
+  );
+  assert.equal(
+    computeWorkspaceGridColumns({
+      showToolbox: true,
+      showLayers: true,
+      showSecondary: false,
+      secondaryVar: "var(--filters-width)",
+    }),
+    "156px minmax(0, 1fr) auto var(--layers-width)",
+  );
+  assert.equal(
+    computeWorkspaceGridColumns({
+      showToolbox: false,
+      showLayers: false,
+      showSecondary: false,
+      secondaryVar: "var(--filters-width)",
+    }),
+    "minmax(0, 1fr)",
+  );
+});
+
+test("DrawBitmapWorkbenchElement exposes togglePanel and panelVisibility to hide/show panels for full-width stage", () => {
+  assert.equal(
+    typeof DrawBitmapWorkbenchElement.prototype.togglePanel,
+    "function",
+  );
+  assert.equal(
+    typeof Object.getOwnPropertyDescriptor(
+      DrawBitmapWorkbenchElement.prototype,
+      "panelVisibility",
+    )?.get,
+    "function",
+  );
+
+  const makeBtn = () => {
+    const attrs = new Map([["aria-pressed", "true"]]);
+    return {
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+    };
+  };
+  const props = new Map();
+  const wbNode = {
+    dataset: {},
+    style: {
+      setProperty: (k, v) => props.set(k, String(v)),
+      getPropertyValue: (k) => props.get(k) ?? "",
+    },
+  };
+  const btns = {
+    "scdraw-bmp-toggle-toolbox": makeBtn(),
+    "scdraw-bmp-toggle-layers": makeBtn(),
+    "scdraw-bmp-toggle-filters": makeBtn(),
+  };
+
+  const wb = new DrawBitmapWorkbenchElement();
+  wb._containerWidth = 1280;
+  wb.shadowRoot = {
+    querySelector: (sel) => (sel === ".scdraw-bitmap-wb" ? wbNode : null),
+    getElementById: (id) => btns[id] || null,
+  };
+
+  wb.togglePanel("toolbox");
+  assert.equal(wbNode.dataset.showToolbox, "false");
+  assert.equal(
+    btns["scdraw-bmp-toggle-toolbox"].getAttribute("aria-pressed"),
+    "false",
+  );
+
+  wb.togglePanel("layers");
+  assert.equal(wbNode.dataset.showLayers, "false");
+  assert.equal(
+    btns["scdraw-bmp-toggle-layers"].getAttribute("aria-pressed"),
+    "false",
+  );
+
+  wb.togglePanel("filters");
+  assert.equal(wbNode.dataset.showFilters, "false");
+  assert.equal(
+    btns["scdraw-bmp-toggle-filters"].getAttribute("aria-pressed"),
+    "false",
+  );
+  assert.equal(props.get("--workspace-columns"), "minmax(0, 1fr)");
+  assert.deepEqual(wb.panelVisibility, {
+    toolbox: false,
+    layers: false,
+    filters: false,
+  });
+
+  wb.togglePanel("toolbox", true);
+  wb.togglePanel("layers", true);
+  wb.togglePanel("filters", true);
+  assert.equal(wbNode.dataset.showToolbox, "true");
+  assert.equal(wbNode.dataset.showLayers, "true");
+  assert.equal(wbNode.dataset.showFilters, "true");
+  assert.equal(
+    props.get("--workspace-columns"),
+    "156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width)",
+  );
+  assert.deepEqual(wb.panelVisibility, {
+    toolbox: true,
+    layers: true,
+    filters: true,
+  });
 });

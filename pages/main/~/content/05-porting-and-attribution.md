@@ -32,6 +32,6 @@ slug: "porting-and-attribution"
 
 ## See Also
 
-- [Vector Studio Tools & Pen Editing](../vector-studio-tools/) — Pen tool, Bezier node editing, and shape tools guide
-- [Bitmap Studio Tools & Pixel Painting](../bitmap-studio-tools/) — Brush techniques, layer blending, selections, and real-time filters
-- [Architecture & Declarative WebMCP Tools](../architecture/) — System design and WebMCP tool infrastructure
+- [Vector Studio Tools & Pen Editing](03-vector-studio-tools.md) (`/main/vector-studio-tools/`) — Pen tool, Bezier node editing, and shape tools guide
+- [Bitmap Studio Tools & Pixel Painting](04-bitmap-studio-tools.md) (`/main/bitmap-studio-tools/`) — Brush techniques, layer blending, selections, and real-time filters
+- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System design and WebMCP tool infrastructure

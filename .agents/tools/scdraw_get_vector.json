@@ -7,10 +7,7 @@
     "properties": {
       "view": {
         "type": "string",
-        "enum": [
-          "json",
-          "svg"
-        ],
+        "enum": ["json", "svg"],
         "description": "Output format: 'json' (default) or 'svg'"
       }
     },

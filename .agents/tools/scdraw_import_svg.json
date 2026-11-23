@@ -10,9 +10,7 @@
         "description": "Valid SVG XML markup"
       }
     },
-    "required": [
-      "svg"
-    ],
+    "required": ["svg"],
     "additionalProperties": false
   },
   "annotations": {

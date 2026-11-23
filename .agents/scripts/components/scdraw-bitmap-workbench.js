@@ -13,11 +13,16 @@
 
 import {
   SHARED_STYLES,
+  computeWorkspaceGridColumns,
   installPageSwipeGuard,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
 } from "./scdraw-styles.js";
-export { resolveWorkbenchFullscreenState, setupWorkbenchFullscreen };
+export {
+  computeWorkspaceGridColumns,
+  resolveWorkbenchFullscreenState,
+  setupWorkbenchFullscreen,
+};
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { getAppBasePath } from "../scdraw-fs.js";
@@ -33,6 +38,7 @@ const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
 export function resolveBitmapResponsiveLayout({
   containerWidth = 1200,
   mobileTab = "canvas",
+  panelVisibility = {},
 } = {}) {
   const tier =
     containerWidth < 640
@@ -41,10 +47,23 @@ export function resolveBitmapResponsiveLayout({
         ? "tablet"
         : "desktop";
 
+  const toolboxOverride =
+    typeof panelVisibility?.toolbox === "boolean"
+      ? panelVisibility.toolbox
+      : null;
+  const layersOverride =
+    typeof panelVisibility?.layers === "boolean"
+      ? panelVisibility.layers
+      : null;
+  const filtersOverride =
+    typeof panelVisibility?.filters === "boolean"
+      ? panelVisibility.filters
+      : null;
+
   if (tier === "mobile") {
     return {
       tier,
-      showToolbox: true,
+      showToolbox: toolboxOverride ?? true,
       showCanvas: mobileTab === "canvas",
       showLayers: mobileTab === "layers",
       showFilters: mobileTab === "filters",
@@ -53,18 +72,18 @@ export function resolveBitmapResponsiveLayout({
   if (tier === "tablet") {
     return {
       tier,
-      showToolbox: true,
+      showToolbox: toolboxOverride ?? true,
       showCanvas: true,
-      showLayers: mobileTab === "layers",
-      showFilters: true,
+      showLayers: layersOverride ?? mobileTab === "layers",
+      showFilters: filtersOverride ?? true,
     };
   }
   return {
     tier,
-    showToolbox: true,
+    showToolbox: toolboxOverride ?? true,
     showCanvas: true,
-    showLayers: true,
-    showFilters: true,
+    showLayers: layersOverride ?? true,
+    showFilters: filtersOverride ?? true,
   };
 }
 
@@ -79,6 +98,13 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     this._cleanupSwipeGuard = null;
     this._fullscreenController = null;
     this._isFullscreen = false;
+    this._mobileTab = "canvas";
+    this._containerWidth = null;
+    this._panelOverrides = {
+      toolbox: null,
+      layers: null,
+      filters: null,
+    };
     this._moreOpen = false;
     this._layersWidth = 230;
     this._filtersWidth = 290;
@@ -89,6 +115,9 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     this._cleanupSwipeGuard = installPageSwipeGuard(this);
     this.render();
     this._attachListeners();
+    const initialWidth = this.getBoundingClientRect?.().width ?? 0;
+    if (initialWidth > 0) this._containerWidth = initialWidth;
+    this._syncPanelVisibility({ applyGrid: initialWidth > 0 });
     this._initFullscreen();
     this._setupResizeObserver();
     this._dispose = effect(() => {
@@ -203,12 +232,90 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     return Boolean(this._isFullscreen);
   }
 
+  _getCurrentLayout() {
+    const width =
+      this._containerWidth ??
+      (typeof window !== "undefined" && window.innerWidth
+        ? window.innerWidth
+        : 1200);
+    return resolveBitmapResponsiveLayout({
+      containerWidth: width,
+      mobileTab: this._mobileTab,
+      panelVisibility: this._panelOverrides,
+    });
+  }
+
+  _syncPanelVisibility({ applyGrid = true } = {}) {
+    const layout = this._getCurrentLayout();
+    const wb = this.shadowRoot?.querySelector(".scdraw-bitmap-wb");
+    if (wb) {
+      wb.dataset.showToolbox = String(layout.showToolbox);
+      wb.dataset.showLayers = String(layout.showLayers);
+      wb.dataset.showFilters = String(layout.showFilters);
+      if (applyGrid) {
+        wb.style.setProperty(
+          "--workspace-columns",
+          computeWorkspaceGridColumns({
+            showToolbox: layout.showToolbox,
+            showLayers: layout.showLayers,
+            showSecondary: layout.showFilters,
+            secondaryVar: "var(--filters-width)",
+          }),
+        );
+      }
+    }
+    const toggleMap = [
+      ["scdraw-bmp-toggle-toolbox", layout.showToolbox],
+      ["scdraw-bmp-toggle-layers", layout.showLayers],
+      ["scdraw-bmp-toggle-filters", layout.showFilters],
+    ];
+    for (const [id, visible] of toggleMap) {
+      const btn = this.shadowRoot?.getElementById(id);
+      if (btn) btn.setAttribute("aria-pressed", String(visible));
+    }
+    return layout;
+  }
+
+  togglePanel(panel, force) {
+    const labels = {
+      toolbox: "Tools & Colors",
+      layers: "Layers",
+      filters: "Filters & Transforms",
+    };
+    if (!Object.hasOwn(labels, panel)) return;
+    const layout = this._getCurrentLayout();
+    const currentMap = {
+      toolbox: layout.showToolbox,
+      layers: layout.showLayers,
+      filters: layout.showFilters,
+    };
+    const nextVisible = typeof force === "boolean" ? force : !currentMap[panel];
+    this._panelOverrides[panel] = nextVisible;
+    this._syncPanelVisibility({ applyGrid: true });
+    scdraw.statusMessage.set(
+      `${nextVisible ? "Shown" : "Hidden"} ${labels[panel]} panel`,
+    );
+  }
+
+  get panelVisibility() {
+    const layout = this._getCurrentLayout();
+    return {
+      toolbox: layout.showToolbox,
+      layers: layout.showLayers,
+      filters: layout.showFilters,
+    };
+  }
+
   _setupResizeObserver() {
     const toolbox = this.shadowRoot?.querySelector("scdraw-toolbox");
     if (typeof ResizeObserver !== "undefined" && toolbox) {
       this._resizeObserver = new ResizeObserver((entries) => {
         const w =
           entries[0]?.contentRect?.width ?? this.getBoundingClientRect().width;
+        if (w > 0) {
+          this._containerWidth = w;
+          this._syncPanelVisibility({ applyGrid: true });
+        }
         if (w >= 640) {
           toolbox.setAttribute("layout", "vertical");
         } else {
@@ -220,6 +327,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
   }
 
   _setMobileTab(tab) {
+    this._mobileTab = tab;
     const wb = this.shadowRoot?.querySelector(".scdraw-bitmap-wb");
     if (wb) wb.dataset.mobileTab = tab;
     for (const btn of this.shadowRoot?.querySelectorAll(
@@ -227,6 +335,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     ) || []) {
       btn.setAttribute("aria-pressed", String(btn.dataset.tab === tab));
     }
+    this._syncPanelVisibility({ applyGrid: this._containerWidth !== null });
   }
 
   _attachListeners() {
@@ -428,6 +537,14 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
       });
     }
 
+    for (const btn of root.querySelectorAll(
+      ".scdraw-panel-toggle[data-panel-toggle]",
+    )) {
+      btn.addEventListener("click", () => {
+        this.togglePanel(btn.dataset.panelToggle);
+      });
+    }
+
     root
       .getElementById("scdraw-bmp-layers-handle")
       ?.addEventListener("scdraw-resize", (e) => {
@@ -584,6 +701,19 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
         .scdraw-bitmap-wb__handle {
           display: none;
         }
+        .scdraw-panel-toggle--dock {
+          display: none;
+        }
+        .scdraw-bitmap-wb__pane--canvas > *,
+        .scdraw-bitmap-wb__pane--layers > *,
+        .scdraw-bitmap-wb__pane--filters > * {
+          flex: 1 1 0;
+          min-height: 0;
+          height: 100%;
+        }
+        .scdraw-bitmap-wb[data-show-toolbox="false"] .scdraw-bitmap-wb__pane--toolbox {
+          display: none;
+        }
 
         @container scdraw-bitmap-workbench (min-width: 640px) {
           .scdraw-bitmap-wb {
@@ -591,23 +721,32 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             min-height: 480px;
           }
           .scdraw-bitmap-wb__tabs { display: none; }
+          .scdraw-panel-toggle--dock { display: inline-flex; }
           .scdraw-bitmap-wb__workspace {
             flex: 1;
             display: grid;
-            grid-template-columns: 156px minmax(0, 1fr) auto var(--filters-width);
+            grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--filters-width));
+            grid-template-rows: minmax(0, 1fr);
             align-items: stretch;
           }
           .scdraw-bitmap-wb__pane {
             order: 0;
-            height: auto;
+            height: 100%;
             min-height: 0;
+          }
+          .scdraw-bitmap-wb__pane > * {
+            flex: 1 1 0;
+            min-height: 0;
+            height: 100%;
           }
           .scdraw-bitmap-wb__pane--toolbox,
           .scdraw-bitmap-wb__pane--canvas,
           .scdraw-bitmap-wb__pane--filters {
-            display: block;
+            display: flex;
+            flex-direction: column;
           }
           .scdraw-bitmap-wb__pane--layers { display: none; }
+          .scdraw-bitmap-wb__handle--layers { display: none; }
           .scdraw-bitmap-wb__handle--filters { display: inline-flex; }
         }
 
@@ -626,34 +765,96 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             margin-left: auto;
           }
           .scdraw-bitmap-wb__workspace {
-            grid-template-columns: 156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width);
+            grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width));
           }
-          .scdraw-bitmap-wb__pane--layers { display: block; }
+          .scdraw-bitmap-wb__pane--layers { display: flex; flex-direction: column; }
           .scdraw-bitmap-wb__handle { display: inline-flex; }
+        }
+
+        @container scdraw-bitmap-workbench (min-width: 640px) {
+          .scdraw-bitmap-wb[data-show-toolbox="false"] .scdraw-bitmap-wb__pane--toolbox {
+            display: none;
+          }
+          .scdraw-bitmap-wb[data-show-layers="true"] .scdraw-bitmap-wb__pane--layers {
+            display: flex;
+            flex-direction: column;
+          }
+          .scdraw-bitmap-wb[data-show-layers="true"] .scdraw-bitmap-wb__handle--layers {
+            display: inline-flex;
+          }
+          .scdraw-bitmap-wb[data-show-layers="false"] .scdraw-bitmap-wb__pane--layers,
+          .scdraw-bitmap-wb[data-show-layers="false"] .scdraw-bitmap-wb__handle--layers {
+            display: none;
+          }
+          .scdraw-bitmap-wb[data-show-filters="true"] .scdraw-bitmap-wb__pane--filters {
+            display: flex;
+            flex-direction: column;
+          }
+          .scdraw-bitmap-wb[data-show-filters="true"] .scdraw-bitmap-wb__handle--filters {
+            display: inline-flex;
+          }
+          .scdraw-bitmap-wb[data-show-filters="false"] .scdraw-bitmap-wb__pane--filters,
+          .scdraw-bitmap-wb[data-show-filters="false"] .scdraw-bitmap-wb__handle--filters {
+            display: none;
+          }
         }
 
         @supports not (container-type: inline-size) {
           @media (min-width: 640px) {
             .scdraw-bitmap-wb { height: calc(100dvh - 180px); min-height: 480px; }
             .scdraw-bitmap-wb__tabs { display: none; }
+            .scdraw-panel-toggle--dock { display: inline-flex; }
             .scdraw-bitmap-wb__workspace {
               flex: 1;
               display: grid;
-              grid-template-columns: 156px minmax(0, 1fr) auto var(--filters-width);
+              grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--filters-width));
+              grid-template-rows: minmax(0, 1fr);
+              align-items: stretch;
             }
-            .scdraw-bitmap-wb__pane { order: 0; height: auto; min-height: 0; }
+            .scdraw-bitmap-wb__pane { order: 0; height: 100%; min-height: 0; }
+            .scdraw-bitmap-wb__pane > * { flex: 1 1 0; min-height: 0; height: 100%; }
+            .scdraw-bitmap-wb__pane--toolbox,
             .scdraw-bitmap-wb__pane--canvas,
-            .scdraw-bitmap-wb__pane--filters { display: block; }
+            .scdraw-bitmap-wb__pane--filters { display: flex; flex-direction: column; }
+            .scdraw-bitmap-wb__pane--layers { display: none; }
+            .scdraw-bitmap-wb__handle--layers { display: none; }
             .scdraw-bitmap-wb__handle--filters { display: inline-flex; }
           }
           @media (min-width: 1024px) {
             .scdraw-bitmap-wb__more-toggle { display: none; }
             .scdraw-bitmap-wb__secondary-bar { display: flex; padding-top: 0; border-top: none; margin-left: auto; }
             .scdraw-bitmap-wb__workspace {
-              grid-template-columns: 156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width);
+              grid-template-columns: var(--workspace-columns, 156px minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width));
             }
-            .scdraw-bitmap-wb__pane--layers { display: block; }
+            .scdraw-bitmap-wb__pane--layers { display: flex; flex-direction: column; }
             .scdraw-bitmap-wb__handle { display: inline-flex; }
+          }
+          @media (min-width: 640px) {
+            .scdraw-bitmap-wb[data-show-toolbox="false"] .scdraw-bitmap-wb__pane--toolbox {
+              display: none;
+            }
+            .scdraw-bitmap-wb[data-show-layers="true"] .scdraw-bitmap-wb__pane--layers {
+              display: flex;
+              flex-direction: column;
+            }
+            .scdraw-bitmap-wb[data-show-layers="true"] .scdraw-bitmap-wb__handle--layers {
+              display: inline-flex;
+            }
+            .scdraw-bitmap-wb[data-show-layers="false"] .scdraw-bitmap-wb__pane--layers,
+            .scdraw-bitmap-wb[data-show-layers="false"] .scdraw-bitmap-wb__handle--layers {
+              display: none;
+            }
+            .scdraw-bitmap-wb[data-show-filters="true"] .scdraw-bitmap-wb__pane--filters {
+              display: flex;
+              flex-direction: column;
+            }
+            .scdraw-bitmap-wb[data-show-filters="true"] .scdraw-bitmap-wb__handle--filters {
+              display: inline-flex;
+            }
+            .scdraw-bitmap-wb[data-show-filters="false"] .scdraw-bitmap-wb__pane--filters,
+            .scdraw-bitmap-wb[data-show-filters="false"] .scdraw-bitmap-wb__handle--filters {
+              display: none;
+            }
           }
         }
 
@@ -714,7 +915,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-bitmap-wb" data-mobile-tab="canvas" data-no-swipe="true" data-no-nav="true">
+      <div class="scdraw-bitmap-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="true" data-show-filters="true" data-no-swipe="true" data-no-nav="true">
         <header class="scdraw-bitmap-wb__topbar" role="region" aria-label="Bitmap Studio Toolbar">
           <div class="scdraw-bitmap-wb__primary-row">
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
@@ -740,12 +941,50 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
                 </span>
                 <span class="scdraw-fullscreen-label">Full Screen</span>
               </button>
+              <div class="scdraw-panel-toggles" role="group" aria-label="Panel visibility">
+                <button
+                  type="button"
+                  id="scdraw-bmp-toggle-toolbox"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle"
+                  data-panel-toggle="toolbox"
+                  aria-pressed="true"
+                  aria-controls="scdraw-bmp-pane-toolbox"
+                  aria-label="Tools and Colors panel"
+                  title="Show or hide Tools &amp; Colors panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><line x1="5.5" y1="2.5" x2="5.5" y2="13.5"/></svg>
+                  <span>Tools</span>
+                </button>
+                <button
+                  type="button"
+                  id="scdraw-bmp-toggle-layers"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
+                  data-panel-toggle="layers"
+                  aria-pressed="true"
+                  aria-controls="scdraw-bmp-pane-layers"
+                  aria-label="Layers panel"
+                  title="Show or hide Layers panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="8,2 14,5.5 8,9 2,5.5"/><polyline points="2,8.5 8,12 14,8.5"/><polyline points="2,11.5 8,15 14,11.5"/></svg>
+                  <span>Layers</span>
+                </button>
+                <button
+                  type="button"
+                  id="scdraw-bmp-toggle-filters"
+                  class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
+                  data-panel-toggle="filters"
+                  aria-pressed="true"
+                  aria-controls="scdraw-bmp-pane-filters"
+                  aria-label="Filters &amp; Transforms panel"
+                  title="Show or hide Filters &amp; Transforms panel">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="4" x2="14" y2="4"/><circle cx="6" cy="4" r="1.6" fill="currentColor"/><line x1="2" y1="8" x2="14" y2="8"/><circle cx="11" cy="8" r="1.6" fill="currentColor"/><line x1="2" y1="12" x2="14" y2="12"/><circle cx="5" cy="12" r="1.6" fill="currentColor"/></svg>
+                  <span>Filters</span>
+                </button>
+              </div>
               <button
                 type="button"
                 id="scdraw-bitmap-more-toggle"
                 class="scdraw-btn scdraw-btn--sm scdraw-bitmap-wb__more-toggle"
                 aria-expanded="false"
-                aria-controls="scdraw-bitmap-secondary-bar">Tools ▾</button>
+                aria-controls="scdraw-bitmap-secondary-bar">More ▾</button>
             </div>
           </div>
 
@@ -794,7 +1033,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
         </div>
 
         <main class="scdraw-bitmap-wb__workspace">
-          <aside class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--toolbox">
+          <aside id="scdraw-bmp-pane-toolbox" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--toolbox">
             <scdraw-toolbox mode="bitmap"></scdraw-toolbox>
           </aside>
           <section class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--canvas">
@@ -802,14 +1041,14 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           </section>
           <scdraw-resize-handle
             id="scdraw-bmp-layers-handle"
-            class="scdraw-bitmap-wb__handle"
+            class="scdraw-bitmap-wb__handle scdraw-bitmap-wb__handle--layers"
             orientation="vertical"
             invert="true"
             value="230"
             min="170"
             max="400"
             label="Resize Bitmap Layers Panel"></scdraw-resize-handle>
-          <aside class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--layers">
+          <aside id="scdraw-bmp-pane-layers" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--layers">
             <scdraw-layers-panel mode="bitmap"></scdraw-layers-panel>
           </aside>
           <scdraw-resize-handle
@@ -821,7 +1060,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             min="220"
             max="460"
             label="Resize Filter Panel"></scdraw-resize-handle>
-          <aside class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--filters">
+          <aside id="scdraw-bmp-pane-filters" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--filters">
             <scdraw-filter-panel></scdraw-filter-panel>
           </aside>
         </main>

@@ -101,6 +101,7 @@ export class DrawLayersPanelElement extends BaseElement {
         ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>'
         : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 4.8-.9"/></svg>';
 
+    const prevScrollTop = listEl.scrollTop;
     listEl.innerHTML = displayLayers
       .map((l) => {
         const isSel = l.id === activeLayer?.id;
@@ -133,6 +134,7 @@ export class DrawLayersPanelElement extends BaseElement {
         </div>`;
       })
       .join("");
+    listEl.scrollTop = prevScrollTop;
 
     if (controlsEl && activeLayer) {
       const opVal = Math.round((activeLayer.opacity ?? 1) * 100);
@@ -179,7 +181,14 @@ export class DrawLayersPanelElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
-        .scdraw-layers { display: flex; flex-direction: column; height: 100%; min-width: 0; }
+        :host {
+          display: block;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
+        .scdraw-layers { display: flex; flex-direction: column; height: 100%; min-width: 0; min-height: 0; }
         .scdraw-layers__actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
         .scdraw-layers__props {
           padding: 0.5rem 0.6rem;
@@ -189,6 +198,7 @@ export class DrawLayersPanelElement extends BaseElement {
           gap: 0.45rem;
           font-size: 0.75rem;
           min-width: 0;
+          flex-shrink: 0;
         }
         .scdraw-layers__prop-row {
           display: grid;
@@ -215,7 +225,13 @@ export class DrawLayersPanelElement extends BaseElement {
           gap: 0.3rem;
           padding: 0.5rem;
           overflow-y: auto;
-          flex: 1;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
+          flex: 1 1 0;
+          min-height: 0;
           min-width: 0;
         }
         .scdraw-layers__item {
@@ -228,6 +244,7 @@ export class DrawLayersPanelElement extends BaseElement {
           background: var(--bg-app);
           cursor: pointer;
           min-width: 0;
+          flex-shrink: 0;
         }
         .scdraw-layers__item--selected {
           border-color: var(--accent);
@@ -261,7 +278,7 @@ export class DrawLayersPanelElement extends BaseElement {
           </div>
         </header>
         <div id="scdraw-layer-active-props" class="scdraw-layers__props"></div>
-        <div id="scdraw-layers-list" class="scdraw-layers__list" role="listbox" aria-label="Layer stack"></div>
+        <div id="scdraw-layers-list" class="scdraw-layers__list scdraw-scrollable" role="listbox" aria-label="Layer stack"></div>
       </section>
     `;
 

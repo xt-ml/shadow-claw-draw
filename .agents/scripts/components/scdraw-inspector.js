@@ -301,14 +301,27 @@ export class DrawInspectorElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
-        .scdraw-inspector { display: flex; flex-direction: column; height: 100%; min-width: 0; }
+        :host {
+          display: block;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
+        .scdraw-inspector { display: flex; flex-direction: column; height: 100%; min-width: 0; min-height: 0; }
         .scdraw-inspector__body {
           padding: 0.55rem;
           overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
-          flex: 1;
+          flex: 1 1 0;
+          min-height: 0;
           min-width: 0;
         }
         .scdraw-inspector__section {
@@ -318,6 +331,7 @@ export class DrawInspectorElement extends BaseElement {
           padding-bottom: 0.65rem;
           border-bottom: 1px solid var(--border-subtle);
           min-width: 0;
+          flex-shrink: 0;
         }
         .scdraw-inspector__heading {
           margin: 0;
@@ -357,6 +371,10 @@ export class DrawInspectorElement extends BaseElement {
           gap: 0.45rem;
           height: 100%;
           min-width: 0;
+          min-height: 0;
+        }
+        .scdraw-inspector__xml-wrap > button {
+          flex-shrink: 0;
         }
         .scdraw-inspector__xml {
           min-height: 220px;
@@ -376,7 +394,7 @@ export class DrawInspectorElement extends BaseElement {
             aria-pressed="false"
             aria-label="Toggle SVG XML Editor">XML</button>
         </header>
-        <div id="scdraw-inspector-body" class="scdraw-inspector__body"></div>
+        <div id="scdraw-inspector-body" class="scdraw-inspector__body scdraw-scrollable"></div>
       </section>
     `;
 

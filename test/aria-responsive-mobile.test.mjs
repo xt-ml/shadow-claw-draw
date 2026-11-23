@@ -23,6 +23,16 @@ test("Shared Styles & Resize Handle: focus-visible, BEM, ARIA separator, overflo
   assert.match(stylesSrc, /\.scdraw-studio-switch/);
   assert.match(stylesSrc, /\.scdraw-btn--active[\s\S]*?var\(--on-accent/);
   assert.match(stylesSrc, /@media\s*\(\s*pointer:\s*coarse\s*\)/);
+  assert.match(stylesSrc, /\.scdraw-scrollable/);
+  assert.match(stylesSrc, /scrollbar-width:\s*thin/);
+  assert.match(stylesSrc, /scrollbar-color:/);
+  assert.match(
+    stylesSrc,
+    /@supports\s+not\s*\(\s*scrollbar-color:\s*auto\s*\)/,
+  );
+  assert.match(stylesSrc, /::-webkit-scrollbar/);
+  assert.match(stylesSrc, /\.scdraw-panel-toggles/);
+  assert.match(stylesSrc, /\.scdraw-panel-toggle/);
 
   assert.match(handleSrc, /class=["'][^"']*scdraw-resize-handle/);
   assert.match(handleSrc, /role:\s*["']separator["']/);
@@ -66,12 +76,31 @@ test("Layers & Inspector: ARIA listbox, min-width: 0 slider grid, readable butto
   assert.match(layersSrc, /\.scdraw-layers__/);
   assert.match(layersSrc, /minmax\(0,\s*1fr\)/);
   assert.match(layersSrc, /min-width:\s*0/);
+  assert.match(
+    layersSrc,
+    /:host\s*\{[\s\S]*?height:\s*100%[\s\S]*?min-height:\s*0[\s\S]*?overflow:\s*hidden/,
+  );
+  assert.match(
+    layersSrc,
+    /\.scdraw-layers__list[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
+  );
+  assert.match(layersSrc, /scdraw-scrollable/);
+  assert.match(layersSrc, /scrollTop/);
   assert.doesNotMatch(layersSrc, /\balert\s*\(/);
 
   assert.match(inspectorSrc, /role=["']region["']/);
   assert.match(inspectorSrc, /aria-label=/);
   assert.match(inspectorSrc, /\.scdraw-inspector__/);
   assert.match(inspectorSrc, /minmax\(0,\s*1fr\)/);
+  assert.match(
+    inspectorSrc,
+    /:host\s*\{[\s\S]*?height:\s*100%[\s\S]*?min-height:\s*0[\s\S]*?overflow:\s*hidden/,
+  );
+  assert.match(
+    inspectorSrc,
+    /\.scdraw-inspector__body[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
+  );
+  assert.match(inspectorSrc, /scdraw-scrollable/);
   assert.doesNotMatch(inspectorSrc, /\balert\s*\(/);
 });
 
@@ -131,6 +160,15 @@ test("Vector Canvas & Workbench: fit-to-viewport scaling, safe margin:auto cente
   assert.match(wbSrc, /:host\(:fullscreen\)/);
   assert.match(wbSrc, /100dvh/);
   assert.match(wbSrc, /100dvw/);
+  assert.match(wbSrc, /grid-template-rows:\s*minmax\(0,\s*1fr\)/);
+  assert.match(wbSrc, /--workspace-columns/);
+  assert.match(wbSrc, /data-show-toolbox/);
+  assert.match(wbSrc, /data-show-layers/);
+  assert.match(wbSrc, /data-show-inspector/);
+  assert.match(wbSrc, /scdraw-vec-toggle-toolbox/);
+  assert.match(wbSrc, /scdraw-vec-toggle-layers/);
+  assert.match(wbSrc, /scdraw-vec-toggle-inspector/);
+  assert.match(wbSrc, /aria-controls=["']scdraw-vec-pane-/);
   assert.doesNotMatch(wbSrc, /\balert\s*\(/);
 });
 
@@ -146,6 +184,15 @@ test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-w
   assert.match(filterSrc, /<output/);
   assert.match(filterSrc, /minmax\(0,\s*1fr\)/);
   assert.match(filterSrc, /min-width:\s*0/);
+  assert.match(
+    filterSrc,
+    /:host\s*\{[\s\S]*?height:\s*100%[\s\S]*?min-height:\s*0[\s\S]*?overflow:\s*hidden/,
+  );
+  assert.match(
+    filterSrc,
+    /\.scdraw-filter-panel__body[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
+  );
+  assert.match(filterSrc, /scdraw-scrollable/);
   assert.match(filterSrc, /@media\s*\(\s*pointer:\s*coarse\s*\)/);
   assert.match(filterSrc, /\.scdraw-filter-panel__/);
   assert.doesNotMatch(filterSrc, /@material\/web/);
@@ -226,6 +273,15 @@ test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-w
   assert.match(bmpWbSrc, /:host\(:fullscreen\)/);
   assert.match(bmpWbSrc, /100dvh/);
   assert.match(bmpWbSrc, /100dvw/);
+  assert.match(bmpWbSrc, /grid-template-rows:\s*minmax\(0,\s*1fr\)/);
+  assert.match(bmpWbSrc, /--workspace-columns/);
+  assert.match(bmpWbSrc, /data-show-toolbox/);
+  assert.match(bmpWbSrc, /data-show-layers/);
+  assert.match(bmpWbSrc, /data-show-filters/);
+  assert.match(bmpWbSrc, /scdraw-bmp-toggle-toolbox/);
+  assert.match(bmpWbSrc, /scdraw-bmp-toggle-layers/);
+  assert.match(bmpWbSrc, /scdraw-bmp-toggle-filters/);
+  assert.match(bmpWbSrc, /aria-controls=["']scdraw-bmp-pane-/);
   assert.doesNotMatch(bmpWbSrc, /\balert\s*\(/);
 
   const themeCss = await fs.readFile(

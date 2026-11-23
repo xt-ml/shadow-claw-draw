@@ -125,19 +125,33 @@ export class DrawFilterPanelElement extends BaseElement {
     this.shadowRoot.innerHTML = `
       <style>
         ${SHARED_STYLES}
+        :host {
+          display: block;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
         .scdraw-filter-panel {
           display: flex;
           flex-direction: column;
           height: 100%;
           min-width: 0;
+          min-height: 0;
         }
         .scdraw-filter-panel__body {
           padding: 0.55rem 0.75rem 0.55rem 0.55rem;
           overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
           display: flex;
           flex-direction: column;
           gap: 0.55rem;
-          flex: 1;
+          flex: 1 1 0;
+          min-height: 0;
           min-width: 0;
         }
         .scdraw-filter-panel__group {
@@ -147,6 +161,7 @@ export class DrawFilterPanelElement extends BaseElement {
           padding-bottom: 0.45rem;
           border-bottom: 1px solid var(--border-subtle);
           min-width: 0;
+          flex-shrink: 0;
         }
         .scdraw-filter-panel__label {
           font-size: 0.74rem;
@@ -186,6 +201,7 @@ export class DrawFilterPanelElement extends BaseElement {
           flex-wrap: wrap;
           gap: 0.35rem;
           padding-top: 0.25rem;
+          flex-shrink: 0;
         }
         @media (pointer: coarse) {
           .scdraw-filter-panel__range {
@@ -202,7 +218,7 @@ export class DrawFilterPanelElement extends BaseElement {
           <span>Filters &amp; Transforms</span>
           <button type="button" id="scdraw-f-reset-filters" class="scdraw-btn scdraw-btn--sm">Clear Filters</button>
         </header>
-        <div class="scdraw-filter-panel__body">
+        <div class="scdraw-filter-panel__body scdraw-scrollable">
           ${descriptors
             .map((d) => {
               if (d.isShadowGroup) {

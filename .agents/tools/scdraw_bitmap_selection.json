@@ -54,18 +54,13 @@
       },
       "pasteMode": {
         "type": "string",
-        "enum": [
-          "new_layer",
-          "into_layer"
-        ]
+        "enum": ["new_layer", "into_layer"]
       },
       "name": {
         "type": "string"
       }
     },
-    "required": [
-      "action"
-    ],
+    "required": ["action"],
     "additionalProperties": false
   },
   "annotations": {

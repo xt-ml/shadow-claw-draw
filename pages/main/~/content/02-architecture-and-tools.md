@@ -80,6 +80,6 @@ Indexed agent skills live under `.agents/skills/` (`vector-illustration`, `bitma
 
 ## See Also
 
-- [Vector Studio Tools & Pen Editing](../vector-studio-tools/) — Detailed guide to all 13 vector tools, Bezier node editing, Inspector, and shortcuts
-- [Bitmap Studio Tools & Pixel Painting](../bitmap-studio-tools/) — Brush techniques, offset layers, selections & clipboard, blend modes, and real-time filters
-- [Porting & Upstream Attribution](../porting-and-attribution/) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, `shadow-claw-daw`, and license provenance
+- [Vector Studio Tools & Pen Editing](03-vector-studio-tools.md) (`/main/vector-studio-tools/`) — Detailed guide to all 13 vector tools, Bezier node editing, Inspector, and shortcuts
+- [Bitmap Studio Tools & Pixel Painting](04-bitmap-studio-tools.md) (`/main/bitmap-studio-tools/`) — Brush techniques, offset layers, selections & clipboard, blend modes, and real-time filters
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, `shadow-claw-daw`, and license provenance

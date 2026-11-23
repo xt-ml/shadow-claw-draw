@@ -247,6 +247,70 @@ input[type="range"] {
   white-space: nowrap;
 }
 
+.scdraw-scrollable {
+  --scrollbar-thumb: var(--text-secondary);
+  --scrollbar-track: var(--bg-card);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@supports not (scrollbar-color: auto) {
+  .scdraw-scrollable {
+    scrollbar-width: auto;
+  }
+  .scdraw-scrollable::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scdraw-scrollable::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+  }
+  .scdraw-scrollable::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+}
+
+.scdraw-panel-toggles {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-app);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+
+.scdraw-panel-toggle {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+  padding: 0.24rem 0.48rem;
+  font-size: 0.72rem;
+}
+
+.scdraw-panel-toggle:hover {
+  background: rgba(148, 163, 184, 0.14);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.scdraw-panel-toggle[aria-pressed="true"] {
+  background: var(--accent-container);
+  border-color: var(--accent);
+  color: var(--on-accent-container);
+  font-weight: 700;
+}
+
+.scdraw-panel-toggle[aria-pressed="true"]:hover {
+  background: var(--accent-container);
+  border-color: var(--accent-hover);
+  color: var(--on-accent-container);
+}
+
 @media (pointer: coarse) {
   .scdraw-btn,
   .scdraw-studio-switch__item,
@@ -257,6 +321,22 @@ input[type="range"] {
   }
 }
 `;
+
+export function computeWorkspaceGridColumns({
+  showToolbox = true,
+  showLayers = true,
+  showSecondary = true,
+  toolboxTrack = "156px",
+  layersVar = "var(--layers-width)",
+  secondaryVar = "var(--filters-width)",
+} = {}) {
+  const cols = [];
+  if (showToolbox) cols.push(toolboxTrack);
+  cols.push("minmax(0, 1fr)");
+  if (showLayers) cols.push("auto", layersVar);
+  if (showSecondary) cols.push("auto", secondaryVar);
+  return cols.join(" ");
+}
 
 const SWIPE_GUARD_ATTRS = ["data-no-swipe", "data-no-nav"];
 const ancestorRefCounts = new WeakMap();

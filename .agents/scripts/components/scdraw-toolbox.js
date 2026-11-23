@@ -256,6 +256,7 @@ export class DrawToolboxElement extends BaseElement {
           container-name: scdraw-toolbox;
           display: block;
           min-width: 0;
+          min-height: 0;
           max-width: 100%;
           height: 100%;
           overflow: hidden;
@@ -272,6 +273,7 @@ export class DrawToolboxElement extends BaseElement {
           border-radius: 8px;
           overflow-x: auto;
           overflow-y: hidden;
+          overscroll-behavior: contain;
           scrollbar-width: thin;
           -webkit-overflow-scrolling: touch;
           touch-action: pan-x;
@@ -354,7 +356,9 @@ export class DrawToolboxElement extends BaseElement {
             overflow-x: hidden;
             overflow-y: auto;
             touch-action: pan-y;
+            scrollbar-gutter: stable;
             height: 100%;
+            min-height: 0;
             gap: 0.45rem;
           }
           .scdraw-toolbox__colors {
@@ -404,7 +408,9 @@ export class DrawToolboxElement extends BaseElement {
           overflow-x: hidden;
           overflow-y: auto;
           touch-action: pan-y;
+          scrollbar-gutter: stable;
           height: 100%;
+          min-height: 0;
           gap: 0.45rem;
         }
         :host([layout="vertical"]) .scdraw-toolbox__colors {
@@ -457,7 +463,7 @@ export class DrawToolboxElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-toolbox" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
+      <div class="scdraw-toolbox scdraw-scrollable" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
         <div class="scdraw-toolbox__colors">
           <div class="scdraw-toolbox__swatch-pair">
             <div class="scdraw-toolbox__swatch-item">
