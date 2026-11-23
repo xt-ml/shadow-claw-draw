@@ -7,7 +7,12 @@
  */
 
 import { State, batch } from "./scdraw-signals.js";
-import { MAX_HISTORY, clamp } from "./scdraw-schema.js";
+import {
+  MAX_HISTORY,
+  MAX_ANIMATION_BITMAP_HISTORY,
+  clamp,
+  deepClone,
+} from "./scdraw-schema.js";
 import {
   createVectorDocument,
   applyVectorCommand,
@@ -19,17 +24,64 @@ import {
 } from "./scdraw-svg-codec.js";
 import {
   createBitmapDocument,
+  createBitmapLayer,
+  cloneBitmapDocument,
   compositeBitmapLayers,
   applyBitmapCommand,
   extractSelectionPixels,
 } from "./scdraw-bitmap.js";
 import { buildCanvasFilterString } from "./scdraw-filters.js";
 import {
+  createAnimationDocument,
+  createAnimationFrame,
+  cloneAnimationDocument,
+  applyAnimationCommand,
+  getEffectiveFrameRange,
+  computeTotalDurationMs,
+} from "./scdraw-animation.js";
+import {
+  optimizeAnimationFrames,
+  unoptimizeAnimationFrames,
+} from "./scdraw-gif-optimize.js";
+import {
+  encodeAnimationToGif,
+  encodeAnimationToApng,
+  encodeAnimationToSvg,
+  encodeAnimationToSpriteSheet,
+  encodeAnimationToVideo,
+  canvasToPngUint8Array,
+} from "./scdraw-encoders.js";
+import {
   DEFAULT_GROUP_ID,
   saveWorkspaceFile,
   readWorkspaceFile,
   listWorkspaceFiles,
 } from "./scdraw-fs.js";
+
+function uint8ToBase64(u8) {
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).toString(
+      "base64",
+    );
+  }
+  let bin = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < u8.length; i += chunk) {
+    bin += String.fromCharCode(...u8.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+
+function base64ToUint8Clamped(b64) {
+  if (typeof Buffer !== "undefined") {
+    const buf = Buffer.from(b64, "base64");
+    return new Uint8ClampedArray(buf);
+  }
+  const bin = atob(b64);
+  const out = new Uint8ClampedArray(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
 
 function defaultCanvasFactory(width, height) {
   if (
@@ -48,6 +100,7 @@ export class DrawEngine {
   constructor() {
     const initialVector = createVectorDocument();
     const initialBitmap = createBitmapDocument();
+    const initialAnimation = createAnimationDocument({ mode: "vector" });
 
     this.activeStudio = new State("vector");
 
@@ -67,6 +120,12 @@ export class DrawEngine {
     this.fillTolerance = new State(24);
     this.bitmapSelection = new State(null);
     this.bitmapClipboard = new State(null);
+
+    // Animation state
+    this.animationDoc = new State(initialAnimation);
+    this.activeFrameIndex = new State(0);
+    this.isPlaying = new State(false);
+    this.exportProgress = new State({ active: false, ratio: 0, stage: "" });
 
     // Shared tool appearance & viewport state
     this.fgColor = new State("#38bdf8");
@@ -92,19 +151,73 @@ export class DrawEngine {
     this._vectorRedoStack = [];
     this._bitmapUndoStack = [];
     this._bitmapRedoStack = [];
+    this._animationUndoStack = [];
+    this._animationRedoStack = [];
   }
 
   _syncHistoryFlags() {
-    const isBmp = this.activeStudio.get() === "bitmap";
-    const undoStack = isBmp ? this._bitmapUndoStack : this._vectorUndoStack;
-    const redoStack = isBmp ? this._bitmapRedoStack : this._vectorRedoStack;
+    const studio = this.activeStudio.get();
+    const undoStack =
+      studio === "bitmap"
+        ? this._bitmapUndoStack
+        : studio === "animation"
+          ? this._animationUndoStack
+          : this._vectorUndoStack;
+    const redoStack =
+      studio === "bitmap"
+        ? this._bitmapRedoStack
+        : studio === "animation"
+          ? this._animationRedoStack
+          : this._vectorRedoStack;
     this.canUndo.set(undoStack.length > 0);
     this.canRedo.set(redoStack.length > 0);
   }
 
+  _projectActiveFrameToStudioDoc(
+    animDoc = this.animationDoc.get(),
+    frameIdx = this.activeFrameIndex.get(),
+  ) {
+    const idx = clamp(
+      Math.round(frameIdx),
+      0,
+      Math.max(0, (animDoc.frames?.length || 1) - 1),
+    );
+    const frame = animDoc.frames?.[idx];
+    if (!frame || !frame.doc) return;
+    if (animDoc.mode === "bitmap") {
+      this.bitmapDoc.set(frame.doc);
+      this.bitmapSelection.set(frame.doc.selection || null);
+      if (
+        !frame.doc.layers?.some((l) => l.id === this.activeBitmapLayerId.get())
+      ) {
+        this.activeBitmapLayerId.set(frame.doc.layers?.[0]?.id || "");
+      }
+    } else {
+      this.vectorDoc.set(frame.doc);
+      if (!frame.doc.layers?.some((l) => l.id === this.activeLayerId.get())) {
+        this.activeLayerId.set(frame.doc.layers?.[0]?.id || "");
+      }
+      const validIds = new Set(findAllElements(frame.doc).map((e) => e.id));
+      this.selectedIds.set(
+        this.selectedIds.get().filter((id) => validIds.has(id)),
+      );
+    }
+  }
+
   setActiveStudio(studio) {
-    this.activeStudio.set(studio === "bitmap" ? "bitmap" : "vector");
-    this._syncHistoryFlags();
+    const next =
+      studio === "bitmap"
+        ? "bitmap"
+        : studio === "animation"
+          ? "animation"
+          : "vector";
+    batch(() => {
+      this.activeStudio.set(next);
+      if (next === "animation") {
+        this._projectActiveFrameToStudioDoc();
+      }
+      this._syncHistoryFlags();
+    });
   }
 
   newVectorDocument(options = {}) {
@@ -144,19 +257,50 @@ export class DrawEngine {
   }
 
   dispatchVectorCommand(cmd) {
+    const inAnim =
+      this.activeStudio.get() === "animation" &&
+      this.animationDoc.get()?.mode === "vector";
     const prevDoc = this.vectorDoc.get();
     const { doc: nextDoc, changed, result } = applyVectorCommand(prevDoc, cmd);
 
     if (changed) {
-      this._vectorUndoStack.push(prevDoc);
-      if (this._vectorUndoStack.length > MAX_HISTORY) {
-        this._vectorUndoStack.shift();
+      if (inAnim) {
+        const prevAnim = this.animationDoc.get();
+        this._animationUndoStack.push({
+          doc: prevAnim,
+          activeFrameIndex: this.activeFrameIndex.get(),
+        });
+        if (this._animationUndoStack.length > MAX_HISTORY) {
+          this._animationUndoStack.shift();
+        }
+        this._animationRedoStack = [];
+      } else {
+        this._vectorUndoStack.push(prevDoc);
+        if (this._vectorUndoStack.length > MAX_HISTORY) {
+          this._vectorUndoStack.shift();
+        }
+        this._vectorRedoStack = [];
       }
-      this._vectorRedoStack = [];
     }
 
     batch(() => {
       this.vectorDoc.set(nextDoc);
+      if (inAnim && changed) {
+        const idx = clamp(
+          this.activeFrameIndex.get(),
+          0,
+          Math.max(0, this.animationDoc.get().frames.length - 1),
+        );
+        const { doc: nextAnim } = applyAnimationCommand(
+          this.animationDoc.get(),
+          {
+            type: "replace_frame_doc",
+            frameIndex: idx,
+            doc: nextDoc,
+          },
+        );
+        this.animationDoc.set(nextAnim);
+      }
       const layerExists = nextDoc.layers.some(
         (l) => l.id === this.activeLayerId.get(),
       );
@@ -185,20 +329,51 @@ export class DrawEngine {
   }
 
   dispatchBitmapCommand(cmd) {
+    const inAnim =
+      this.activeStudio.get() === "animation" &&
+      this.animationDoc.get()?.mode === "bitmap";
     const prevDoc = this.bitmapDoc.get();
     const { doc: nextDoc, changed, result } = applyBitmapCommand(prevDoc, cmd);
 
     if (changed) {
-      this._bitmapUndoStack.push(prevDoc);
-      if (this._bitmapUndoStack.length > MAX_HISTORY) {
-        this._bitmapUndoStack.shift();
+      if (inAnim) {
+        const prevAnim = this.animationDoc.get();
+        this._animationUndoStack.push({
+          doc: prevAnim,
+          activeFrameIndex: this.activeFrameIndex.get(),
+        });
+        if (this._animationUndoStack.length > MAX_ANIMATION_BITMAP_HISTORY) {
+          this._animationUndoStack.shift();
+        }
+        this._animationRedoStack = [];
+      } else {
+        this._bitmapUndoStack.push(prevDoc);
+        if (this._bitmapUndoStack.length > MAX_HISTORY) {
+          this._bitmapUndoStack.shift();
+        }
+        this._bitmapRedoStack = [];
       }
-      this._bitmapRedoStack = [];
     }
 
     batch(() => {
       this.bitmapDoc.set(nextDoc);
       this.bitmapSelection.set(nextDoc.selection || null);
+      if (inAnim && changed) {
+        const idx = clamp(
+          this.activeFrameIndex.get(),
+          0,
+          Math.max(0, this.animationDoc.get().frames.length - 1),
+        );
+        const { doc: nextAnim } = applyAnimationCommand(
+          this.animationDoc.get(),
+          {
+            type: "replace_frame_doc",
+            frameIndex: idx,
+            doc: nextDoc,
+          },
+        );
+        this.animationDoc.set(nextAnim);
+      }
       if (
         !nextDoc.layers.some((l) => l.id === this.activeBitmapLayerId.get())
       ) {
@@ -224,8 +399,147 @@ export class DrawEngine {
     return result || { ok: true };
   }
 
+  newAnimationDocument(options = {}) {
+    const doc = createAnimationDocument(options);
+    batch(() => {
+      this.isPlaying.set(false);
+      this.animationDoc.set(doc);
+      this.activeFrameIndex.set(0);
+      this._animationUndoStack = [];
+      this._animationRedoStack = [];
+      this._projectActiveFrameToStudioDoc(doc, 0);
+      this.dirty.set(false);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(
+        `New ${doc.mode} animation "${doc.name}" (${doc.width}x${doc.height} @ ${doc.fps}fps)`,
+      );
+      this._syncHistoryFlags();
+    });
+    return {
+      ok: true,
+      mode: doc.mode,
+      width: doc.width,
+      height: doc.height,
+      fps: doc.fps,
+      frameCount: doc.frames.length,
+    };
+  }
+
+  selectAnimationFrame(index, { syncRevision = true } = {}) {
+    const anim = this.animationDoc.get();
+    const maxIdx = Math.max(0, (anim.frames?.length || 1) - 1);
+    const nextIdx = clamp(Math.round(index), 0, maxIdx);
+    batch(() => {
+      this.activeFrameIndex.set(nextIdx);
+      this._projectActiveFrameToStudioDoc(anim, nextIdx);
+      if (syncRevision) {
+        this.revision.set(this.revision.get() + 1);
+      }
+    });
+    return { ok: true, frameIndex: nextIdx };
+  }
+
+  dispatchAnimationCommand(cmd) {
+    const prevAnim = this.animationDoc.get();
+    const prevFrameIdx = this.activeFrameIndex.get();
+    const {
+      doc: nextAnim,
+      changed,
+      result,
+    } = applyAnimationCommand(prevAnim, cmd);
+
+    if (changed) {
+      const cap =
+        prevAnim.mode === "bitmap" ? MAX_ANIMATION_BITMAP_HISTORY : MAX_HISTORY;
+      this._animationUndoStack.push({
+        doc: prevAnim,
+        activeFrameIndex: prevFrameIdx,
+      });
+      if (this._animationUndoStack.length > cap) {
+        this._animationUndoStack.shift();
+      }
+      this._animationRedoStack = [];
+    }
+
+    const targetIdx =
+      typeof result?.frameIndex === "number"
+        ? clamp(result.frameIndex, 0, nextAnim.frames.length - 1)
+        : clamp(prevFrameIdx, 0, nextAnim.frames.length - 1);
+
+    batch(() => {
+      this.animationDoc.set(nextAnim);
+      this.activeFrameIndex.set(targetIdx);
+      this._projectActiveFrameToStudioDoc(nextAnim, targetIdx);
+      if (changed) {
+        this.dirty.set(true);
+        this.revision.set(this.revision.get() + 1);
+      }
+      this._syncHistoryFlags();
+    });
+
+    return result || { ok: true };
+  }
+
+  captureCurrentStudioToAnimationFrame({
+    source,
+    insertAfterActive = true,
+    name,
+    delayMs,
+  } = {}) {
+    const anim = this.animationDoc.get();
+    const srcMode =
+      source === "bitmap" || source === "vector" ? source : anim.mode;
+    if (srcMode !== anim.mode) {
+      throw new Error(
+        `Cannot capture ${srcMode} studio into ${anim.mode} animation directly. Switch animation mode or rasterize first.`,
+      );
+    }
+    const snapshot =
+      srcMode === "bitmap"
+        ? cloneBitmapDocument(this.bitmapDoc.get())
+        : deepClone(this.vectorDoc.get());
+    const afterIndex = insertAfterActive
+      ? this.activeFrameIndex.get()
+      : anim.frames.length - 1;
+    const res = this.dispatchAnimationCommand({
+      type: "add_frame",
+      afterIndex,
+      name: name || `Studio Frame ${anim.frames.length + 1}`,
+      delayMs,
+      doc: snapshot,
+    });
+    this.statusMessage.set(`Added ${srcMode} frame to Animation Studio`);
+    return res;
+  }
+
   undo() {
-    if (this.activeStudio.get() === "bitmap") {
+    const studio = this.activeStudio.get();
+    if (studio === "animation") {
+      if (this._animationUndoStack.length === 0) return false;
+      const current = {
+        doc: this.animationDoc.get(),
+        activeFrameIndex: this.activeFrameIndex.get(),
+      };
+      const prev = this._animationUndoStack.pop();
+      this._animationRedoStack.push(current);
+      batch(() => {
+        this.animationDoc.set(prev.doc);
+        const idx = clamp(
+          prev.activeFrameIndex,
+          0,
+          Math.max(0, prev.doc.frames.length - 1),
+        );
+        this.activeFrameIndex.set(idx);
+        this._projectActiveFrameToStudioDoc(prev.doc, idx);
+        this.revision.set(this.revision.get() + 1);
+        this.dirty.set(this._animationUndoStack.length > 0);
+        this.statusMessage.set("Undo (Animation)");
+        this._syncHistoryFlags();
+      });
+      return true;
+    }
+
+    if (studio === "bitmap") {
       if (this._bitmapUndoStack.length === 0) return false;
       const current = this.bitmapDoc.get();
       const prev = this._bitmapUndoStack.pop();
@@ -267,7 +581,33 @@ export class DrawEngine {
   }
 
   redo() {
-    if (this.activeStudio.get() === "bitmap") {
+    const studio = this.activeStudio.get();
+    if (studio === "animation") {
+      if (this._animationRedoStack.length === 0) return false;
+      const current = {
+        doc: this.animationDoc.get(),
+        activeFrameIndex: this.activeFrameIndex.get(),
+      };
+      const next = this._animationRedoStack.pop();
+      this._animationUndoStack.push(current);
+      batch(() => {
+        this.animationDoc.set(next.doc);
+        const idx = clamp(
+          next.activeFrameIndex,
+          0,
+          Math.max(0, next.doc.frames.length - 1),
+        );
+        this.activeFrameIndex.set(idx);
+        this._projectActiveFrameToStudioDoc(next.doc, idx);
+        this.revision.set(this.revision.get() + 1);
+        this.dirty.set(true);
+        this.statusMessage.set("Redo (Animation)");
+        this._syncHistoryFlags();
+      });
+      return true;
+    }
+
+    if (studio === "bitmap") {
       if (this._bitmapRedoStack.length === 0) return false;
       const current = this.bitmapDoc.get();
       const next = this._bitmapRedoStack.pop();
@@ -398,21 +738,12 @@ export class DrawEngine {
     return outCanvas.toDataURL(mimeType);
   }
 
-  async sendVectorToBitmap({
-    rasterizer,
-    canvasFactory,
-    layerName = "Vector Snapshot",
-  } = {}) {
-    const vDoc = this.vectorDoc.get();
-    const svg = this.exportSvg({ includeBackgroundRect: false });
-    const w = vDoc.width;
-    const h = vDoc.height;
-
-    let pixels = null;
+  async _rasterizeSvgToPixels(svg, w, h, { rasterizer, canvasFactory } = {}) {
     if (typeof rasterizer === "function") {
-      pixels = await rasterizer(svg, w, h);
-    } else if (typeof Image !== "undefined" && typeof Blob !== "undefined") {
-      pixels = await new Promise((resolve, reject) => {
+      return await rasterizer(svg, w, h);
+    }
+    if (typeof Image !== "undefined" && typeof Blob !== "undefined") {
+      return await new Promise((resolve, reject) => {
         const img = new Image();
         const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
         const url = URL.createObjectURL(blob);
@@ -436,12 +767,497 @@ export class DrawEngine {
         };
         img.src = url;
       });
-    } else {
-      const makeCanvas = canvasFactory || defaultCanvasFactory;
-      const c = makeCanvas(w, h);
-      const ctx = c.getContext("2d");
-      pixels = new Uint8ClampedArray(ctx.getImageData(0, 0, w, h).data);
     }
+    const makeCanvas = canvasFactory || defaultCanvasFactory;
+    const c = makeCanvas(w, h);
+    const ctx = c.getContext("2d");
+    return new Uint8ClampedArray(ctx.getImageData(0, 0, w, h).data);
+  }
+
+  async renderAnimationFrameToCanvas(
+    frameIndex,
+    { width, height, canvasFactory, rasterizer } = {},
+  ) {
+    const anim = this.animationDoc.get();
+    const idx = clamp(Math.round(frameIndex), 0, anim.frames.length - 1);
+    const frame = anim.frames[idx];
+    const targetW = width || anim.width;
+    const targetH = height || anim.height;
+    const makeCanvas = canvasFactory || defaultCanvasFactory;
+    const outCanvas = makeCanvas(targetW, targetH);
+    const ctx = outCanvas.getContext("2d");
+
+    if (anim.mode === "bitmap") {
+      if (targetW === frame.doc.width && targetH === frame.doc.height) {
+        this.renderBitmapToContext(ctx, frame.doc, {
+          canvasFactory: makeCanvas,
+        });
+      } else {
+        const tmp = makeCanvas(frame.doc.width, frame.doc.height);
+        this.renderBitmapToContext(tmp.getContext("2d"), frame.doc, {
+          canvasFactory: makeCanvas,
+        });
+        ctx.drawImage(tmp, 0, 0, targetW, targetH);
+      }
+      return outCanvas;
+    }
+
+    const svg = serializeVectorDocumentToSvg(frame.doc, {
+      includeBackgroundRect:
+        anim.background && anim.background !== "transparent",
+    });
+    const pixels = await this._rasterizeSvgToPixels(svg, targetW, targetH, {
+      rasterizer,
+      canvasFactory: makeCanvas,
+    });
+    const imgData =
+      typeof ImageData !== "undefined"
+        ? new ImageData(pixels, targetW, targetH)
+        : { width: targetW, height: targetH, data: pixels };
+    ctx.putImageData(imgData, 0, 0);
+    return outCanvas;
+  }
+
+  async rasterizeAnimationToBitmap({
+    width,
+    height,
+    rasterizer,
+    canvasFactory,
+  } = {}) {
+    const anim = this.animationDoc.get();
+    const w = clamp(Math.round(width || anim.width), 16, 4096);
+    const h = clamp(Math.round(height || anim.height), 16, 4096);
+    const makeCanvas = canvasFactory || defaultCanvasFactory;
+
+    const bitmapFrames = [];
+    for (let i = 0; i < anim.frames.length; i++) {
+      const f = anim.frames[i];
+      const canvas = await this.renderAnimationFrameToCanvas(i, {
+        width: w,
+        height: h,
+        canvasFactory: makeCanvas,
+        rasterizer,
+      });
+      const px = new Uint8ClampedArray(
+        canvas.getContext("2d").getImageData(0, 0, w, h).data,
+      );
+      const bDoc = createBitmapDocument({
+        width: w,
+        height: h,
+        background: "transparent",
+        name: f.name,
+      });
+      bDoc.layers[0] = createBitmapLayer({
+        id: "blayer_1",
+        name: f.name || `Frame ${i + 1}`,
+        width: w,
+        height: h,
+        pixels: px,
+      });
+      bitmapFrames.push(
+        createAnimationFrame({
+          id: f.id,
+          name: f.name,
+          delayMs: f.delayMs,
+          easing: f.easing,
+          mode: "bitmap",
+          width: w,
+          height: h,
+          doc: bDoc,
+        }),
+      );
+    }
+
+    const prevAnim = anim;
+    this._animationUndoStack.push({
+      doc: prevAnim,
+      activeFrameIndex: this.activeFrameIndex.get(),
+    });
+    const nextAnim = {
+      ...cloneAnimationDocument(anim, { sharePixels: true }),
+      mode: "bitmap",
+      width: w,
+      height: h,
+      frames: bitmapFrames,
+    };
+
+    batch(() => {
+      this.animationDoc.set(nextAnim);
+      const idx = clamp(
+        this.activeFrameIndex.get(),
+        0,
+        bitmapFrames.length - 1,
+      );
+      this.activeFrameIndex.set(idx);
+      this._projectActiveFrameToStudioDoc(nextAnim, idx);
+      this.dirty.set(true);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(
+        `Rasterized ${bitmapFrames.length} frames to Bitmap Animation (${w}x${h})`,
+      );
+      this._syncHistoryFlags();
+    });
+
+    return { ok: true, frameCount: bitmapFrames.length, width: w, height: h };
+  }
+
+  optimizeBitmapAnimationFrames() {
+    const anim = this.animationDoc.get();
+    if (anim.mode !== "bitmap") {
+      throw new Error(
+        "GIF delta optimization applies to Bitmap Animation frames.",
+      );
+    }
+    const rawFrames = anim.frames.map((f) => ({
+      rgba: compositeBitmapLayers(f.doc),
+      delayMs: f.delayMs,
+    }));
+    const optFrames = optimizeAnimationFrames(
+      rawFrames,
+      anim.width,
+      anim.height,
+    );
+    const prevAnim = anim;
+    this._animationUndoStack.push({
+      doc: prevAnim,
+      activeFrameIndex: this.activeFrameIndex.get(),
+    });
+
+    const nextFrames = optFrames.map((of, i) => {
+      const bDoc = createBitmapDocument({
+        width: anim.width,
+        height: anim.height,
+        background: "transparent",
+        name: `Opt Frame ${i + 1} (${of.disposal})`,
+      });
+      bDoc.layers[0] = createBitmapLayer({
+        name: `Delta (${of.disposal})`,
+        width: of.width,
+        height: of.height,
+        offsetX: of.left,
+        offsetY: of.top,
+        pixels: of.rgba,
+      });
+      return createAnimationFrame({
+        name: `Frame ${i + 1} (${of.disposal})`,
+        delayMs: of.delayMs,
+        mode: "bitmap",
+        width: anim.width,
+        height: anim.height,
+        doc: bDoc,
+      });
+    });
+
+    const nextAnim = {
+      ...cloneAnimationDocument(anim, { sharePixels: true }),
+      frames: nextFrames,
+      trimStart: 0,
+      trimEnd: Math.max(0, nextFrames.length - 1),
+    };
+    batch(() => {
+      this.animationDoc.set(nextAnim);
+      this.activeFrameIndex.set(0);
+      this._projectActiveFrameToStudioDoc(nextAnim, 0);
+      this.dirty.set(true);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(
+        `Optimized ${nextFrames.length} animation frames (GIMP delta)`,
+      );
+      this._syncHistoryFlags();
+    });
+    return { ok: true, frameCount: nextFrames.length };
+  }
+
+  unoptimizeBitmapAnimationFrames() {
+    const anim = this.animationDoc.get();
+    if (anim.mode !== "bitmap") {
+      throw new Error("Unoptimize applies to Bitmap Animation frames.");
+    }
+    const subFrames = anim.frames.map((f) => {
+      const l = f.doc.layers?.[0];
+      const isReplace = /\(replace\)/i.test(f.name || "");
+      return {
+        left: l?.offsetX || 0,
+        top: l?.offsetY || 0,
+        width: l?.width || anim.width,
+        height: l?.height || anim.height,
+        rgba:
+          f.doc.layers.length > 1 ? compositeBitmapLayers(f.doc) : l?.pixels,
+        delayMs: f.delayMs,
+        disposal: isReplace ? "replace" : "combine",
+      };
+    });
+    const coalesced = unoptimizeAnimationFrames(
+      subFrames,
+      anim.width,
+      anim.height,
+    );
+    const prevAnim = anim;
+    this._animationUndoStack.push({
+      doc: prevAnim,
+      activeFrameIndex: this.activeFrameIndex.get(),
+    });
+
+    const nextFrames = coalesced.map((cf, i) => {
+      const bDoc = createBitmapDocument({
+        width: anim.width,
+        height: anim.height,
+        background: "transparent",
+        name: `Frame ${i + 1}`,
+      });
+      bDoc.layers[0] = createBitmapLayer({
+        name: `Frame ${i + 1}`,
+        width: anim.width,
+        height: anim.height,
+        pixels: cf.rgba,
+      });
+      return createAnimationFrame({
+        name: `Frame ${i + 1}`,
+        delayMs: cf.delayMs,
+        mode: "bitmap",
+        width: anim.width,
+        height: anim.height,
+        doc: bDoc,
+      });
+    });
+
+    const nextAnim = {
+      ...cloneAnimationDocument(anim, { sharePixels: true }),
+      frames: nextFrames,
+      trimStart: 0,
+      trimEnd: Math.max(0, nextFrames.length - 1),
+    };
+    batch(() => {
+      this.animationDoc.set(nextAnim);
+      this.activeFrameIndex.set(0);
+      this._projectActiveFrameToStudioDoc(nextAnim, 0);
+      this.dirty.set(true);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(
+        `Unoptimized ${nextFrames.length} full-canvas frames`,
+      );
+      this._syncHistoryFlags();
+    });
+    return { ok: true, frameCount: nextFrames.length };
+  }
+
+  importAnimationFrames({
+    frames = [],
+    width,
+    height,
+    mode = "bitmap",
+    replace = false,
+  } = {}) {
+    if (!Array.isArray(frames) || frames.length === 0) {
+      throw new Error("importAnimationFrames requires at least one frame.");
+    }
+    const anim = this.animationDoc.get();
+    const w = clamp(Math.round(width || anim.width), 16, 4096);
+    const h = clamp(Math.round(height || anim.height), 16, 4096);
+
+    const newFrames = frames.map((fr, idx) => {
+      if (mode === "vector" && fr.doc) {
+        return createAnimationFrame({
+          name: fr.name || `Imported ${idx + 1}`,
+          delayMs: fr.delayMs ?? Math.round(1000 / (anim.fps || 12)),
+          mode: "vector",
+          width: w,
+          height: h,
+          doc: fr.doc,
+        });
+      }
+      const bDoc = createBitmapDocument({
+        width: w,
+        height: h,
+        background: "transparent",
+        name: fr.name || `Imported ${idx + 1}`,
+      });
+      bDoc.layers[0] = createBitmapLayer({
+        name: fr.name || `Imported ${idx + 1}`,
+        width: w,
+        height: h,
+        pixels: fr.rgba,
+      });
+      return createAnimationFrame({
+        name: fr.name || `Imported ${idx + 1}`,
+        delayMs: fr.delayMs ?? Math.round(1000 / (anim.fps || 12)),
+        mode: "bitmap",
+        width: w,
+        height: h,
+        doc: bDoc,
+      });
+    });
+
+    const prevAnim = anim;
+    this._animationUndoStack.push({
+      doc: prevAnim,
+      activeFrameIndex: this.activeFrameIndex.get(),
+    });
+
+    const nextFrames = replace ? newFrames : [...anim.frames, ...newFrames];
+    const nextAnim = {
+      ...cloneAnimationDocument(anim, { sharePixels: true }),
+      mode,
+      width: w,
+      height: h,
+      frames: nextFrames,
+      trimStart: 0,
+      trimEnd: nextFrames.length - 1,
+    };
+
+    batch(() => {
+      this.animationDoc.set(nextAnim);
+      this.activeFrameIndex.set(0);
+      this._projectActiveFrameToStudioDoc(nextAnim, 0);
+      this.dirty.set(true);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(`Imported ${newFrames.length} animation frames`);
+      this._syncHistoryFlags();
+    });
+    return {
+      ok: true,
+      importedCount: newFrames.length,
+      frameCount: nextFrames.length,
+    };
+  }
+
+  async exportAnimation(options = {}) {
+    const anim = this.animationDoc.get();
+    const es = anim.exportSettings || {};
+    const format = (options.format || es.format || "gif").toLowerCase();
+    const { start, end } = getEffectiveFrameRange(anim);
+    const makeCanvas = options.canvasFactory || defaultCanvasFactory;
+    const onProgress = (ratio, stage) => {
+      this.exportProgress.set({ active: ratio < 1, ratio, stage: stage || "" });
+      options.onProgress?.(ratio, stage);
+    };
+
+    try {
+      if (format === "svg") {
+        if (anim.mode !== "vector") {
+          throw new Error(
+            "Animated SVG export requires Vector Animation mode (or embed bitmap frames first).",
+          );
+        }
+        onProgress(0.5, "Serializing Animated SVG...");
+        const res = encodeAnimationToSvg(anim, {
+          engine: options.engine || es.svgEngine || "smil",
+          interpolate: options.interpolate ?? es.svgInterpolate ?? true,
+          includeBackgroundRect:
+            options.includeBackgroundRect ?? es.includeBackgroundRect ?? true,
+        });
+        onProgress(1, "Complete");
+        this.statusMessage.set(`Exported Animated SVG (${res.engineUsed})`);
+        return { ok: true, format: "svg", ...res };
+      }
+
+      const canvases = [];
+      const rgbaFrames = [];
+      const delaysMs = [];
+      const total = end - start + 1;
+      for (let i = start; i <= end; i++) {
+        onProgress(
+          ((i - start) / total) * 0.4,
+          `Rendering frame ${i - start + 1}/${total}...`,
+        );
+        const canvas = await this.renderAnimationFrameToCanvas(i, {
+          canvasFactory: makeCanvas,
+          rasterizer: options.rasterizer,
+        });
+        canvases.push(canvas);
+        const ctx = canvas.getContext("2d");
+        const rgba = new Uint8ClampedArray(
+          ctx.getImageData(0, 0, anim.width, anim.height).data,
+        );
+        const delayMs = anim.frames[i].delayMs;
+        rgbaFrames.push({ rgba, delayMs });
+        delaysMs.push(delayMs);
+      }
+
+      let result;
+      if (format === "gif") {
+        result = await encodeAnimationToGif(rgbaFrames, {
+          width: anim.width,
+          height: anim.height,
+          loopCount: anim.loopCount,
+          colors: options.colors ?? es.colors ?? 200,
+          dither: options.dither ?? es.dither ?? "bayer",
+          optimizeDelta: options.optimizeDelta ?? es.optimizeDelta ?? true,
+          gifEngine: options.gifEngine ?? es.gifEngine ?? "native",
+          quality: options.quality ?? es.quality ?? 85,
+          gifsicleLossy: options.gifsicleLossy ?? es.gifsicleLossy ?? 0,
+          resizeMax: options.resizeMax ?? es.resizeMax ?? 0,
+          gifskiLoader: options.gifskiLoader,
+          gifsicleLoader: options.gifsicleLoader,
+          onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
+        });
+      } else if (format === "apng") {
+        const pngFrames = [];
+        for (const c of canvases)
+          pngFrames.push(await canvasToPngUint8Array(c));
+        result = await encodeAnimationToApng(pngFrames, {
+          delaysMs,
+          loopCount: anim.loopCount,
+          onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
+        });
+      } else if (format === "spritesheet") {
+        result = await encodeAnimationToSpriteSheet(canvases, {
+          width: anim.width,
+          height: anim.height,
+          columns: options.columns ?? es.spriteColumns ?? 0,
+          padding: options.padding ?? es.spritePadding ?? 0,
+          canvasFactory: makeCanvas,
+          onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
+        });
+      } else if (format === "webm" || format === "mp4") {
+        result = await encodeAnimationToVideo(canvases, {
+          format,
+          delaysMs,
+          fps: anim.fps,
+          width: anim.width,
+          height: anim.height,
+          canvasFactory: makeCanvas,
+          ffmpegLoader: options.ffmpegLoader,
+          onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
+        });
+      } else {
+        throw new Error(`Unsupported animation export format: ${format}`);
+      }
+
+      if (options.saveToWorkspace) {
+        const defaultName = `${(anim.name || "animation").replace(/\s+/g, "-").toLowerCase()}.${result.extension}`;
+        const saved = await saveWorkspaceFile(
+          options.conversationId || DEFAULT_GROUP_ID,
+          options.filename || defaultName,
+          result.bytes,
+        );
+        result.saved = saved;
+      }
+
+      onProgress(1, "Complete");
+      this.statusMessage.set(
+        `Pressed ${format.toUpperCase()} (${result.bytes.byteLength} bytes via ${result.engineUsed})`,
+      );
+      return { ok: true, format, ...result };
+    } finally {
+      this.exportProgress.set({ active: false, ratio: 0, stage: "" });
+    }
+  }
+
+  async sendVectorToBitmap({
+    rasterizer,
+    canvasFactory,
+    layerName = "Vector Snapshot",
+  } = {}) {
+    const vDoc = this.vectorDoc.get();
+    const svg = this.exportSvg({ includeBackgroundRect: false });
+    const w = vDoc.width;
+    const h = vDoc.height;
+
+    const pixels = await this._rasterizeSvgToPixels(svg, w, h, {
+      rasterizer,
+      canvasFactory,
+    });
 
     const bDoc = this.bitmapDoc.get();
     if (bDoc.width !== w || bDoc.height !== h) {
@@ -532,6 +1348,52 @@ export class DrawEngine {
     this.pan.set({ x: 0, y: 0 });
   }
 
+  _serializeAnimationProject() {
+    const anim = this.animationDoc.get();
+    if (anim.mode !== "bitmap") {
+      return JSON.stringify({ animationDoc: anim }, null, 2);
+    }
+    const serialized = {
+      ...anim,
+      frames: anim.frames.map((f) => ({
+        ...f,
+        doc: {
+          ...f.doc,
+          layers: (f.doc.layers || []).map((l) => ({
+            ...l,
+            pixelsBase64: l.pixels ? uint8ToBase64(l.pixels) : undefined,
+            pixels: undefined,
+          })),
+        },
+      })),
+    };
+    return JSON.stringify({ animationDoc: serialized }, null, 2);
+  }
+
+  _deserializeAnimationProject(animData) {
+    if (animData.mode !== "bitmap") return animData;
+    return {
+      ...animData,
+      frames: (animData.frames || []).map((f) => ({
+        ...f,
+        doc: {
+          ...f.doc,
+          layers: (f.doc.layers || []).map((l) => ({
+            ...l,
+            pixels: l.pixelsBase64
+              ? base64ToUint8Clamped(l.pixelsBase64)
+              : new Uint8ClampedArray(
+                  (l.width || animData.width) *
+                    (l.height || animData.height) *
+                    4,
+                ),
+            pixelsBase64: undefined,
+          })),
+        },
+      })),
+    };
+  }
+
   async saveToWorkspace({
     conversationId = DEFAULT_GROUP_ID,
     filename,
@@ -542,9 +1404,11 @@ export class DrawEngine {
       filename ||
       (format === "png"
         ? "drawing.png"
-        : format === "scdraw-json"
-          ? "drawing.scdraw.json"
-          : "drawing.svg");
+        : format === "scdraw-anim-json"
+          ? "animation.scdraw-anim.json"
+          : format === "scdraw-json"
+            ? "drawing.scdraw.json"
+            : "drawing.svg");
 
     let content;
     if (format === "png" || name.toLowerCase().endsWith(".png")) {
@@ -554,6 +1418,11 @@ export class DrawEngine {
       const u8 = new Uint8Array(binStr.length);
       for (let i = 0; i < binStr.length; i++) u8[i] = binStr.charCodeAt(i);
       content = u8;
+    } else if (
+      format === "scdraw-anim-json" ||
+      name.toLowerCase().endsWith(".scdraw-anim.json")
+    ) {
+      content = this._serializeAnimationProject();
     } else if (
       format === "scdraw-json" ||
       name.toLowerCase().endsWith(".json")
@@ -580,6 +1449,21 @@ export class DrawEngine {
       this.statusMessage.set(`Loaded ${file.name}`);
       return { ok: true, format: "svg", ...imp };
     }
+    if (file.format === "scdraw-anim-json") {
+      const data = JSON.parse(file.text);
+      if (data.animationDoc) {
+        const hydrated = this._deserializeAnimationProject(data.animationDoc);
+        batch(() => {
+          this.animationDoc.set(hydrated);
+          this.activeFrameIndex.set(0);
+          this._projectActiveFrameToStudioDoc(hydrated, 0);
+          this.dirty.set(false);
+          this.revision.set(this.revision.get() + 1);
+        });
+      }
+      this.statusMessage.set(`Loaded ${file.name}`);
+      return { ok: true, format: "scdraw-anim-json" };
+    }
     if (file.format === "scdraw-json") {
       const data = JSON.parse(file.text);
       if (data.vectorDoc) {
@@ -602,6 +1486,7 @@ export class DrawEngine {
   getStatus() {
     const v = this.vectorDoc.get();
     const b = this.bitmapDoc.get();
+    const a = this.animationDoc.get();
     const clip = this.bitmapClipboard.get();
     return {
       studio: this.activeStudio.get(),
@@ -638,6 +1523,24 @@ export class DrawEngine {
         clipboard: clip ? { width: clip.width, height: clip.height } : null,
         filters: b.filters,
         shadowColor: b.shadowColor,
+      },
+      animation: {
+        name: a.name,
+        mode: a.mode,
+        width: a.width,
+        height: a.height,
+        fps: a.fps,
+        loopCount: a.loopCount,
+        loopMode: a.loopMode,
+        speedMultiplier: a.speedMultiplier,
+        frameCount: a.frames.length,
+        activeFrameIndex: this.activeFrameIndex.get(),
+        trimStart: a.trimStart,
+        trimEnd: a.trimEnd,
+        totalDurationMs: computeTotalDurationMs(a),
+        isPlaying: this.isPlaying.get(),
+        onionSkin: a.onionSkin,
+        exportSettings: a.exportSettings,
       },
     };
   }

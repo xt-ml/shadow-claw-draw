@@ -246,6 +246,59 @@ test("Pages: Page 2 Bitmap Studio exists with iframe: false, swipe suppression, 
   );
   assert.match(llmsTxt, /\/main\//);
   assert.match(llmsTxt, /\/main\/bitmap\//);
+  assert.match(llmsTxt, /\/main\/animation\//);
+});
+
+test("Pages: Page 3 Animation Studio exists with iframe: false, swipe suppression, route /main/animation/, directPages, and allowedElements", () => {
+  const animPath = resolve(ROOT, "pages/main/~/content/02-animation.html");
+  assert.ok(
+    existsSync(animPath),
+    "pages/main/~/content/02-animation.html must exist",
+  );
+
+  const animContent = readFileSync(animPath, "utf8");
+  assert.match(
+    animContent,
+    /title:\s*["']ShadowClaw Draw[^"']*Animation[^"']*["']/i,
+  );
+  assert.match(animContent, /iframe:\s*false/);
+  assert.match(
+    animContent,
+    /<div\s+class=["']scdraw-workbench-page["'][^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["']/,
+  );
+  assert.match(
+    animContent,
+    /<scdraw-animation-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/scdraw-animation-workbench>/,
+  );
+
+  const routes = JSON.parse(
+    readFileSync(resolve(ROOT, "pages/resources/routes.json"), "utf8"),
+  );
+  assert.deepEqual(routes.routes["/pages/main/~/content/02-animation.html"], {
+    prettyPath: "/main/animation/",
+  });
+
+  const config = JSON.parse(
+    readFileSync(resolve(ROOT, "shadow-claw.config.json"), "utf8"),
+  );
+  assert.ok(
+    config.pages?.directPages?.includes(
+      "/pages/main/~/content/02-animation.html",
+    ),
+    "pages.directPages must include /pages/main/~/content/02-animation.html",
+  );
+  for (const tag of [
+    "scdraw-animation-workbench",
+    "scdraw-animation-stage",
+    "scdraw-timeline",
+    "scdraw-export-panel",
+    "scdraw-capture-panel",
+  ]) {
+    assert.ok(
+      config.customElements?.allowedElements?.includes(tag),
+      `allowedElements must include ${tag}`,
+    );
+  }
 });
 
 test("Iconography: Draw icons are ShadowClaw Draw-specific and do not collide with default ShadowClaw or template icons", () => {

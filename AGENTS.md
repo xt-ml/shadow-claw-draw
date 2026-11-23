@@ -9,15 +9,17 @@ Dual-page, browser-native **Vector (SVG)** and **Bitmap (Canvas 2D)** graphical 
 - **Assistant Name**: `ShadowClaw Draw`
 - **Page 1 — Vector Studio (Default Pinned Home)**: `pages/main/index.html` (`/main/`) hosting `<scdraw-vector-workbench>` (`iframe: false`)
 - **Page 2 — Bitmap Studio**: `pages/main/~/content/01-bitmap.html` (`/main/bitmap/`) hosting `<scdraw-bitmap-workbench>` (`iframe: false`)
+- **Page 3 — Animation Studio**: `pages/main/~/content/02-animation.html` (`/main/animation/`) hosting `<scdraw-animation-workbench>` (`iframe: false`)
 - **Documentation Pages**:
   - `pages/main/~/content/02-architecture-and-tools.md` (`/main/architecture/`)
   - `pages/main/~/content/03-vector-studio-tools.md` (`/main/vector-studio-tools/`)
   - `pages/main/~/content/04-bitmap-studio-tools.md` (`/main/bitmap-studio-tools/`)
   - `pages/main/~/content/05-porting-and-attribution.md` (`/main/porting-and-attribution/`)
+  - `pages/main/~/content/06-animation-studio-tools.md` (`/main/animation-studio-tools/`)
   - `pages/main/MEMORY.md` (`/main/memory/`)
 - **Namespace Isolation** (enforced by `npm run check:compat` / `bin/check-namespace.mjs`):
-  - Tools prefix: `scdraw_*` (26 declarative tools)
-  - Custom Elements prefix: `scdraw-*` (10 Web Components)
+  - Tools prefix: `scdraw_*` (36 declarative tools)
+  - Custom Elements prefix: `scdraw-*` (15 Web Components)
   - Broadcast Channels: `scdraw-commands`, `scdraw-results`, `scdraw-state`
   - Web Lock: `scdraw-engine`
   - Engine singleton: `globalThis.__scdraw`

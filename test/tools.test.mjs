@@ -42,6 +42,16 @@ test("Tools: all Pass 1 tools exist on disk, match manifest, and start with scdr
     "scdraw_export_png",
     "scdraw_rasterize_vector_to_bitmap",
     "scdraw_embed_bitmap_in_vector",
+    "scdraw_new_animation",
+    "scdraw_get_animation_status",
+    "scdraw_animation_manage_frame",
+    "scdraw_animation_tween",
+    "scdraw_animation_trim",
+    "scdraw_animation_playback",
+    "scdraw_animation_capture_studio",
+    "scdraw_animation_rasterize_to_bitmap",
+    "scdraw_export_animated_svg",
+    "scdraw_export_animation",
   ];
 
   for (const name of expectedTools) {
@@ -401,4 +411,74 @@ test("Adapter: scdraw_bitmap_selection executes set, all, invert, fill_pixels, d
   assert.equal(typeof status.layers[1].offsetY, "number");
   assert.equal(typeof status.layers[1].width, "number");
   assert.equal(typeof status.layers[1].height, "number");
+});
+
+test("Adapter: Animation Studio tools execute end-to-end (new, frame CRUD, tween, trim, playback, capture, export)", async () => {
+  await handleToolDispatch("scdraw_new_vector", { width: 120, height: 120 });
+  await handleToolDispatch("scdraw_add_shape", {
+    type: "circle",
+    cx: 30,
+    cy: 60,
+    r: 12,
+  });
+
+  const created = await handleToolDispatch("scdraw_new_animation", {
+    mode: "vector",
+    width: 120,
+    height: 120,
+    fps: 12,
+    name: "Tool Anim",
+  });
+  assert.equal(created.ok, true);
+  assert.equal(created.mode, "vector");
+
+  const cap = await handleToolDispatch("scdraw_animation_capture_studio", {
+    source: "vector",
+    name: "Captured",
+  });
+  assert.equal(cap.ok, true);
+
+  const dup = await handleToolDispatch("scdraw_animation_manage_frame", {
+    action: "duplicate",
+    frameIndex: 1,
+  });
+  assert.equal(dup.ok, true);
+
+  const tween = await handleToolDispatch("scdraw_animation_tween", {
+    fromIndex: 1,
+    toIndex: 2,
+    steps: 2,
+    easing: "ease-in-out",
+  });
+  assert.equal(tween.ok, true);
+  assert.equal(tween.insertedCount, 2);
+
+  const trim = await handleToolDispatch("scdraw_animation_trim", {
+    trimStart: 1,
+    trimEnd: 4,
+    apply: true,
+  });
+  assert.equal(trim.ok, true);
+
+  const pb = await handleToolDispatch("scdraw_animation_playback", {
+    action: "set_timing",
+    fps: 24,
+    loopMode: "pingpong",
+  });
+  assert.equal(pb.ok, true);
+
+  const svgOut = await handleToolDispatch("scdraw_export_animated_svg", {
+    engine: "smil",
+    interpolate: true,
+  });
+  assert.equal(svgOut.ok, true);
+  assert.match(svgOut.svg, /data-scdraw-animation="true"/);
+
+  const animStatus = await handleToolDispatch(
+    "scdraw_get_animation_status",
+    {},
+  );
+  assert.equal(animStatus.fps, 24);
+  assert.equal(animStatus.loopMode, "pingpong");
+  assert.equal(animStatus.frameCount, 4);
 });

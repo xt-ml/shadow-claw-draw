@@ -296,4 +296,18 @@ test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-w
     themeCss,
     /\.scdraw-workbench-page\.scdraw-workbench-page--fullscreen\s+scdraw-vector-workbench/,
   );
+  assert.match(themeCss, /scdraw-animation-workbench/);
+
+  const animWbSrc = await readComp("scdraw-animation-workbench.js");
+  assert.match(
+    animWbSrc,
+    /@container\s+scdraw-animation-workbench\s*\(\s*min-width:\s*640px\s*\)/,
+  );
+  assert.match(
+    animWbSrc,
+    /@container\s+scdraw-animation-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
+  );
+  assert.match(animWbSrc, /installPageSwipeGuard/);
+  assert.match(animWbSrc, /setupWorkbenchFullscreen/);
+  assert.match(animWbSrc, /prefers-reduced-motion/);
 });

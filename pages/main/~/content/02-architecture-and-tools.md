@@ -7,10 +7,11 @@ slug: "architecture"
 
 ## Architecture & Declarative WebMCP Tools
 
-**ShadowClaw Draw** runs as two direct-rendered (`iframe: false`) Shadow DOM workbenches inside ShadowClaw using plain Vanilla ESM JavaScript, Web Components, TC39 Signals (`signal-polyfill@0.2.2`), and zero build-time framework dependencies:
+**ShadowClaw Draw** runs as three direct-rendered (`iframe: false`) Shadow DOM workbenches inside ShadowClaw using plain Vanilla ESM JavaScript, Web Components, TC39 Signals (`signal-polyfill@0.2.2`), and zero build-time framework dependencies:
 
 1. **Page 1 — Vector Studio (`/main/`, `pages/main/index.html`)**: Hosts `<scdraw-vector-workbench>` with live SVG DOM rendering, layer management, Inkscape-inspired shapes & Bezier node editing, alignment/distribution, and live XML editing.
 2. **Page 2 — Bitmap Studio (`/main/bitmap/`, `pages/main/~/content/01-bitmap.html`)**: Hosts `<scdraw-bitmap-workbench>` with multi-layer pixel compositing, GIMP-inspired blend modes & flood fill, document-space offset-layer painting/auto-expansion, rectangular/inverted selection masking & Cut/Copy/Paste, the 10-group real-time Canvas 2D filter pipeline ported from `<x-canvas-image-manipulation>`, and crop/flip/rotate/levels transforms.
+3. **Page 3 — Animation Studio (`/main/animation/`, `pages/main/~/content/02-animation.html`)**: Hosts `<scdraw-animation-workbench>` uniting Vector & Bitmap frame/keyframe animation, Inkscape LPE path-morph tweening & arc-length trajectory motion, GIMP CIE L\*a\*b\* quantization/dithering & delta-frame GIF optimization, pure-JS APNG, SMIL/CSS Animated SVG, and GIFWorks-ported capture/trim/Web Share.
 
 ---
 
@@ -24,20 +25,25 @@ slug: "architecture"
 
 ### Custom Elements (`scdraw-*`)
 
-All **10 Web Components** reside in `.agents/scripts/components/` and are barrel-exported by `.agents/scripts/scdraw-element.js`:
+All **15 Web Components** reside in `.agents/scripts/components/` and are barrel-exported by `.agents/scripts/scdraw-element.js`:
 
-| Element Tag               | Module                       | Purpose                                                                      |
-| ------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `scdraw-vector-workbench` | `scdraw-vector-workbench.js` | Vector Studio shell, toolbar, Full Screen toggle, responsive panes & tabs    |
-| `scdraw-bitmap-workbench` | `scdraw-bitmap-workbench.js` | Bitmap Studio shell, brush sliders, selection bar, Full Screen & mobile tabs |
-| `scdraw-toolbox`          | `scdraw-toolbox.js`          | Dual-mode ARIA `toolbar` with SVG icons, labels, shortcuts, color swatches   |
-| `scdraw-vector-canvas`    | `scdraw-vector-canvas.js`    | Interactive SVG DOM stage, pointer gestures, Bezier overlay, text bar        |
-| `scdraw-bitmap-canvas`    | `scdraw-bitmap-canvas.js`    | Interactive Canvas 2D stage, marquee drag, drag-drop import & shortcuts      |
-| `scdraw-layers-panel`     | `scdraw-layers-panel.js`     | ARIA `listbox` layer stack, visibility/lock, opacity, 8 blend modes          |
-| `scdraw-inspector`        | `scdraw-inspector.js`        | Artboard config, fill/stroke/opacity/rotation, align/distribute, live XML    |
-| `scdraw-filter-panel`     | `scdraw-filter-panel.js`     | 10-group real-time Canvas filter pipeline and destructive image transforms   |
-| `scdraw-statusbar`        | `scdraw-statusbar.js`        | `aria-live="polite"` feedback, coordinates, zoom, `Sel`/`Clip` readouts      |
-| `scdraw-resize-handle`    | `scdraw-resize-handle.js`    | Accessible `role="separator"` pane splitter (pointer + keyboard resize)      |
+| Element Tag                  | Module                          | Purpose                                                                       |
+| ---------------------------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| `scdraw-vector-workbench`    | `scdraw-vector-workbench.js`    | Vector Studio shell, toolbar, Full Screen toggle, responsive panes & tabs     |
+| `scdraw-bitmap-workbench`    | `scdraw-bitmap-workbench.js`    | Bitmap Studio shell, brush sliders, selection bar, Full Screen & mobile tabs  |
+| `scdraw-animation-workbench` | `scdraw-animation-workbench.js` | Animation Studio shell, mode toggle, shortcuts, Full Screen & responsive grid |
+| `scdraw-toolbox`             | `scdraw-toolbox.js`             | Dual-mode ARIA `toolbar` with SVG icons, labels, shortcuts, color swatches    |
+| `scdraw-vector-canvas`       | `scdraw-vector-canvas.js`       | Interactive SVG DOM stage, pointer gestures, Bezier overlay, text bar         |
+| `scdraw-bitmap-canvas`       | `scdraw-bitmap-canvas.js`       | Interactive Canvas 2D stage, marquee drag, drag-drop import & shortcuts       |
+| `scdraw-animation-stage`     | `scdraw-animation-stage.js`     | Embedded vector/bitmap stage, onion skinning, `rAF` playback, drop import     |
+| `scdraw-timeline`            | `scdraw-timeline.js`            | Transport, filmstrip thumbnails, drag/keyboard reorder, dual-handle trim      |
+| `scdraw-layers-panel`        | `scdraw-layers-panel.js`        | ARIA `listbox` layer stack, visibility/lock, opacity, 8 blend modes           |
+| `scdraw-inspector`           | `scdraw-inspector.js`           | Artboard config, fill/stroke/opacity/rotation, align/distribute, live XML     |
+| `scdraw-filter-panel`        | `scdraw-filter-panel.js`        | 10-group real-time Canvas filter pipeline and destructive image transforms    |
+| `scdraw-export-panel`        | `scdraw-export-panel.js`        | GIF/APNG/SVG/WebM/MP4/Sprite Sheet export, GIMP/CDN controls, Web Share       |
+| `scdraw-capture-panel`       | `scdraw-capture-panel.js`       | GIFWorks-ported screen/webcam capture, countdown/timer, clip frame extractor  |
+| `scdraw-statusbar`           | `scdraw-statusbar.js`           | `aria-live="polite"` feedback, coordinates, zoom, `Sel`/`Clip` readouts       |
+| `scdraw-resize-handle`       | `scdraw-resize-handle.js`       | Accessible `role="separator"` pane splitter (pointer + keyboard resize)       |
 
 ---
 
@@ -52,14 +58,15 @@ All **10 Web Components** reside in `.agents/scripts/components/` and are barrel
 
 ### Declarative WebMCP Tools (`scdraw_*`)
 
-All **26 declarative tools** are defined in `bin/tool-manifest.mjs`, compiled into `.agents/tools/scdraw_*.json` and `.agents/scripts/scdraw-tools-metadata.js`, and executed through `.agents/scripts/scdraw-adapter.js` using Web Locks (`scdraw-engine`), `BroadcastChannel` (`scdraw-commands`, `scdraw-results`, `scdraw-state`), and `document.modelContext`:
+All **36 declarative tools** are defined in `bin/tool-manifest.mjs`, compiled into `.agents/tools/scdraw_*.json` and `.agents/scripts/scdraw-tools-metadata.js`, and executed through `.agents/scripts/scdraw-adapter.js` using Web Locks (`scdraw-engine`), `BroadcastChannel` (`scdraw-commands`, `scdraw-results`, `scdraw-state`), and `document.modelContext`:
 
 - **Vector & Document (12)**: `scdraw_get_status`, `scdraw_new_vector`, `scdraw_get_vector`, `scdraw_import_svg`, `scdraw_export_svg`, `scdraw_add_shape`, `scdraw_update_element`, `scdraw_delete_elements`, `scdraw_manage_layer`, `scdraw_transform_elements`, `scdraw_undo`, `scdraw_redo`
 - **Workspace OPFS (3)**: `scdraw_save_file`, `scdraw_load_file`, `scdraw_list_files`
 - **Bitmap, Filters & Selection/Clipboard (9)**: `scdraw_new_bitmap`, `scdraw_get_bitmap_status`, `scdraw_bitmap_draw_stroke`, `scdraw_bitmap_fill`, `scdraw_bitmap_set_filter`, `scdraw_bitmap_transform`, `scdraw_bitmap_manage_layer`, `scdraw_bitmap_selection`, `scdraw_export_png`
 - **Cross-Studio Bridge (2)**: `scdraw_rasterize_vector_to_bitmap` (serializes Vector SVG into a new Bitmap raster layer), `scdraw_embed_bitmap_in_vector` (flattens Bitmap composite into PNG and embeds an `<image>` layer in Vector Studio)
+- **Animation Studio (10)**: `scdraw_new_animation`, `scdraw_get_animation_status`, `scdraw_animation_manage_frame`, `scdraw_animation_tween`, `scdraw_animation_trim`, `scdraw_animation_playback`, `scdraw_animation_capture_studio`, `scdraw_animation_rasterize_to_bitmap`, `scdraw_export_animated_svg`, `scdraw_export_animation`
 
-Indexed agent skills live under `.agents/skills/` (`vector-illustration`, `bitmap-editing`, and `skill-creator`) and are published in `.well-known/agent-skills/index.json`.
+Indexed agent skills live under `.agents/skills/` (`vector-illustration`, `bitmap-editing`, `animation-studio`, and `skill-creator`) and are published in `.well-known/agent-skills/index.json`.
 
 ---
 
@@ -82,4 +89,5 @@ Indexed agent skills live under `.agents/skills/` (`vector-illustration`, `bitma
 
 - [Vector Studio Tools & Pen Editing](03-vector-studio-tools.md) (`/main/vector-studio-tools/`) — Detailed guide to all 13 vector tools, Bezier node editing, Inspector, and shortcuts
 - [Bitmap Studio Tools & Pixel Painting](04-bitmap-studio-tools.md) (`/main/bitmap-studio-tools/`) — Brush techniques, offset layers, selections & clipboard, blend modes, and real-time filters
-- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, `shadow-claw-daw`, and license provenance
+- [Animation Studio Tools & Export](06-animation-studio-tools.md) (`/main/animation-studio-tools/`) — Keyframes, tweening, capture, trim, and GIF/APNG/SVG export
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, GIFWorks, `<x-canvas-image-manipulation>`, `shadow-claw-daw`, and license provenance

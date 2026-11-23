@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "scdraw_new_animation",
+  "description": "Create and reset an Animation Studio project in either 'vector' or 'bitmap' mode with specified dimensions, FPS, and background.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "mode": {
+        "type": "string",
+        "enum": ["vector", "bitmap"]
+      },
+      "width": {
+        "type": "integer",
+        "minimum": 16,
+        "maximum": 4096
+      },
+      "height": {
+        "type": "integer",
+        "minimum": 16,
+        "maximum": 4096
+      },
+      "fps": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 60
+      },
+      "loopCount": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 65535
+      },
+      "loopMode": {
+        "type": "string",
+        "enum": ["loop", "once", "pingpong"]
+      },
+      "background": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false
+  },
+  "annotations": {
+    "readOnlyHint": false,
+    "consequentialHint": false
+  },
+  "execution": {
+    "type": "javascript",
+    "code": "let toolParams = {};\ntry {\n  toolParams = typeof input !== \"undefined\" && input && typeof input === \"object\"\n    ? input\n    : (typeof $PIPE_DATA !== \"undefined\" && $PIPE_DATA ? (typeof $PIPE_DATA === \"string\" ? JSON.parse($PIPE_DATA) : $PIPE_DATA) : (typeof data !== \"undefined\" && data ? (typeof data === \"string\" ? JSON.parse(data) : data) : {}));\n} catch (_) {}\n\nconst cmdCh = new BroadcastChannel(\"scdraw-commands\");\nconst resCh = new BroadcastChannel(\"scdraw-results\");\nconst reqId = \"req_\" + Math.random().toString(36).slice(2);\n\nconst timeout = new Promise((_, reject) =>\n  setTimeout(() => {\n    cmdCh.close();\n    resCh.close();\n    reject(new Error(\"Timeout awaiting ShadowClaw Draw response for scdraw_new_animation. Ensure a Draw workbench page is open.\"));\n  }, 5000)\n);\n\nconst reply = new Promise((resolve, reject) => {\n  const handler = (e) => {\n    if (e.data && e.data.requestId === reqId) {\n      if (e.data.ack) return;\n      resCh.removeEventListener(\"message\", handler);\n      cmdCh.close();\n      resCh.close();\n      if (e.data.error) reject(new Error(e.data.error));\n      else resolve(e.data.result);\n    }\n  };\n  resCh.addEventListener(\"message\", handler);\n  cmdCh.postMessage({ type: \"scdraw_new_animation\", requestId: reqId, params: toolParams || {} });\n});\n\nreturn await Promise.race([reply, timeout]);"
+  }
+}

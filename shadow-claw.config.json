@@ -42,7 +42,8 @@
     "defaultPinnedPage": "/pages/main/index.html",
     "directPages": [
       "/pages/main/index.html",
-      "/pages/main/~/content/01-bitmap.html"
+      "/pages/main/~/content/01-bitmap.html",
+      "/pages/main/~/content/02-animation.html"
     ],
     "iframe": true
   },
@@ -50,12 +51,17 @@
     "allowedElements": [
       "scdraw-vector-workbench",
       "scdraw-bitmap-workbench",
+      "scdraw-animation-workbench",
       "scdraw-toolbox",
       "scdraw-vector-canvas",
       "scdraw-bitmap-canvas",
+      "scdraw-animation-stage",
+      "scdraw-timeline",
       "scdraw-layers-panel",
       "scdraw-inspector",
       "scdraw-filter-panel",
+      "scdraw-export-panel",
+      "scdraw-capture-panel",
       "scdraw-statusbar",
       "scdraw-resize-handle"
     ],
@@ -86,6 +92,7 @@
       "allow-popups",
       "allow-popups-to-escape-sandbox"
     ],
+    "scriptSrc": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
     "workerSrc": ["'self'", "blob:", "data:"],
     "connectSrc": [
       "'self'",
@@ -129,6 +136,16 @@
     "scdraw_bitmap_selection",
     "scdraw_export_png",
     "scdraw_rasterize_vector_to_bitmap",
-    "scdraw_embed_bitmap_in_vector"
+    "scdraw_embed_bitmap_in_vector",
+    "scdraw_new_animation",
+    "scdraw_get_animation_status",
+    "scdraw_animation_manage_frame",
+    "scdraw_animation_tween",
+    "scdraw_animation_trim",
+    "scdraw_animation_playback",
+    "scdraw_animation_capture_studio",
+    "scdraw_animation_rasterize_to_bitmap",
+    "scdraw_export_animated_svg",
+    "scdraw_export_animation"
   ]
 }

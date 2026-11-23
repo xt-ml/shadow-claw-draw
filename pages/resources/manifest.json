@@ -21,8 +21,9 @@
       ],
       "accept": {
         "image/svg+xml": [".svg"],
-        "image/png": [".png"],
-        "application/json": [".scdraw.json"]
+        "image/png": [".png", ".apng"],
+        "image/gif": [".gif"],
+        "application/json": [".scdraw.json", ".scdraw-anim.json"]
       }
     }
   ],

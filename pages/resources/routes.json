@@ -6,6 +6,9 @@
     "/pages/main/~/content/01-bitmap.html": {
       "prettyPath": "/main/bitmap/"
     },
+    "/pages/main/~/content/02-animation.html": {
+      "prettyPath": "/main/animation/"
+    },
     "/pages/main/~/content/02-architecture-and-tools.md": {
       "prettyPath": "/main/architecture/"
     },
@@ -17,6 +20,9 @@
     },
     "/pages/main/~/content/05-porting-and-attribution.md": {
       "prettyPath": "/main/porting-and-attribution/"
+    },
+    "/pages/main/~/content/06-animation-studio-tools.md": {
+      "prettyPath": "/main/animation-studio-tools/"
     },
     "/pages/main/MEMORY.md": {
       "prettyPath": "/main/memory/"

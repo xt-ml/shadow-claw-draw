@@ -461,6 +461,166 @@ export async function handleToolDispatch(name, params = {}) {
         layerName: params.layerName,
       });
 
+    case "scdraw_new_animation":
+      return scdraw.newAnimationDocument(params);
+
+    case "scdraw_get_animation_status": {
+      const a = scdraw.animationDoc.get();
+      return {
+        ...scdraw.getStatus().animation,
+        frames: a.frames.map((f, index) => ({
+          index,
+          id: f.id,
+          name: f.name,
+          delayMs: f.delayMs,
+          easing: f.easing,
+        })),
+      };
+    }
+
+    case "scdraw_animation_manage_frame": {
+      const action = params.action;
+      if (action === "select") {
+        return scdraw.selectAnimationFrame(params.frameIndex ?? 0);
+      }
+      if (action === "add") {
+        return scdraw.dispatchAnimationCommand({
+          type: "add_frame",
+          afterIndex: params.afterIndex ?? scdraw.activeFrameIndex.get(),
+          name: params.name,
+          delayMs: params.delayMs,
+          easing: params.easing,
+        });
+      }
+      if (action === "duplicate") {
+        return scdraw.dispatchAnimationCommand({
+          type: "duplicate_frame",
+          frameIndex: params.frameIndex ?? scdraw.activeFrameIndex.get(),
+          name: params.name,
+        });
+      }
+      if (action === "delete") {
+        return scdraw.dispatchAnimationCommand({
+          type: "delete_frame",
+          frameIndex: params.frameIndex ?? scdraw.activeFrameIndex.get(),
+        });
+      }
+      if (action === "reorder") {
+        return scdraw.dispatchAnimationCommand({
+          type: "reorder_frame",
+          fromIndex: params.fromIndex ?? 0,
+          toIndex: params.toIndex ?? 0,
+        });
+      }
+      if (action === "update") {
+        return scdraw.dispatchAnimationCommand({
+          type: "update_frame",
+          frameIndex: params.frameIndex ?? scdraw.activeFrameIndex.get(),
+          name: params.name,
+          delayMs: params.delayMs,
+          easing: params.easing,
+        });
+      }
+      if (action === "reverse") {
+        return scdraw.dispatchAnimationCommand({ type: "reverse_frames" });
+      }
+      if (action === "pingpong") {
+        return scdraw.dispatchAnimationCommand({ type: "pingpong_frames" });
+      }
+      throw new Error(`Unknown animation frame action: ${action}`);
+    }
+
+    case "scdraw_animation_tween":
+      return scdraw.dispatchAnimationCommand({
+        type: "insert_tween_frames",
+        fromIndex: params.fromIndex ?? 0,
+        toIndex: params.toIndex ?? 1,
+        steps: params.steps ?? 4,
+        easing: params.easing ?? "linear",
+        trajectoryPath: params.trajectoryPath || "",
+        equidistant: params.equidistant !== false,
+      });
+
+    case "scdraw_animation_trim": {
+      const res = scdraw.dispatchAnimationCommand({
+        type: "set_trim_range",
+        trimStart: params.trimStart,
+        trimEnd: params.trimEnd,
+      });
+      if (params.apply) {
+        return scdraw.dispatchAnimationCommand({ type: "apply_trim" });
+      }
+      return res;
+    }
+
+    case "scdraw_animation_playback": {
+      const action = params.action;
+      if (action === "play") {
+        scdraw.isPlaying.set(true);
+        return { ok: true, isPlaying: true };
+      }
+      if (action === "pause") {
+        scdraw.isPlaying.set(false);
+        return { ok: true, isPlaying: false };
+      }
+      if (action === "stop") {
+        scdraw.isPlaying.set(false);
+        scdraw.selectAnimationFrame(scdraw.animationDoc.get().trimStart || 0);
+        return {
+          ok: true,
+          isPlaying: false,
+          frameIndex: scdraw.activeFrameIndex.get(),
+        };
+      }
+      if (action === "seek") {
+        return scdraw.selectAnimationFrame(params.frameIndex ?? 0);
+      }
+      if (action === "set_timing") {
+        return scdraw.dispatchAnimationCommand({
+          type: "set_timing",
+          fps: params.fps,
+          loopCount: params.loopCount,
+          loopMode: params.loopMode,
+          speedMultiplier: params.speedMultiplier,
+          applyFpsToAllFrames: params.applyFpsToAllFrames,
+        });
+      }
+      throw new Error(`Unknown playback action: ${action}`);
+    }
+
+    case "scdraw_animation_capture_studio":
+      return scdraw.captureCurrentStudioToAnimationFrame(params);
+
+    case "scdraw_animation_rasterize_to_bitmap":
+      return await scdraw.rasterizeAnimationToBitmap(params);
+
+    case "scdraw_export_animated_svg": {
+      const res = await scdraw.exportAnimation({
+        ...params,
+        format: "svg",
+      });
+      return {
+        ok: true,
+        svg: res.text,
+        engineUsed: res.engineUsed,
+        saved: res.saved,
+      };
+    }
+
+    case "scdraw_export_animation": {
+      const res = await scdraw.exportAnimation(params);
+      return {
+        ok: true,
+        format: res.format,
+        mimeType: res.mimeType,
+        extension: res.extension,
+        engineUsed: res.engineUsed,
+        byteLength: res.bytes?.byteLength || 0,
+        saved: res.saved,
+        atlas: res.atlas,
+      };
+    }
+
     default:
       throw new Error(`Unknown scdraw tool: ${name}`);
   }

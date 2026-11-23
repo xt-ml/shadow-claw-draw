@@ -4,6 +4,13 @@
   "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
   "skills": [
     {
+      "name": "animation-studio",
+      "type": "skill-md",
+      "description": "Create frame-based and keyframe Vector or Bitmap animations, morph paths and animate along curved trajectories, capture screen/webcam clips, trim frames, and export offline GIF89a, APNG, Animated SVG, WebM, MP4, or PNG Sprite Sheets.",
+      "url": "../../.agents/skills/animation-studio/SKILL.md",
+      "digest": "sha256:f22ec8da0988e3ef960de22f96f5c05a0270ce00c4e93417849cbed5f3821c2e"
+    },
+    {
       "name": "bitmap-editing",
       "type": "skill-md",
       "description": "Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and convert between Vector and Bitmap studios.",
@@ -37,6 +44,42 @@
       "description": "Add a vector shape (rect, ellipse, circle, line, polygon, star, polyline, path, text, image) to a vector layer.",
       "url": "../../.agents/tools/scdraw_add_shape.json",
       "digest": "sha256:de08757dc576aa79f6ebe0670ab32be483127b35a5708be63f9c9f1badf1e0fe"
+    },
+    {
+      "name": "scdraw_animation_capture_studio",
+      "description": "Capture the current Vector Studio or Bitmap Studio artwork into the Animation Studio timeline as a new frame.",
+      "url": "../../.agents/tools/scdraw_animation_capture_studio.json",
+      "digest": "sha256:41ad70bcc13067f5460d808f6ee6bbc4b9f060a9f3bbf20045de433208a8d9b9"
+    },
+    {
+      "name": "scdraw_animation_manage_frame",
+      "description": "Manage Animation Studio frames: add, duplicate, delete, reorder, select, update (name/delayMs/easing), reverse, or pingpong.",
+      "url": "../../.agents/tools/scdraw_animation_manage_frame.json",
+      "digest": "sha256:1ace0b5b99b1b1fc3c5a5b85d4cb5fb025042915676300610dc2d32d6dafd287"
+    },
+    {
+      "name": "scdraw_animation_playback",
+      "description": "Control Animation Studio playback (play, pause, stop, seek, set_timing) including FPS, loopMode, loopCount, and speedMultiplier.",
+      "url": "../../.agents/tools/scdraw_animation_playback.json",
+      "digest": "sha256:fc6bda0b0ec1e4f635fafcac70bf05e6c9eb9f92a1b6fbc7600db5ae007546f2"
+    },
+    {
+      "name": "scdraw_animation_rasterize_to_bitmap",
+      "description": "Rasterize a Vector Animation into Bitmap Animation frames at the specified dimensions.",
+      "url": "../../.agents/tools/scdraw_animation_rasterize_to_bitmap.json",
+      "digest": "sha256:d7537b4c30abe7fc596c1dde51b60157a33d14e4c7be4b6b3c46153fd2b05fbf"
+    },
+    {
+      "name": "scdraw_animation_trim",
+      "description": "Set the Animation Studio [trimStart, trimEnd] frame range and optionally apply trim destructively.",
+      "url": "../../.agents/tools/scdraw_animation_trim.json",
+      "digest": "sha256:5d84c4f4fd1746ad4698ee9ca6a53f1790fa45624db652622162c6562db8d2c7"
+    },
+    {
+      "name": "scdraw_animation_tween",
+      "description": "Generate N Inkscape-interpolated in-between frames (morphing paths, transforms, geometry, colors) between two Vector Animation keyframes, optionally along a curved trajectoryPath.",
+      "url": "../../.agents/tools/scdraw_animation_tween.json",
+      "digest": "sha256:a2e8a165e89c1f8d93b62bc80f5b935417c7d5f1b868e0b5cec4b45930a4a805"
     },
     {
       "name": "scdraw_bitmap_draw_stroke",
@@ -87,6 +130,18 @@
       "digest": "sha256:3a9961553e9b71fcfba920b488f9cf6179eabe1739e14bde74b33abfcfe527d8"
     },
     {
+      "name": "scdraw_export_animated_svg",
+      "description": "Export the active Vector Animation as an Animated SVG (SMIL or CSS @keyframes), optionally saving to OPFS.",
+      "url": "../../.agents/tools/scdraw_export_animated_svg.json",
+      "digest": "sha256:62f23add184b2d9d004fce78fd1cc34fa03f79d61d30da055b6e3ea015f545e8"
+    },
+    {
+      "name": "scdraw_export_animation",
+      "description": "Render and export the active Animation Studio timeline as GIF (GIMP CIE Lab + delta optimize or Gifski + Gifsicle), APNG, Animated SVG, WebM, MP4, or PNG Sprite Sheet.",
+      "url": "../../.agents/tools/scdraw_export_animation.json",
+      "digest": "sha256:c9154904cebb89788ed68ea4428cc7786facd9aaf7ad470da79d5da7bc7cf8a7"
+    },
+    {
       "name": "scdraw_export_png",
       "description": "Composite and filter the active Bitmap Studio document and export a PNG data URL (optionally saving to OPFS).",
       "url": "../../.agents/tools/scdraw_export_png.json",
@@ -97,6 +152,12 @@
       "description": "Serialize the current Vector Studio document to clean W3C SVG XML.",
       "url": "../../.agents/tools/scdraw_export_svg.json",
       "digest": "sha256:9eb641bbce4d021af692cda194ff71764a8628504d95180ee467b65448b9cf0f"
+    },
+    {
+      "name": "scdraw_get_animation_status",
+      "description": "Return the current Animation Studio state including mode, frame count, active frame index, frame delays, trim range, onion skin, and export settings.",
+      "url": "../../.agents/tools/scdraw_get_animation_status.json",
+      "digest": "sha256:ed19bc27a85d93f4be2890c6e45beef768d1bb7ad6d733a384b3a30fcfa1ceea"
     },
     {
       "name": "scdraw_get_bitmap_status",
@@ -139,6 +200,12 @@
       "description": "Add, remove, update, or reorder layers in the Vector Studio document.",
       "url": "../../.agents/tools/scdraw_manage_layer.json",
       "digest": "sha256:f88eb6c9f02409ddba1e0ef4898c8510bb8e557b06d27aeb6d7a07983b7628b4"
+    },
+    {
+      "name": "scdraw_new_animation",
+      "description": "Create and reset an Animation Studio project in either 'vector' or 'bitmap' mode with specified dimensions, FPS, and background.",
+      "url": "../../.agents/tools/scdraw_new_animation.json",
+      "digest": "sha256:222f8583a1ddd1b6eb7fc78128c4edd2d0c28b00a7566bea136486ab3f73be28"
     },
     {
       "name": "scdraw_new_bitmap",
@@ -191,6 +258,18 @@
   ],
   "scripts": [
     {
+      "name": "scdraw-animation-stage",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-animation-stage.",
+      "url": "../../.agents/scripts/components/scdraw-animation-stage.js",
+      "digest": "sha256:d3ba42a9e20b3541240d9e31caeab877ad7802ca5d5aa8f7ef2b869354054528"
+    },
+    {
+      "name": "scdraw-animation-workbench",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-animation-workbench.",
+      "url": "../../.agents/scripts/components/scdraw-animation-workbench.js",
+      "digest": "sha256:93ac81763a7e7827cd61b3347315f7a338b54a3d6b1e417c25816cc0f399280d"
+    },
+    {
       "name": "scdraw-bitmap-canvas",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-canvas.",
       "url": "../../.agents/scripts/components/scdraw-bitmap-canvas.js",
@@ -200,7 +279,19 @@
       "name": "scdraw-bitmap-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-workbench.",
       "url": "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
-      "digest": "sha256:0b431210474b50e9a8975e0097df8df09c090a8705aea58f05ff4c4eb9c7f426"
+      "digest": "sha256:f68b771818e5f09de9f1ff16d4242a524678beab839c6c10add3ce23825adcdb"
+    },
+    {
+      "name": "scdraw-capture-panel",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-capture-panel.",
+      "url": "../../.agents/scripts/components/scdraw-capture-panel.js",
+      "digest": "sha256:0c833af61d9179b37721e865d435f7102debdc8f6e3007cd6f9390c5b492ed35"
+    },
+    {
+      "name": "scdraw-export-panel",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-export-panel.",
+      "url": "../../.agents/scripts/components/scdraw-export-panel.js",
+      "digest": "sha256:d8e857b742a7fa90487c5050db203a61faf6085bc41748a1287de7e3f63874dc"
     },
     {
       "name": "scdraw-filter-panel",
@@ -239,6 +330,12 @@
       "digest": "sha256:5730440fd8d68593dfee83921447e84e4748b70165902150670f60178e888570"
     },
     {
+      "name": "scdraw-timeline",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-timeline.",
+      "url": "../../.agents/scripts/components/scdraw-timeline.js",
+      "digest": "sha256:a12215332a8f63765947b12c538424c7dcc039bf11c8675fa4f425ab327e9fb3"
+    },
+    {
       "name": "scdraw-toolbox",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-toolbox.",
       "url": "../../.agents/scripts/components/scdraw-toolbox.js",
@@ -254,13 +351,31 @@
       "name": "scdraw-vector-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-workbench.",
       "url": "../../.agents/scripts/components/scdraw-vector-workbench.js",
-      "digest": "sha256:67370ab82a2d92bf59a91edb740cb725fcfb38769ff13d1b6657d3c18167a217"
+      "digest": "sha256:bee86b20ad62f6b69397fea9d91405a4c2069a82edf82325a72272bf4dffcb08"
     },
     {
       "name": "scdraw-adapter",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-adapter.",
       "url": "../../.agents/scripts/scdraw-adapter.js",
-      "digest": "sha256:58fa870a2b54ca8637cd8db0dc9e8b351cccd8ea7bd74d01045184b611a265c2"
+      "digest": "sha256:143b87290fa46d1f5a262a42a3f0532caa2e5eb0bccf6a17f6bf8b6d8ce3cb36"
+    },
+    {
+      "name": "scdraw-anim-svg",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-anim-svg.",
+      "url": "../../.agents/scripts/scdraw-anim-svg.js",
+      "digest": "sha256:0f1416b431a79ea9d726d1f42e5b9523dfe5189d58933f4ba43a0d427f8f72da"
+    },
+    {
+      "name": "scdraw-animation",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-animation.",
+      "url": "../../.agents/scripts/scdraw-animation.js",
+      "digest": "sha256:7758c073abc24a0ee656dfca2852888757d8cc77df008fb5f2f77d4028732a80"
+    },
+    {
+      "name": "scdraw-apng-codec",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-apng-codec.",
+      "url": "../../.agents/scripts/scdraw-apng-codec.js",
+      "digest": "sha256:bc7b02b339d324f7d0e16c7e5dc3576cccd5bc7aea99802de49641d41d2ce5ef"
     },
     {
       "name": "scdraw-bitmap",
@@ -269,16 +384,28 @@
       "digest": "sha256:985c8e94701c17e9cccefc48d27c32c3588be3c35e7201c3a51982a1185fecd8"
     },
     {
+      "name": "scdraw-capture",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-capture.",
+      "url": "../../.agents/scripts/scdraw-capture.js",
+      "digest": "sha256:c6ff233f81c827e808b876802c6d50d87ad1391d8d4237f9f2011447f594c9d6"
+    },
+    {
       "name": "scdraw-element",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-element.",
       "url": "../../.agents/scripts/scdraw-element.js",
-      "digest": "sha256:fefdfce0f4acfcee6df739f6e5cc3a12bb926a399aa04e9c868b415c2c38e6ef"
+      "digest": "sha256:3f0544b0aeadad556f7f39f7aa5ba3fb8ff30410d5a0ff9e79e5084940902844"
+    },
+    {
+      "name": "scdraw-encoders",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-encoders.",
+      "url": "../../.agents/scripts/scdraw-encoders.js",
+      "digest": "sha256:d2bc69df7d9fd21a3d615fc73a38398cd0ecdf2747c6d090f0188419cffcfcf0"
     },
     {
       "name": "scdraw-engine",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
       "url": "../../.agents/scripts/scdraw-engine.js",
-      "digest": "sha256:c19945ba97c1424032d109d413e1391c1e028542b19015a2af93e22fa83ce61e"
+      "digest": "sha256:31298415ecbb863639f858ece19c07f40b2d1213525dffbb5b3431a9579d7908"
     },
     {
       "name": "scdraw-filters",
@@ -290,13 +417,37 @@
       "name": "scdraw-fs",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-fs.",
       "url": "../../.agents/scripts/scdraw-fs.js",
-      "digest": "sha256:e6cdc49686bb1a651653e5966a61ee80b9e34ad6fb1354a64ca424ef03ba1d1a"
+      "digest": "sha256:77a4cddb6d636cd1ce5a8f2b9f48c2558415f4177f9a08601b245a7a01e9108f"
+    },
+    {
+      "name": "scdraw-gif-codec",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-codec.",
+      "url": "../../.agents/scripts/scdraw-gif-codec.js",
+      "digest": "sha256:5f481bb4bdd8b50bbeba26adb7c96d661404f0bbb48d043cd6b92f2643aa5cc3"
+    },
+    {
+      "name": "scdraw-gif-optimize",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-optimize.",
+      "url": "../../.agents/scripts/scdraw-gif-optimize.js",
+      "digest": "sha256:da00ee3ec6a1bbe486e39981ce446e94dd0c480d9fbe04f7cefa1db7ff9a85f6"
+    },
+    {
+      "name": "scdraw-gif-worker",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-worker.",
+      "url": "../../.agents/scripts/scdraw-gif-worker.js",
+      "digest": "sha256:e6f19338f1fd402805e63dbc1a5c2aaeaa8082f52ddc2713786f4ca102e822bd"
+    },
+    {
+      "name": "scdraw-quantize",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-quantize.",
+      "url": "../../.agents/scripts/scdraw-quantize.js",
+      "digest": "sha256:f03dc9527cdf861b8386f82e8d011484e5cd5d0e2baaf04c4cf1f6d67608ffef"
     },
     {
       "name": "scdraw-schema",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-schema.",
       "url": "../../.agents/scripts/scdraw-schema.js",
-      "digest": "sha256:542e4ac721c8d59a72af205f8887cd715c4e0a327d1089006fad71bc559b7deb"
+      "digest": "sha256:b0f9efa2d0f272cff5e64b64fde1203e5e664767e6d9137ad153870277217358"
     },
     {
       "name": "scdraw-signals",
@@ -314,7 +465,13 @@
       "name": "scdraw-tools-metadata",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-tools-metadata.",
       "url": "../../.agents/scripts/scdraw-tools-metadata.js",
-      "digest": "sha256:76dfc1bf1183420041c3918ed57e128f14a87fac7f46d2bba8be86f3d7dc2703"
+      "digest": "sha256:f16109be9fc1353aa7a4cc180b83c266f8dcf731e5c616f33e6bae7357e5cd21"
+    },
+    {
+      "name": "scdraw-tween",
+      "description": "Portable ESM engine logic and tool execution handler for scdraw-tween.",
+      "url": "../../.agents/scripts/scdraw-tween.js",
+      "digest": "sha256:77a86c9b577f2aaff06de926c910de86cb3f831a408a4d32c8aa2e3423a61b04"
     },
     {
       "name": "scdraw-vector",
@@ -332,6 +489,12 @@
   "dependencies": {
     "tools": [
       "../../.agents/tools/scdraw_add_shape.json",
+      "../../.agents/tools/scdraw_animation_capture_studio.json",
+      "../../.agents/tools/scdraw_animation_manage_frame.json",
+      "../../.agents/tools/scdraw_animation_playback.json",
+      "../../.agents/tools/scdraw_animation_rasterize_to_bitmap.json",
+      "../../.agents/tools/scdraw_animation_trim.json",
+      "../../.agents/tools/scdraw_animation_tween.json",
       "../../.agents/tools/scdraw_bitmap_draw_stroke.json",
       "../../.agents/tools/scdraw_bitmap_fill.json",
       "../../.agents/tools/scdraw_bitmap_manage_layer.json",
@@ -340,8 +503,11 @@
       "../../.agents/tools/scdraw_bitmap_transform.json",
       "../../.agents/tools/scdraw_delete_elements.json",
       "../../.agents/tools/scdraw_embed_bitmap_in_vector.json",
+      "../../.agents/tools/scdraw_export_animated_svg.json",
+      "../../.agents/tools/scdraw_export_animation.json",
       "../../.agents/tools/scdraw_export_png.json",
       "../../.agents/tools/scdraw_export_svg.json",
+      "../../.agents/tools/scdraw_get_animation_status.json",
       "../../.agents/tools/scdraw_get_bitmap_status.json",
       "../../.agents/tools/scdraw_get_status.json",
       "../../.agents/tools/scdraw_get_vector.json",
@@ -349,6 +515,7 @@
       "../../.agents/tools/scdraw_list_files.json",
       "../../.agents/tools/scdraw_load_file.json",
       "../../.agents/tools/scdraw_manage_layer.json",
+      "../../.agents/tools/scdraw_new_animation.json",
       "../../.agents/tools/scdraw_new_bitmap.json",
       "../../.agents/tools/scdraw_new_vector.json",
       "../../.agents/tools/scdraw_rasterize_vector_to_bitmap.json",
@@ -359,27 +526,42 @@
       "../../.agents/tools/scdraw_update_element.json"
     ],
     "scripts": [
+      "../../.agents/scripts/components/scdraw-animation-stage.js",
+      "../../.agents/scripts/components/scdraw-animation-workbench.js",
       "../../.agents/scripts/components/scdraw-bitmap-canvas.js",
       "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
+      "../../.agents/scripts/components/scdraw-capture-panel.js",
+      "../../.agents/scripts/components/scdraw-export-panel.js",
       "../../.agents/scripts/components/scdraw-filter-panel.js",
       "../../.agents/scripts/components/scdraw-inspector.js",
       "../../.agents/scripts/components/scdraw-layers-panel.js",
       "../../.agents/scripts/components/scdraw-resize-handle.js",
       "../../.agents/scripts/components/scdraw-statusbar.js",
       "../../.agents/scripts/components/scdraw-styles.js",
+      "../../.agents/scripts/components/scdraw-timeline.js",
       "../../.agents/scripts/components/scdraw-toolbox.js",
       "../../.agents/scripts/components/scdraw-vector-canvas.js",
       "../../.agents/scripts/components/scdraw-vector-workbench.js",
       "../../.agents/scripts/scdraw-adapter.js",
+      "../../.agents/scripts/scdraw-anim-svg.js",
+      "../../.agents/scripts/scdraw-animation.js",
+      "../../.agents/scripts/scdraw-apng-codec.js",
       "../../.agents/scripts/scdraw-bitmap.js",
+      "../../.agents/scripts/scdraw-capture.js",
       "../../.agents/scripts/scdraw-element.js",
+      "../../.agents/scripts/scdraw-encoders.js",
       "../../.agents/scripts/scdraw-engine.js",
       "../../.agents/scripts/scdraw-filters.js",
       "../../.agents/scripts/scdraw-fs.js",
+      "../../.agents/scripts/scdraw-gif-codec.js",
+      "../../.agents/scripts/scdraw-gif-optimize.js",
+      "../../.agents/scripts/scdraw-gif-worker.js",
+      "../../.agents/scripts/scdraw-quantize.js",
       "../../.agents/scripts/scdraw-schema.js",
       "../../.agents/scripts/scdraw-signals.js",
       "../../.agents/scripts/scdraw-svg-codec.js",
       "../../.agents/scripts/scdraw-tools-metadata.js",
+      "../../.agents/scripts/scdraw-tween.js",
       "../../.agents/scripts/scdraw-vector.js",
       "../../.agents/scripts/vendor/signal-polyfill.js"
     ]

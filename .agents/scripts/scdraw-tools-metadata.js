@@ -861,4 +861,382 @@ export const TOOLS_METADATA = [
       consequentialHint: false,
     },
   },
+  {
+    name: "scdraw_new_animation",
+    description:
+      "Create and reset an Animation Studio project in either 'vector' or 'bitmap' mode with specified dimensions, FPS, and background.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: {
+          type: "string",
+          enum: ["vector", "bitmap"],
+        },
+        width: {
+          type: "integer",
+          minimum: 16,
+          maximum: 4096,
+        },
+        height: {
+          type: "integer",
+          minimum: 16,
+          maximum: 4096,
+        },
+        fps: {
+          type: "number",
+          minimum: 1,
+          maximum: 60,
+        },
+        loopCount: {
+          type: "integer",
+          minimum: 0,
+          maximum: 65535,
+        },
+        loopMode: {
+          type: "string",
+          enum: ["loop", "once", "pingpong"],
+        },
+        background: {
+          type: "string",
+        },
+        name: {
+          type: "string",
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_get_animation_status",
+    description:
+      "Return the current Animation Studio state including mode, frame count, active frame index, frame delays, trim range, onion skin, and export settings.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: true,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_manage_frame",
+    description:
+      "Manage Animation Studio frames: add, duplicate, delete, reorder, select, update (name/delayMs/easing), reverse, or pingpong.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        action: {
+          type: "string",
+          enum: [
+            "add",
+            "duplicate",
+            "delete",
+            "reorder",
+            "select",
+            "update",
+            "reverse",
+            "pingpong",
+          ],
+        },
+        frameIndex: {
+          type: "integer",
+        },
+        afterIndex: {
+          type: "integer",
+        },
+        fromIndex: {
+          type: "integer",
+        },
+        toIndex: {
+          type: "integer",
+        },
+        name: {
+          type: "string",
+        },
+        delayMs: {
+          type: "integer",
+          minimum: 20,
+          maximum: 10000,
+        },
+        easing: {
+          type: "string",
+          enum: ["linear", "ease-in", "ease-out", "ease-in-out", "step"],
+        },
+      },
+      required: ["action"],
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_tween",
+    description:
+      "Generate N Inkscape-interpolated in-between frames (morphing paths, transforms, geometry, colors) between two Vector Animation keyframes, optionally along a curved trajectoryPath.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fromIndex: {
+          type: "integer",
+          minimum: 0,
+        },
+        toIndex: {
+          type: "integer",
+          minimum: 0,
+        },
+        steps: {
+          type: "integer",
+          minimum: 1,
+          maximum: 60,
+        },
+        easing: {
+          type: "string",
+          enum: ["linear", "ease-in", "ease-out", "ease-in-out", "step"],
+        },
+        trajectoryPath: {
+          type: "string",
+        },
+        equidistant: {
+          type: "boolean",
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_trim",
+    description:
+      "Set the Animation Studio [trimStart, trimEnd] frame range and optionally apply trim destructively.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        trimStart: {
+          type: "integer",
+          minimum: 0,
+        },
+        trimEnd: {
+          type: "integer",
+          minimum: 0,
+        },
+        apply: {
+          type: "boolean",
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_playback",
+    description:
+      "Control Animation Studio playback (play, pause, stop, seek, set_timing) including FPS, loopMode, loopCount, and speedMultiplier.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        action: {
+          type: "string",
+          enum: ["play", "pause", "stop", "seek", "set_timing"],
+        },
+        frameIndex: {
+          type: "integer",
+          minimum: 0,
+        },
+        fps: {
+          type: "number",
+          minimum: 1,
+          maximum: 60,
+        },
+        loopCount: {
+          type: "integer",
+          minimum: 0,
+          maximum: 65535,
+        },
+        loopMode: {
+          type: "string",
+          enum: ["loop", "once", "pingpong"],
+        },
+        speedMultiplier: {
+          type: "number",
+          enum: [0.25, 0.5, 1, 2, 4],
+        },
+        applyFpsToAllFrames: {
+          type: "boolean",
+        },
+      },
+      required: ["action"],
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_capture_studio",
+    description:
+      "Capture the current Vector Studio or Bitmap Studio artwork into the Animation Studio timeline as a new frame.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        source: {
+          type: "string",
+          enum: ["vector", "bitmap"],
+        },
+        insertAfterActive: {
+          type: "boolean",
+        },
+        name: {
+          type: "string",
+        },
+        delayMs: {
+          type: "integer",
+          minimum: 20,
+          maximum: 10000,
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_animation_rasterize_to_bitmap",
+    description:
+      "Rasterize a Vector Animation into Bitmap Animation frames at the specified dimensions.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        width: {
+          type: "integer",
+          minimum: 16,
+          maximum: 4096,
+        },
+        height: {
+          type: "integer",
+          minimum: 16,
+          maximum: 4096,
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_export_animated_svg",
+    description:
+      "Export the active Vector Animation as an Animated SVG (SMIL or CSS @keyframes), optionally saving to OPFS.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        engine: {
+          type: "string",
+          enum: ["smil", "css"],
+        },
+        interpolate: {
+          type: "boolean",
+        },
+        includeBackgroundRect: {
+          type: "boolean",
+        },
+        saveToWorkspace: {
+          type: "boolean",
+        },
+        filename: {
+          type: "string",
+        },
+        conversationId: {
+          type: "string",
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: true,
+      consequentialHint: false,
+    },
+  },
+  {
+    name: "scdraw_export_animation",
+    description:
+      "Render and export the active Animation Studio timeline as GIF (GIMP CIE Lab + delta optimize or Gifski + Gifsicle), APNG, Animated SVG, WebM, MP4, or PNG Sprite Sheet.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        format: {
+          type: "string",
+          enum: ["gif", "apng", "svg", "webm", "mp4", "spritesheet"],
+        },
+        gifEngine: {
+          type: "string",
+          enum: ["native", "gifski"],
+        },
+        dither: {
+          type: "string",
+          enum: [
+            "bayer",
+            "floyd-steinberg",
+            "floyd-steinberg-low-bleed",
+            "none",
+          ],
+        },
+        colors: {
+          type: "integer",
+          minimum: 2,
+          maximum: 256,
+        },
+        optimizeDelta: {
+          type: "boolean",
+        },
+        quality: {
+          type: "integer",
+          minimum: 1,
+          maximum: 100,
+        },
+        gifsicleLossy: {
+          type: "integer",
+          minimum: 0,
+          maximum: 200,
+        },
+        resizeMax: {
+          type: "integer",
+          minimum: 0,
+          maximum: 4096,
+        },
+        saveToWorkspace: {
+          type: "boolean",
+        },
+        filename: {
+          type: "string",
+        },
+        conversationId: {
+          type: "string",
+        },
+      },
+      additionalProperties: false,
+    },
+    annotations: {
+      readOnlyHint: false,
+      consequentialHint: false,
+    },
+  },
 ];

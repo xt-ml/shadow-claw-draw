@@ -11,8 +11,10 @@
 
 - [Vector Studio](https://xt-ml.github.io/shadow-claw-draw/main/): SVG path, shape, layer, Bezier node, and XML vector editor
 - [Bitmap Studio](https://xt-ml.github.io/shadow-claw-draw/main/bitmap/): Multi-layer raster painting, GIMP-inspired blend modes & selections/clipboard, and Canvas filter pipeline
-- [Architecture & Tools](https://xt-ml.github.io/shadow-claw-draw/main/architecture/): System design, 10 Web Components, 26 WebMCP tools, and extensibility guide
+- [Animation Studio](https://xt-ml.github.io/shadow-claw-draw/main/animation/): Frame/keyframe Vector & Bitmap animation, Inkscape path-morph tweening, GIFWorks capture/trim, and offline GIMP GIF/APNG/Animated SVG export
+- [Architecture & Tools](https://xt-ml.github.io/shadow-claw-draw/main/architecture/): System design, 15 Web Components, 36 WebMCP tools, and extensibility guide
 - [Vector Studio Tools & Pen Editing](https://xt-ml.github.io/shadow-claw-draw/main/vector-studio-tools/): Complete reference for all 13 vector tools, Bezier nodes, Inspector, and shortcuts
 - [Bitmap Studio Tools & Pixel Painting](https://xt-ml.github.io/shadow-claw-draw/main/bitmap-studio-tools/): Complete reference for all 8 bitmap tools, moved-layer coordinates, selections/clipboard, filters, and transforms
-- [Porting & Attribution](https://xt-ml.github.io/shadow-claw-draw/main/porting-and-attribution/): Upstream provenance (Inkscape, GIMP, x-canvas-image-manipulation, shadow-claw-daw)
+- [Animation Studio Tools & Export](https://xt-ml.github.io/shadow-claw-draw/main/animation-studio-tools/): Keyframes, tweening, capture, trim, and GIF/APNG/SVG/WebM/MP4/Sprite Sheet export
+- [Porting & Attribution](https://xt-ml.github.io/shadow-claw-draw/main/porting-and-attribution/): Upstream provenance (Inkscape, GIMP, GIFWorks, x-canvas-image-manipulation, shadow-claw-daw)
 - [Memory](https://xt-ml.github.io/shadow-claw-draw/main/memory/): Persistent site memory

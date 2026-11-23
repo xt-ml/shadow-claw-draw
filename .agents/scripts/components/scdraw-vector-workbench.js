@@ -385,6 +385,16 @@ export class DrawVectorWorkbenchElement extends BaseElement {
       }
     });
 
+    root
+      .getElementById("scdraw-vec-send-anim")
+      ?.addEventListener("click", () => {
+        try {
+          scdraw.captureCurrentStudioToAnimationFrame({ source: "vector" });
+        } catch (err) {
+          scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
+        }
+      });
+
     for (const btn of root.querySelectorAll(".scdraw-vector-wb__tab")) {
       btn.addEventListener("click", () => {
         this._setMobileTab(btn.dataset.tab);
@@ -422,6 +432,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     const basePath = getAppBasePath();
     const vectorHref = `${basePath}main/`;
     const bitmapHref = `${basePath}main/bitmap/`;
+    const animHref = `${basePath}main/animation/`;
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -776,6 +787,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
               <a class="scdraw-studio-switch__item" href="${vectorHref}" data-route="/main/" aria-current="page">Vector</a>
               <a class="scdraw-studio-switch__item" href="${bitmapHref}" data-route="/main/bitmap/">Bitmap</a>
+              <a class="scdraw-studio-switch__item" href="${animHref}" data-route="/main/animation/">Animation</a>
             </nav>
             <div class="scdraw-vector-wb__quick-actions">
               <button type="button" id="scdraw-btn-undo" class="scdraw-btn scdraw-btn--sm" aria-label="Undo">Undo</button>
@@ -857,6 +869,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
               <button type="button" id="scdraw-btn-zoom-out" class="scdraw-btn scdraw-btn--sm" aria-label="Zoom out">−</button>
               <button type="button" id="scdraw-zoom-readout" class="scdraw-btn scdraw-btn--sm" aria-label="Reset zoom">100%</button>
               <button type="button" id="scdraw-btn-zoom-in" class="scdraw-btn scdraw-btn--sm" aria-label="Zoom in">+</button>
+              <button type="button" id="scdraw-vec-send-anim" class="scdraw-btn scdraw-btn--sm">Send to Anim</button>
             </div>
           </div>
         </header>

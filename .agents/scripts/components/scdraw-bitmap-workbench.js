@@ -448,6 +448,16 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
       }
     });
 
+    root
+      .getElementById("scdraw-bmp-send-anim")
+      ?.addEventListener("click", () => {
+        try {
+          scdraw.captureCurrentStudioToAnimationFrame({ source: "bitmap" });
+        } catch (err) {
+          scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
+        }
+      });
+
     root.getElementById("scdraw-bmp-sel-all")?.addEventListener("click", () => {
       scdraw.dispatchBitmapCommand({ type: "select_all" });
       scdraw.statusMessage.set("Selected entire canvas");
@@ -568,6 +578,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     const basePath = getAppBasePath();
     const vectorHref = `${basePath}main/`;
     const bitmapHref = `${basePath}main/bitmap/`;
+    const animHref = `${basePath}main/animation/`;
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -921,6 +932,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
               <a class="scdraw-studio-switch__item" href="${vectorHref}" data-route="/main/">Vector</a>
               <a class="scdraw-studio-switch__item" href="${bitmapHref}" data-route="/main/bitmap/" aria-current="page">Bitmap</a>
+              <a class="scdraw-studio-switch__item" href="${animHref}" data-route="/main/animation/">Animation</a>
             </nav>
             <div class="scdraw-bitmap-wb__quick-actions">
               <button type="button" id="scdraw-bmp-undo" class="scdraw-btn scdraw-btn--sm" aria-label="Undo">Undo</button>
@@ -1011,6 +1023,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
               <button type="button" id="scdraw-bmp-zoom-in" class="scdraw-btn scdraw-btn--sm" aria-label="Zoom in">+</button>
               <button type="button" id="scdraw-pull-vector" class="scdraw-btn scdraw-btn--sm">Pull Vector</button>
               <button type="button" id="scdraw-push-vector" class="scdraw-btn scdraw-btn--sm">Send Vector</button>
+              <button type="button" id="scdraw-bmp-send-anim" class="scdraw-btn scdraw-btn--sm">Send to Anim</button>
             </div>
           </div>
         </header>

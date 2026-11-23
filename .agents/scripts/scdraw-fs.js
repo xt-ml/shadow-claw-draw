@@ -245,12 +245,48 @@ export function classifyDrawFile(filename) {
   if (lower.endsWith(".svg")) {
     return { format: "svg", isVector: true, isBitmap: false, isProject: true };
   }
+  if (lower.endsWith(".scdraw-anim.json")) {
+    return {
+      format: "scdraw-anim-json",
+      isVector: false,
+      isBitmap: false,
+      isProject: true,
+      isAnimation: true,
+    };
+  }
   if (lower.endsWith(".scdraw.json") || lower.endsWith(".json")) {
     return {
       format: "scdraw-json",
       isVector: false,
       isBitmap: false,
       isProject: true,
+    };
+  }
+  if (lower.endsWith(".gif")) {
+    return {
+      format: "gif",
+      isVector: false,
+      isBitmap: true,
+      isProject: false,
+      isAnimation: true,
+    };
+  }
+  if (lower.endsWith(".apng")) {
+    return {
+      format: "apng",
+      isVector: false,
+      isBitmap: true,
+      isProject: false,
+      isAnimation: true,
+    };
+  }
+  if (lower.endsWith(".webm") || lower.endsWith(".mp4")) {
+    return {
+      format: lower.endsWith(".mp4") ? "mp4" : "webm",
+      isVector: false,
+      isBitmap: false,
+      isProject: false,
+      isAnimation: true,
     };
   }
   if (
@@ -285,6 +321,9 @@ export function formatFileSize(bytes) {
 export function getDrawFileIcon(filename) {
   const { format, isBitmap } = classifyDrawFile(filename);
   if (format === "svg") return "✒️";
+  if (format === "scdraw-anim-json" || format === "gif" || format === "apng")
+    return "🎞️";
+  if (format === "webm" || format === "mp4") return "🎬";
   if (format === "scdraw-json") return "📐";
   if (isBitmap) return "🖼️";
   return "📁";

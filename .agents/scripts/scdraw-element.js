@@ -14,3 +14,11 @@ export { DrawVectorWorkbenchElement } from "./components/scdraw-vector-workbench
 export { DrawFilterPanelElement } from "./components/scdraw-filter-panel.js";
 export { DrawBitmapCanvasElement } from "./components/scdraw-bitmap-canvas.js";
 export { DrawBitmapWorkbenchElement } from "./components/scdraw-bitmap-workbench.js";
+export { DrawTimelineElement } from "./components/scdraw-timeline.js";
+export { DrawAnimationStageElement } from "./components/scdraw-animation-stage.js";
+export { DrawExportPanelElement } from "./components/scdraw-export-panel.js";
+export { DrawCapturePanelElement } from "./components/scdraw-capture-panel.js";
+export {
+  DrawAnimationWorkbenchElement,
+  resolveAnimationResponsiveLayout,
+} from "./components/scdraw-animation-workbench.js";
