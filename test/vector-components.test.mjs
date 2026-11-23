@@ -15,10 +15,13 @@ import { DrawInspectorElement } from "../.agents/scripts/components/scdraw-inspe
 import { DrawStatusBarElement } from "../.agents/scripts/components/scdraw-statusbar.js";
 import {
   DrawVectorCanvasElement,
+  PEN_DOUBLE_TAP_DIST_PX,
+  PEN_DOUBLE_TAP_MS,
   clientToSvgPoint,
   computeMarqueeSelection,
   computeKeyboardNudge,
   computeFitScale,
+  processPenPointerDown,
 } from "../.agents/scripts/components/scdraw-vector-canvas.js";
 import {
   DrawVectorWorkbenchElement,
@@ -222,6 +225,116 @@ test("Vector Canvas helpers: clientToSvgPoint, computeMarqueeSelection, computeK
   assert.deepEqual(computeKeyboardNudge("ArrowRight", false), { dx: 1, dy: 0 });
   assert.deepEqual(computeKeyboardNudge("ArrowUp", true), { dx: 0, dy: -10 });
   assert.equal(computeKeyboardNudge("Enter", false), null);
+});
+
+test("Vector Canvas Pen tool: processPenPointerDown handles single taps, mouse double-click, and iPad touch double-tap identically to Enter", () => {
+  assert.equal(typeof PEN_DOUBLE_TAP_MS, "number");
+  assert.equal(typeof PEN_DOUBLE_TAP_DIST_PX, "number");
+
+  // 1. Place anchor 1 at (100, 100), t=1000
+  const s1 = processPenPointerDown({
+    penNodes: [],
+    pt: { x: 100, y: 100 },
+    clientX: 100,
+    clientY: 100,
+    timeStamp: 1000,
+    detail: 1,
+    lastTap: null,
+  });
+  assert.deepEqual(s1.nextNodes, [{ x: 100, y: 100 }]);
+  assert.equal(s1.shouldFinish, false);
+
+  // 2. Rapid double-tap on anchor 1 when only 1 node exists -> no duplicate node, does not finish
+  const s1Double = processPenPointerDown({
+    penNodes: s1.nextNodes,
+    pt: { x: 101, y: 100 },
+    clientX: 102,
+    clientY: 100,
+    timeStamp: 1150,
+    detail: 1,
+    lastTap: s1.nextLastTap,
+  });
+  assert.deepEqual(s1Double.nextNodes, [{ x: 100, y: 100 }]);
+  assert.equal(s1Double.shouldFinish, false);
+
+  // 3. Place anchor 2 at (240, 180), t=1600
+  const s2 = processPenPointerDown({
+    penNodes: s1Double.nextNodes,
+    pt: { x: 240, y: 180 },
+    clientX: 240,
+    clientY: 180,
+    timeStamp: 1600,
+    detail: 1,
+    lastTap: s1Double.nextLastTap,
+  });
+  assert.deepEqual(s2.nextNodes, [
+    { x: 100, y: 100 },
+    { x: 240, y: 180 },
+  ]);
+  assert.equal(s2.shouldFinish, false);
+
+  // 4. iPad double-tap on anchor 2 (dt=160 <= PEN_DOUBLE_TAP_MS, detail=0 or 1, within dist)
+  const ipadDouble = processPenPointerDown({
+    penNodes: s2.nextNodes,
+    pt: { x: 242, y: 181 },
+    clientX: 243,
+    clientY: 181,
+    timeStamp: 1760,
+    detail: 0,
+    lastTap: s2.nextLastTap,
+  });
+  assert.equal(ipadDouble.shouldFinish, true);
+  assert.deepEqual(ipadDouble.nextNodes, [
+    { x: 100, y: 100 },
+    { x: 240, y: 180 },
+  ]);
+
+  // 5. Mouse double-click (detail=2) on anchor 2 -> finishes without adding duplicate 3rd node
+  const mouseDouble = processPenPointerDown({
+    penNodes: s2.nextNodes,
+    pt: { x: 240, y: 180 },
+    clientX: 240,
+    clientY: 180,
+    timeStamp: 2500,
+    detail: 2,
+    lastTap: s2.nextLastTap,
+  });
+  assert.equal(mouseDouble.shouldFinish, true);
+  assert.deepEqual(mouseDouble.nextNodes, [
+    { x: 100, y: 100 },
+    { x: 240, y: 180 },
+  ]);
+
+  // 6. Pause (> PEN_DOUBLE_TAP_MS), then double-tap on existing last anchor (240, 180)
+  const pauseTap1 = processPenPointerDown({
+    penNodes: s2.nextNodes,
+    pt: { x: 240, y: 180 },
+    clientX: 240,
+    clientY: 180,
+    timeStamp: 4000,
+    detail: 1,
+    lastTap: s2.nextLastTap,
+  });
+  assert.equal(pauseTap1.shouldFinish, false);
+  assert.deepEqual(pauseTap1.nextNodes, [
+    { x: 100, y: 100 },
+    { x: 240, y: 180 },
+  ]);
+
+  const pauseTap2 = processPenPointerDown({
+    penNodes: pauseTap1.nextNodes,
+    pt: { x: 240, y: 180 },
+    clientX: 241,
+    clientY: 180,
+    timeStamp: 4140,
+    detail: 1,
+    lastTap: pauseTap1.nextLastTap,
+  });
+  assert.equal(pauseTap2.shouldFinish, true);
+  assert.deepEqual(pauseTap2.nextNodes, [
+    { x: 100, y: 100 },
+    { x: 240, y: 180 },
+  ]);
 });
 
 test("Vector Workbench layout resolver: mobile-first stacked vs tablet/desktop studio grid", () => {

@@ -84,6 +84,66 @@ export function computeKeyboardNudge(key, shiftKey = false) {
   }
 }
 
+export const PEN_DOUBLE_TAP_MS = 400;
+export const PEN_DOUBLE_TAP_DIST_PX = 28;
+export const PEN_COINCIDENT_NODE_EPSILON = 2;
+
+export function processPenPointerDown({
+  penNodes = [],
+  pt,
+  clientX = 0,
+  clientY = 0,
+  timeStamp = 0,
+  detail = 1,
+  lastTap = null,
+} = {}) {
+  const nodes = [...penNodes];
+  const now = Number(timeStamp) > 0 ? Number(timeStamp) : Date.now();
+  const dt = lastTap ? now - lastTap.timeStamp : Infinity;
+  const clientDist = lastTap
+    ? Math.hypot(clientX - lastTap.clientX, clientY - lastTap.clientY)
+    : Infinity;
+  const lastNode = nodes.length > 0 ? nodes[nodes.length - 1] : null;
+  const isCoincidentWithLastNode = Boolean(
+    lastNode &&
+    pt &&
+    Math.hypot(pt.x - lastNode.x, pt.y - lastNode.y) <=
+      PEN_COINCIDENT_NODE_EPSILON,
+  );
+
+  const isDoubleTap =
+    (dt >= 0 &&
+      dt <= PEN_DOUBLE_TAP_MS &&
+      clientDist <= PEN_DOUBLE_TAP_DIST_PX) ||
+    (Number(detail) >= 2 &&
+      (clientDist <= PEN_DOUBLE_TAP_DIST_PX || isCoincidentWithLastNode));
+
+  if (isDoubleTap) {
+    if (nodes.length >= 2) {
+      return {
+        nextNodes: nodes,
+        shouldFinish: true,
+        nextLastTap: null,
+      };
+    }
+    return {
+      nextNodes: nodes,
+      shouldFinish: false,
+      nextLastTap: { timeStamp: now, clientX, clientY, pt },
+    };
+  }
+
+  if (!isCoincidentWithLastNode && pt) {
+    nodes.push({ x: pt.x, y: pt.y });
+  }
+
+  return {
+    nextNodes: nodes,
+    shouldFinish: false,
+    nextLastTap: { timeStamp: now, clientX, clientY, pt },
+  };
+}
+
 export class DrawVectorCanvasElement extends BaseElement {
   constructor() {
     super();
@@ -95,6 +155,7 @@ export class DrawVectorCanvasElement extends BaseElement {
     this._fitScale = 1;
     this._gesture = null;
     this._penNodes = [];
+    this._lastPenTap = null;
     this._pendingTextPos = null;
   }
 
@@ -280,8 +341,7 @@ export class DrawVectorCanvasElement extends BaseElement {
 
   _finishPenPath() {
     if (this._penNodes.length < 2) {
-      this._penNodes = [];
-      return;
+      return false;
     }
     const nodes = this._penNodes.map((p) => ({
       x: p.x,
@@ -291,6 +351,7 @@ export class DrawVectorCanvasElement extends BaseElement {
       mode: "cusp",
     }));
     this._penNodes = [];
+    this._lastPenTap = null;
     scdraw.dispatchVectorCommand({
       type: "add_element",
       layerId: scdraw.activeLayerId.get(),
@@ -303,6 +364,8 @@ export class DrawVectorCanvasElement extends BaseElement {
         strokeWidth: scdraw.strokeWidth.get(),
       },
     });
+    scdraw.statusMessage.set(`Pen path created (${nodes.length} anchors)`);
+    return true;
   }
 
   _commitTextInput() {
@@ -382,7 +445,22 @@ export class DrawVectorCanvasElement extends BaseElement {
       }
 
       if (tool === "pen") {
-        this._penNodes.push(pt);
+        e.preventDefault?.();
+        const { nextNodes, shouldFinish, nextLastTap } = processPenPointerDown({
+          penNodes: this._penNodes,
+          pt,
+          clientX: e.clientX ?? 0,
+          clientY: e.clientY ?? 0,
+          timeStamp: e.timeStamp || Date.now(),
+          detail: e.detail ?? 1,
+          lastTap: this._lastPenTap,
+        });
+        this._penNodes = nextNodes;
+        this._lastPenTap = nextLastTap;
+        if (shouldFinish) {
+          this._finishPenPath();
+          return;
+        }
         scdraw.statusMessage.set(
           `Pen: ${this._penNodes.length} anchor(s) — double-click or press Enter to finish`,
         );
@@ -731,7 +809,10 @@ export class DrawVectorCanvasElement extends BaseElement {
     stage.addEventListener("pointerup", endGesture);
     stage.addEventListener("pointercancel", endGesture);
     stage.addEventListener("dblclick", () => {
-      if (scdraw.activeVectorTool.get() === "pen") {
+      if (
+        scdraw.activeVectorTool.get() === "pen" &&
+        this._penNodes.length >= 2
+      ) {
         this._finishPenPath();
       }
     });
@@ -780,6 +861,22 @@ export class DrawVectorCanvasElement extends BaseElement {
       if (e.key === "Enter" && this._penNodes.length >= 2) {
         e.preventDefault();
         this._finishPenPath();
+        return;
+      }
+      if (e.key === "Escape" && this._penNodes.length > 0) {
+        e.preventDefault();
+        this._penNodes = [];
+        this._lastPenTap = null;
+        scdraw.statusMessage.set("Canceled pen path");
+        this._renderStage({
+          doc: scdraw.vectorDoc.get(),
+          sel: scdraw.selectedIds.get(),
+          tool: scdraw.activeVectorTool.get(),
+          zoom: scdraw.zoom.get(),
+          pan: scdraw.pan.get(),
+          grid: scdraw.gridEnabled.get(),
+          gridSize: scdraw.gridSize.get(),
+        });
         return;
       }
 
@@ -858,6 +955,9 @@ export class DrawVectorCanvasElement extends BaseElement {
           display: flex;
           padding: 0.75rem;
           touch-action: none;
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-touch-callout: none;
           background-image:
             linear-gradient(45deg, rgba(148,163,184,0.06) 25%, transparent 25%),
             linear-gradient(-45deg, rgba(148,163,184,0.06) 25%, transparent 25%),

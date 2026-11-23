@@ -248,7 +248,7 @@
       "name": "scdraw-vector-canvas",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-canvas.",
       "url": "../../.agents/scripts/components/scdraw-vector-canvas.js",
-      "digest": "sha256:fb46703729c6138c58c729e8946fbe9d2bf47a1d4a921953b1cc6980ef92ba6a"
+      "digest": "sha256:0486a23b0fd499fabdd677b2442ee1e3f4cec8dc00fd43f6b26fd4ba9ef475b1"
     },
     {
       "name": "scdraw-vector-workbench",
