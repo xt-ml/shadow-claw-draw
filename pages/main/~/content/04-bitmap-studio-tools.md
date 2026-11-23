@@ -1,7 +1,7 @@
 ---
 title: "Bitmap Studio Tools & Pixel Painting"
 created: "2026-11-22T16:30:00Z"
-updated: "2026-11-22T16:55:00Z"
+updated: "2026-11-23T12:40:00Z"
 slug: "bitmap-studio-tools"
 ---
 
@@ -30,7 +30,7 @@ All **8 Bitmap Tools** reside in `<scdraw-toolbox mode="bitmap">`, paired with *
 
 ## Brush Controls, Image Import & History
 
-- **Brush Sliders** (in topbar secondary strip / `Tools ▾` mobile drawer):
+- **Brush Sliders** (in topbar secondary strip / `More ▾` drawer):
   - **Size**: `1–128 px` (default `12 px`)
   - **Hard**: `0.05–1.00` radial falloff (`0.8` default)
   - **Op**: `0.05–1.00` stroke opacity (`1.0` default)
@@ -130,11 +130,12 @@ Transform & pixel buttons at the bottom of the panel:
 
 ## Full Screen Mode, Mobile Tabs & Cross-Studio Bridge
 
-- **Full Screen Mode**: Click **Full Screen** (`#scdraw-bmp-fullscreen`) to hide app navigation and maximize canvas working room across `100dvw × 100dvh`. Pressing `Escape` first clears any active bitmap selection before a second `Escape` exits CSS Full Screen.
+- **Topbar & Full Screen Mode**: Switch between `Vector` | `Bitmap` | `Animation`, toggle topbar panels (`Tools`, `Layers`, `Filters`), or click **Full Screen** (`#scdraw-bmp-fullscreen`) to hide app navigation and maximize canvas working room across `100dvw × 100dvh`. Pressing `Escape` first clears any active bitmap selection before a second `Escape` exits CSS Full Screen.
 - **Mobile Navigation**: Switches cleanly between `Canvas`, `Filters`, and `Layers` tabs above `<scdraw-statusbar>` (which shows cursor `(x, y px)`, zoom, active tool, `Sel: WxH`, and `Clip: WxH`).
 - **Cross-Studio Bridge**:
   - **Pull Vector** (`scdraw_rasterize_vector_to_bitmap`): Renders Vector Studio SVG into a new Bitmap raster layer.
   - **Send Vector** (`scdraw_embed_bitmap_in_vector`): Flattens Bitmap Studio (including filters) to PNG and embeds it into Vector Studio as an `<image>` layer.
+  - **Send to Anim** (`scdraw_animation_capture_studio`): Captures Bitmap Studio into Animation Studio as a timeline frame.
 
 ---
 
@@ -162,12 +163,13 @@ Transform & pixel buttons at the bottom of the panel:
 ## Declarative WebMCP Automation
 
 AI agents can inspect and drive every Bitmap Studio feature using:
-`scdraw_get_bitmap_status` (returns dimensions, `selection`, `hasClipboard`, `clipboard`, and per-layer `width`/`height`/`offsetX`/`offsetY`), `scdraw_new_bitmap`, `scdraw_bitmap_draw_stroke`, `scdraw_bitmap_fill`, `scdraw_bitmap_selection`, `scdraw_bitmap_set_filter`, `scdraw_bitmap_transform`, `scdraw_bitmap_manage_layer`, `scdraw_export_png`, `scdraw_rasterize_vector_to_bitmap`, and `scdraw_embed_bitmap_in_vector`.
+`scdraw_get_bitmap_status` (returns dimensions, `selection`, `hasClipboard`, `clipboard`, and per-layer `width`/`height`/`offsetX`/`offsetY`), `scdraw_new_bitmap`, `scdraw_bitmap_draw_stroke`, `scdraw_bitmap_fill`, `scdraw_bitmap_selection`, `scdraw_bitmap_set_filter`, `scdraw_bitmap_transform`, `scdraw_bitmap_manage_layer`, `scdraw_export_png`, `scdraw_rasterize_vector_to_bitmap`, `scdraw_embed_bitmap_in_vector`, and `scdraw_animation_capture_studio`.
 
 ---
 
 ## See Also
 
-- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 26 `scdraw_*` tools, and extension workflow
+- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 36 `scdraw_*` tools, and extension workflow
 - [Vector Studio Tools & Pen Editing](03-vector-studio-tools.md) (`/main/vector-studio-tools/`) — Vector paths, Bezier nodes, Inspector, and XML workflow
-- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — GIMP, Inkscape, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance
+- [Animation Studio Tools & Export](06-animation-studio-tools.md) (`/main/animation-studio-tools/`) — Keyframes, tweening, capture, trim, and GIF/APNG/SVG export
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — GIMP, Inkscape, GIFWorks, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance

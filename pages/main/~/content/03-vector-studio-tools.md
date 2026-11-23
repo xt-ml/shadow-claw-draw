@@ -1,7 +1,7 @@
 ---
 title: "Vector Studio Tools & Pen Editing"
 created: "2026-11-22T16:00:00Z"
-updated: "2026-11-22T16:55:00Z"
+updated: "2026-11-23T12:40:00Z"
 slug: "vector-studio-tools"
 ---
 
@@ -94,9 +94,9 @@ When **one or more elements are selected**, `<scdraw-inspector>` provides:
 
 ## Topbar, Full Screen Mode & Mobile Ergonomics
 
-- **Primary Actions**: `Vector` | `Bitmap` switcher, `Undo`, `Redo` (history capped at `MAX_HISTORY = 100`), `Save` (writes `.svg` to OPFS conversation storage), and **Full Screen** (`#scdraw-btn-fullscreen`).
+- **Primary Actions**: `Vector` | `Bitmap` | `Animation` switcher, `Undo`, `Redo` (history capped at `MAX_HISTORY = 100`), `Save` (writes `.svg` to OPFS conversation storage), **Full Screen** (`#scdraw-btn-fullscreen`), and panel toggles (`Tools`, `Layers`, `Inspector`).
 - **Full Screen Mode**: Toggles the Fullscreen API when supported or expands into a viewport-filling `100dvw × 100dvh` overlay (with host `.page` `transform` neutralization so sidebar/header navigation stays hidden until you click **Exit Full Screen** or press `Escape`).
-- **Secondary Tools Bar (`Tools ▾` on mobile, always open at `>= 1024px`)**: `New`, `Import SVG`, `Export SVG`, workspace filename input (`drawing.svg`), `Grid` toggle (`16px` grid), `Snap` toggle, and zoom controls (`−`, `100%` reset, `+`).
+- **Secondary Tools Bar (`More ▾` on mobile/tablet, always open at `>= 1024px`)**: `New`, `Import SVG`, `Export SVG`, workspace filename input (`drawing.svg`), `Grid` toggle (`16px` grid), `Snap` toggle, zoom controls (`−`, `100%` reset, `+`), and `Send to Anim` (captures current Vector artwork into Animation Studio).
 - **Mobile Layout (`< 640px`)**: Shows hero SVG canvas above a horizontally scrollable toolstrip and 4-tab bar (`Canvas | Layers | Inspector | SVG XML`), with `data-no-swipe` / `data-no-nav` guards blocking accidental page swipes.
 
 ---
@@ -126,12 +126,13 @@ Agents can inspect, script, or compose illustrations programmatically without po
 - `scdraw_new_vector` / `scdraw_get_vector` (`"json"` or `"svg"`) / `scdraw_import_svg` / `scdraw_export_svg`
 - `scdraw_add_shape` (`rect`, `ellipse`, `circle`, `line`, `polygon`, `star`, `polyline`, `path`, `text`)
 - `scdraw_update_element`, `scdraw_delete_elements`, `scdraw_transform_elements` (`move`, `transform`, `align`, `distribute`, `group`, `ungroup`, `z_order`)
-- `scdraw_manage_layer`, `scdraw_save_file`, `scdraw_load_file`, `scdraw_rasterize_vector_to_bitmap`, `scdraw_embed_bitmap_in_vector`
+- `scdraw_manage_layer`, `scdraw_save_file`, `scdraw_load_file`, `scdraw_rasterize_vector_to_bitmap`, `scdraw_embed_bitmap_in_vector`, `scdraw_animation_capture_studio`
 
 ---
 
 ## See Also
 
-- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 26 `scdraw_*` tools, and extension workflow
+- [Architecture & Declarative WebMCP Tools](02-architecture-and-tools.md) (`/main/architecture/`) — System architecture, all 36 `scdraw_*` tools, and extension workflow
 - [Bitmap Studio Tools & Pixel Painting](04-bitmap-studio-tools.md) (`/main/bitmap-studio-tools/`) — Raster layers, moved-layer coordinates, selections/clipboard, and 10-group filter pipeline
-- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance
+- [Animation Studio Tools & Export](06-animation-studio-tools.md) (`/main/animation-studio-tools/`) — Keyframes, tweening, capture, trim, and GIF/APNG/SVG export
+- [Porting & Upstream Attribution](05-porting-and-attribution.md) (`/main/porting-and-attribution/`) — Inkscape, GIMP, GIFWorks, `<x-canvas-image-manipulation>`, and `shadow-claw-daw` provenance

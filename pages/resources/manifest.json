@@ -1,6 +1,6 @@
 {
   "background_color": "#0f1419",
-  "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
+  "description": "In-browser Vector, Bitmap & Animation Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
   "display": "standalone",
   "id": "shadow-claw-draw",
   "name": "ShadowClaw Draw",
@@ -11,7 +11,7 @@
   "file_handlers": [
     {
       "action": "./",
-      "name": "ShadowClaw Draw Vector & Bitmap Files",
+      "name": "ShadowClaw Draw Vector, Bitmap & Animation Files",
       "icons": [
         {
           "src": "assets/icons/192.png",
@@ -134,7 +134,7 @@
   "screenshots": [
     {
       "form_factor": "wide",
-      "label": "ShadowClaw Draw Vector & Bitmap Studio",
+      "label": "ShadowClaw Draw Vector, Bitmap & Animation Studio",
       "sizes": "1024x768",
       "src": "assets/screenshots/scdraw-studio-1024x768.png",
       "type": "image/png"

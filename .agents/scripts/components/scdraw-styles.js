@@ -344,7 +344,7 @@ const ancestorRefCounts = new WeakMap();
 /**
  * Suppresses ShadowClaw Pages horizontal swipe and arrow-key navigation across
  * the workbench host and its enclosing page viewer containers while mounted.
- * Uses WeakMap reference counting on shared ancestors so Vector <-> Bitmap
+ * Uses WeakMap reference counting on shared ancestors so Vector <-> Bitmap <-> Animation
  * transitions keep protection intact and clean teardown restores prior state.
  *
  * @param {HTMLElement} host

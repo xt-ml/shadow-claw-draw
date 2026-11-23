@@ -1,7 +1,7 @@
 {
   "name": "shadow-claw-draw",
   "version": "1.0.0",
-  "description": "ShadowClaw Draw — In-browser Vector & Bitmap Drawing Studio powered by ShadowClaw.",
+  "description": "ShadowClaw Draw — In-browser Vector, Bitmap & Animation Studio powered by ShadowClaw.",
   "type": "module",
   "homepage": "https://xt-ml.github.io/shadow-claw-draw/",
   "repository": {
@@ -30,6 +30,9 @@
     "svg",
     "vector",
     "bitmap",
+    "animation",
+    "gif",
+    "apng",
     "canvas",
     "inkscape",
     "gimp",

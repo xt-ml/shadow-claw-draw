@@ -1,7 +1,7 @@
 ---
 title: "Architecture & Declarative WebMCP Tools"
 created: "2026-11-22T15:00:00Z"
-updated: "2026-11-22T16:55:00Z"
+updated: "2026-11-23T12:40:00Z"
 slug: "architecture"
 ---
 
@@ -18,8 +18,8 @@ slug: "architecture"
 ### Responsive Shell, Swipe Guard & Full Screen Mode
 
 - **Mobile-First Container Queries**: Workbenches and `<scdraw-toolbox>` use mobile-first `@container` queries (`min-width: 640px`, `min-width: 1024px`) with `@supports not (container-type: inline-size)` fallbacks, `@media (pointer: coarse)` `44px` minimum touch targets, `touch-action: none` on active drawing surfaces, and `computeFitScale` artboard fitting on load and resize.
-- **Page Swipe Suppression (`installPageSwipeGuard` in `scdraw-styles.js`)**: Uses a `WeakMap` reference counter across `<scdraw-vector-workbench>`, `<scdraw-bitmap-workbench>`, `.scdraw-workbench-page`, `.pages__rendered`, and `.pages__viewer` to maintain `data-no-swipe="true"` and `data-no-nav="true"` so touch panning and marquee drags never trigger accidental page swipes, cleanly restoring prior attributes when leaving drawing pages.
-- **Full Screen Mode (`resolveWorkbenchFullscreenState` & `setupWorkbenchFullscreen`)**: Both studios expose a **Full Screen** / **Exit Full Screen** toggle (`#scdraw-btn-fullscreen` and `#scdraw-bmp-fullscreen`, plus `.toggleFullscreen(force)` and `.isFullscreen` on workbench hosts). When native `requestFullscreen()` is unavailable or rejected (such as iOS Safari), CSS `100dvw × 100dvh` (`100vw × 100vh` fallback) fixed overlay styling takes over while neutralizing any ancestor `.page` `transform` containing block and restoring it cleanly on exit or `dispose()`. Pressing `Escape` cancels active canvas selections or inline text entry first before exiting fullscreen.
+- **Page Swipe Suppression (`installPageSwipeGuard` in `scdraw-styles.js`)**: Uses a `WeakMap` reference counter across `<scdraw-vector-workbench>`, `<scdraw-bitmap-workbench>`, `<scdraw-animation-workbench>`, `.scdraw-workbench-page`, `.pages__rendered`, and `.pages__viewer` to maintain `data-no-swipe="true"` and `data-no-nav="true"` so touch panning and marquee drags never trigger accidental page swipes, cleanly restoring prior attributes when leaving drawing pages.
+- **Full Screen Mode (`resolveWorkbenchFullscreenState` & `setupWorkbenchFullscreen`)**: All three studios expose a **Full Screen** / **Exit Full Screen** toggle (`#scdraw-btn-fullscreen`, `#scdraw-bmp-fullscreen`, and `#scdraw-anim-fullscreen`, plus `.toggleFullscreen(force)` and `.isFullscreen` on workbench hosts). When native `requestFullscreen()` is unavailable or rejected (such as iOS Safari), CSS `100dvw × 100dvh` (`100vw × 100vh` fallback) fixed overlay styling takes over while neutralizing any ancestor `.page` `transform` containing block and restoring it cleanly on exit or `dispose()`. Pressing `Escape` cancels active canvas selections or inline text entry first before exiting fullscreen.
 
 ---
 
@@ -49,10 +49,11 @@ All **15 Web Components** reside in `.agents/scripts/components/` and are barrel
 
 ### Pure Engine, Document Models & Limits
 
-- **Reactive Core (`scdraw-engine.js`, `scdraw-signals.js`, `scdraw-schema.js`)**: Exposes `globalThis.__scdraw` (`DrawEngine`) with separate Vector and Bitmap undo/redo stacks (each capped at `MAX_HISTORY = 100`), canvas dimensions bounded to `MIN_CANVAS_SIZE = 16` through `MAX_CANVAS_SIZE = 4096`, `DEFAULT_CANVAS_WIDTH = 1024`, `DEFAULT_CANVAS_HEIGHT = 768`, and `bitmapClipboard` signal state preserved across undo/redo.
+- **Reactive Core (`scdraw-engine.js`, `scdraw-signals.js`, `scdraw-schema.js`)**: Exposes `globalThis.__scdraw` (`DrawEngine`) with separate Vector, Bitmap, and Animation undo/redo stacks (`MAX_HISTORY = 100` for Vector, Bitmap, and Vector Animation; `MAX_ANIMATION_BITMAP_HISTORY = 25` for Bitmap Animation; `MAX_ANIMATION_FRAMES = 500`), canvas dimensions bounded to `MIN_CANVAS_SIZE = 16` through `MAX_CANVAS_SIZE = 4096` (`DEFAULT_CANVAS_WIDTH = 1024`, `DEFAULT_CANVAS_HEIGHT = 768`; default animation dimensions `800×600` vector / `512×512` bitmap at `12 fps` / `83 ms`), and `bitmapClipboard` signal state preserved across undo/redo.
 - **Vector Model (`scdraw-vector.js`, `scdraw-svg-codec.js`)**: Pure JSON SVG scene graph, Ramer-Douglas-Peucker freehand simplification, Bezier node operations (`cusp`, `smooth`, `symmetric`), alignment/distribution, and XSS-safe W3C SVG serializer/parser (stripping `<script>`, `on*` handlers, and `javascript:` URIs).
 - **Bitmap Model (`scdraw-bitmap.js`, `scdraw-filters.js`)**: Multi-layer `Uint8ClampedArray` compositing with 8 GIMP blend modes (`normal`, `multiply`, `screen`, `overlay`, `darken`, `lighten`, `difference`, `add`), `docToLayerPoint` document-space mapping, `ensureLayerCoversDocRect` non-destructive layer expansion for offset layers, `isDocPointSelected` / `clampSelectionToDoc` rectangular & inverted selection masking, and `extractSelectionPixels` / Cut / Copy / Copy Visible / Paste (`new_layer` default and `into_layer`).
-- **OPFS Storage (`scdraw-fs.js`)**: Safe filename & conversation `groupId` sanitization reading/writing `.svg`, `.png`, and `.scdraw.json` workspace files.
+- **Animation Model & Codecs (`scdraw-animation.js`, `scdraw-tween.js`, `scdraw-quantize.js`, `scdraw-gif-optimize.js`, `scdraw-gif-codec.js`, `scdraw-gif-worker.js`, `scdraw-apng-codec.js`, `scdraw-anim-svg.js`, `scdraw-capture.js`, `scdraw-encoders.js`)**: Structural-sharing frame timeline, Inkscape-inspired cubic Bezier path-morph and equidistant arc-length trajectory tweening, GIMP perceptual CIE L\*a\*b\* box-cut quantization & Bayer/Floyd-Steinberg dithering, delta-frame GIF89a optimization & Web Worker LZW encoder/decoder, pure-JS lossless APNG muxer/demuxer, SMIL/CSS Animated SVG round-trip codec, `MediaRecorder` screen/webcam capture helpers, and unified encoder adapters with optional lazy CDN WASM accelerators.
+- **OPFS Storage (`scdraw-fs.js`)**: Safe filename & conversation `groupId` sanitization reading/writing `.svg`, `.png`, `.webp`, `.jpg`, `.scdraw.json`, `.scdraw-anim.json`, `.gif`, `.apng`, `.webm`, and `.mp4` workspace files.
 
 ---
 
@@ -78,7 +79,7 @@ Indexed agent skills live under `.agents/skills/` (`vector-illustration`, `bitma
    - Add the tool name (`scdraw_*`) to `enabledTools` in `shadow-claw.config.json`.
    - Run `npm run build:tools && npm run check && npm test`.
 2. **Add a UI Component or Workbench Feature**:
-   - Follow `kebab-case` (`scdraw-*.js`), include `SHARED_STYLES` from `scdraw-styles.js`, re-export from `.agents/scripts/scdraw-element.js`, allowlist the custom tag in `shadow-claw.config.json` (`customElements.allowedElements`), and update `bin/check-namespace.mjs` if total component counts change.
+   - Follow `kebab-case` (`scdraw-*.js`), include `SHARED_STYLES` from `scdraw-styles.js`, re-export from `.agents/scripts/scdraw-element.js`, allowlist the custom tag in `shadow-claw.config.json` (`customElements.allowedElements`), and update `test/pages.test.mjs` and documentation if custom elements change.
 3. **Add or Update Skills & Docs**:
    - Author skills in `.agents/skills/<name>/SKILL.md` and run `npm run skills:index`.
    - Register new documentation pages in `pages/resources/routes.json` and `pages/resources/llms.txt` before running `npm run build`.

@@ -1,7 +1,7 @@
 ---
 title: "Porting & Upstream Attribution"
 created: "2026-11-22T15:00:00Z"
-updated: "2026-11-22T16:55:00Z"
+updated: "2026-11-23T12:40:00Z"
 slug: "porting-and-attribution"
 ---
 

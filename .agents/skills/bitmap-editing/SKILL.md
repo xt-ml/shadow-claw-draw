@@ -1,6 +1,6 @@
 ---
 name: bitmap-editing
-description: Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and convert between Vector and Bitmap studios.
+description: Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and bridge across Vector, Bitmap, and Animation studios.
 ---
 
 # Bitmap Editing Skill
@@ -16,4 +16,4 @@ Use this skill when working in **Bitmap Studio** (`/main/bitmap/`) or combining 
 5. Manage rectangular selections and clipboard operations via `scdraw_bitmap_selection` (`set`, `all`, `invert`, `cut`, `copy`, `copy_merged`, `paste`, `delete_pixels`, `fill_pixels`, `clear`).
 6. Apply real-time Canvas filters via `scdraw_bitmap_set_filter` (`blur`, `brightness`, `contrast`, `saturation`, `grayscale`, `hueRotate`, `invert`, `opacity`, `sepia`, `shadowX`, `shadowY`, `shadowBlur`, `shadowColor`, or `reset: true`).
 7. Transform via `scdraw_bitmap_transform` (`crop`, `flip_h`, `flip_v`, `rotate_90`, `rotate_ccw`, `resize`, `desaturate`, `adjust_levels`, `reset`).
-8. Bridge between studios with `scdraw_rasterize_vector_to_bitmap` and `scdraw_embed_bitmap_in_vector`, and export PNG via `scdraw_export_png`.
+8. Bridge across studios with `scdraw_rasterize_vector_to_bitmap`, `scdraw_embed_bitmap_in_vector`, and `scdraw_animation_capture_studio`, and export PNG via `scdraw_export_png`.

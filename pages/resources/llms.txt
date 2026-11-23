@@ -1,6 +1,6 @@
 # [ShadowClaw Draw](https://xt-ml.github.io/shadow-claw-draw/)
 
-> Dual-studio Vector (SVG) & Bitmap (Canvas 2D) graphical drawing application built on ShadowClaw, Web Components, TC39 Signals, and WebMCP.
+> Three-studio Vector (SVG), Bitmap (Canvas 2D) & Animation graphical drawing application built on ShadowClaw, Web Components, TC39 Signals, and WebMCP.
 
 ## Docs
 

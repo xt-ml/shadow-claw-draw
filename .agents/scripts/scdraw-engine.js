@@ -1,9 +1,9 @@
 /**
  * .agents/scripts/scdraw-engine.js
  *
- * Reactive DrawEngine singleton managing Vector Studio state (Pass 1),
- * Bitmap Studio state (Pass 2), dual undo/redo history stacks,
- * Canvas rendering, Vector<->Bitmap bridge, and OPFS I/O.
+ * Reactive DrawEngine singleton managing Vector Studio, Bitmap Studio,
+ * and Animation Studio state, per-studio undo/redo history stacks,
+ * Canvas/SVG rendering, cross-studio bridges, and OPFS I/O.
  */
 
 import { State, batch } from "./scdraw-signals.js";

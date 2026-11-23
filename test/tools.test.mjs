@@ -14,7 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const TOOLS_DIR = resolve(ROOT, ".agents/tools");
 
-test("Tools: all Pass 1 tools exist on disk, match manifest, and start with scdraw_", () => {
+test("Tools: all 36 declarative tools exist on disk, match manifest, and start with scdraw_", () => {
   const expectedTools = [
     "scdraw_get_status",
     "scdraw_new_vector",
@@ -217,7 +217,7 @@ test("Adapter: registerNativeWebMcp registers tools on document.modelContext", a
   };
   try {
     await registerNativeWebMcp();
-    assert.ok(registered.length >= 26);
+    assert.ok(registered.length >= 36);
     assert.ok(registered.some((t) => t.name === "scdraw_add_shape"));
     assert.ok(registered.some((t) => t.name === "scdraw_bitmap_set_filter"));
   } finally {

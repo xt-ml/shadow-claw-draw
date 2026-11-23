@@ -428,6 +428,7 @@ test("Branding & Theme Identity: strictly identifies as ShadowClaw Draw (no temp
   assert.match(notFoundHtml, /<title>ShadowClaw Draw - Not Found<\/title>/);
   assert.match(notFoundHtml, /\/shadow-claw-draw\/main\//);
   assert.match(notFoundHtml, /\/shadow-claw-draw\/main\/bitmap\//);
+  assert.match(notFoundHtml, /\/shadow-claw-draw\/main\/animation\//);
 
   const llmsTxt = readFileSync(
     resolve(ROOT, "pages/resources/llms.txt"),
@@ -474,5 +475,52 @@ test("Documentation Links: relative links in pages/main/~/content/*.md resolve t
         `${file}: relative link "${href}" points to missing file ${target}`,
       );
     }
+  }
+});
+
+test("Documentation Accuracy: docs reflect all three studios and 36 tools without stale counts", () => {
+  const readme = readFileSync(resolve(ROOT, "README.md"), "utf8");
+  assert.match(readme, /Three Studios/);
+  assert.match(readme, /\/main\/animation\//);
+  assert.match(readme, /\b36\b/);
+  assert.match(readme, /06-animation-studio-tools\.md/);
+  assert.doesNotMatch(readme, /Two Studios|dual-page|26 declarative|all 26/i);
+
+  const stalePattern =
+    /\bdual-page\b|\bdual-studio\b|\ball 26\b|\b26 `scdraw_\*`/i;
+
+  for (const rel of [
+    "AGENTS.md",
+    "pages/resources/llms.txt",
+    "pages/main/MEMORY.md",
+  ]) {
+    const content = readFileSync(resolve(ROOT, rel), "utf8");
+    assert.doesNotMatch(
+      content,
+      stalePattern,
+      `${rel} must not contain stale dual-studio or 26-tool counts`,
+    );
+  }
+
+  const contentDir = resolve(ROOT, "pages/main/~/content");
+  for (const file of readdirSync(contentDir).filter((f) => f.endsWith(".md"))) {
+    const content = readFileSync(resolve(contentDir, file), "utf8");
+    assert.doesNotMatch(
+      content,
+      stalePattern,
+      `pages/main/~/content/${file} must not contain stale dual-studio or 26-tool counts`,
+    );
+  }
+
+  for (const docFile of [
+    "03-vector-studio-tools.md",
+    "04-bitmap-studio-tools.md",
+  ]) {
+    const content = readFileSync(resolve(contentDir, docFile), "utf8");
+    assert.match(
+      content,
+      /06-animation-studio-tools\.md/,
+      `${docFile} must cross-link 06-animation-studio-tools.md`,
+    );
   }
 });

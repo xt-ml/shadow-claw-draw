@@ -2,7 +2,7 @@
  * .agents/scripts/scdraw-schema.js
  *
  * Canonical constants, limits, tool lists, and tiny shared helpers
- * for ShadowClaw Draw (Vector & Bitmap studios).
+ * for ShadowClaw Draw (Vector, Bitmap & Animation studios).
  */
 
 export const VECTOR_SCHEMA_VERSION = 1;

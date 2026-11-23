@@ -3,7 +3,7 @@
  *
  * Page 1 Studio Workbench (<scdraw-vector-workbench>).
  * True Mobile-First layout:
- * - Compact 1-row primary header (Vector/Bitmap switch, Undo, Redo, Save, More toggle)
+ * - Compact 1-row primary header (Vector/Bitmap/Animation switch, Undo, Redo, Save, Full Screen, More toggle)
  * - Hero canvas immediately visible above the fold on mobile
  * - Horizontally scrollable labeled thumb toolstrip beneath canvas on mobile
  * - Equal-width segmented panel tabs (Canvas | Layers | Inspector | XML)

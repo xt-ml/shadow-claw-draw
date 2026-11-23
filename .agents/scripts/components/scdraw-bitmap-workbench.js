@@ -3,7 +3,7 @@
  *
  * Page 2 Studio Workbench (<scdraw-bitmap-workbench>).
  * True Mobile-First layout matching Vector Studio:
- * - Compact 1-row primary header (Vector/Bitmap switch, Undo, Redo, Save, More toggle)
+ * - Compact 1-row primary header (Vector/Bitmap/Animation switch, Undo, Redo, Save, Full Screen, More toggle)
  * - Hero Bitmap Canvas immediately visible above the fold on mobile
  * - Horizontally scrollable labeled thumb toolstrip beneath canvas on mobile
  * - Equal-width segmented panel tabs (Canvas | Filters | Layers)

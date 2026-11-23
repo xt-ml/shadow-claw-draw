@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "site": {
     "title": "ShadowClaw Draw",
-    "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
+    "description": "In-browser Vector, Bitmap & Animation Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
     "themeColor": "#0f1419",
     "lang": "en-US"
   },

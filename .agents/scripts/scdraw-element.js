@@ -1,7 +1,7 @@
 /**
  * .agents/scripts/scdraw-element.js
  *
- * Modular Custom Elements barrel for ShadowClaw Draw workbenches (Vector & Bitmap).
+ * Modular Custom Elements barrel for ShadowClaw Draw workbenches (Vector, Bitmap & Animation).
  */
 
 export { DrawResizeHandleElement } from "./components/scdraw-resize-handle.js";

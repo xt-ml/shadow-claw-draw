@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
   "name": "ShadowClaw Draw",
-  "description": "In-browser Vector & Bitmap Drawing Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
+  "description": "In-browser Vector, Bitmap & Animation Studio powered by SVG, Canvas 2D, Web Components, WebMCP, and ShadowClaw.",
   "skills": [
     {
       "name": "animation-studio",
@@ -13,9 +13,9 @@
     {
       "name": "bitmap-editing",
       "type": "skill-md",
-      "description": "Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and convert between Vector and Bitmap studios.",
+      "description": "Paint on multi-layer pixel canvases, flood fill, apply real-time Canvas filters, crop/flip/rotate images, export PNGs, and bridge across Vector, Bitmap, and Animation studios.",
       "url": "../../.agents/skills/bitmap-editing/SKILL.md",
-      "digest": "sha256:001d1621db0fee8af35557d583971044241031b5c5867e9d50f3466d96189d1f"
+      "digest": "sha256:832a6dcdd7ae6eb9a8d53b88b790da968cd4ba5d0c3f4c7755fb94c5f4f18972"
     },
     {
       "name": "skill-creator",
@@ -35,7 +35,7 @@
       "type": "skill-md",
       "description": "Create, edit, align, layer, and export W3C SVG vector illustrations in ShadowClaw Draw Vector Studio using declarative scdraw_* tools.",
       "url": "../../.agents/skills/vector-illustration/SKILL.md",
-      "digest": "sha256:0e85b76dacf8a8be8f423cddf7a955c55014f59bfdfc7118075daf9623546ca2"
+      "digest": "sha256:3490efcc079e30eb08e1044348e92b909f40bd09c367e377fb84c2c692de6b56"
     }
   ],
   "tools": [
@@ -279,7 +279,7 @@
       "name": "scdraw-bitmap-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-workbench.",
       "url": "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
-      "digest": "sha256:f68b771818e5f09de9f1ff16d4242a524678beab839c6c10add3ce23825adcdb"
+      "digest": "sha256:55438f10592ec7ed91a34b172c135effbe81494ae12f8922fd1d5cf812d60603"
     },
     {
       "name": "scdraw-capture-panel",
@@ -327,7 +327,7 @@
       "name": "scdraw-styles",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-styles.",
       "url": "../../.agents/scripts/components/scdraw-styles.js",
-      "digest": "sha256:5730440fd8d68593dfee83921447e84e4748b70165902150670f60178e888570"
+      "digest": "sha256:cd58bef272aa8387d8c54010df1d614e20fff0a7938eefc8f91d82065c58420a"
     },
     {
       "name": "scdraw-timeline",
@@ -351,7 +351,7 @@
       "name": "scdraw-vector-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-workbench.",
       "url": "../../.agents/scripts/components/scdraw-vector-workbench.js",
-      "digest": "sha256:bee86b20ad62f6b69397fea9d91405a4c2069a82edf82325a72272bf4dffcb08"
+      "digest": "sha256:df6af8d255d184b225b8dc4fecb0582387ea35dccbc00bc6922550e9b438727f"
     },
     {
       "name": "scdraw-adapter",
@@ -393,7 +393,7 @@
       "name": "scdraw-element",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-element.",
       "url": "../../.agents/scripts/scdraw-element.js",
-      "digest": "sha256:3f0544b0aeadad556f7f39f7aa5ba3fb8ff30410d5a0ff9e79e5084940902844"
+      "digest": "sha256:339e1f62923d8983515593323298989288df754160864914c7a08a4dc0657391"
     },
     {
       "name": "scdraw-encoders",
@@ -405,7 +405,7 @@
       "name": "scdraw-engine",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
       "url": "../../.agents/scripts/scdraw-engine.js",
-      "digest": "sha256:31298415ecbb863639f858ece19c07f40b2d1213525dffbb5b3431a9579d7908"
+      "digest": "sha256:8f2fe78b8b8a4ea62a0ab9e642b0506901209e7e83902efca0d8ca22e7b47f72"
     },
     {
       "name": "scdraw-filters",
@@ -417,7 +417,7 @@
       "name": "scdraw-fs",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-fs.",
       "url": "../../.agents/scripts/scdraw-fs.js",
-      "digest": "sha256:77a4cddb6d636cd1ce5a8f2b9f48c2558415f4177f9a08601b245a7a01e9108f"
+      "digest": "sha256:b29a09dcbc3279b033633a135429e1b7a1efd73d9ad3d22f17998cddb4592b9c"
     },
     {
       "name": "scdraw-gif-codec",
@@ -447,7 +447,7 @@
       "name": "scdraw-schema",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-schema.",
       "url": "../../.agents/scripts/scdraw-schema.js",
-      "digest": "sha256:b0f9efa2d0f272cff5e64b64fde1203e5e664767e6d9137ad153870277217358"
+      "digest": "sha256:a2836a74dd299028e43d05ec1dba6dfdf3f1011674525716704bf59478a4ea52"
     },
     {
       "name": "scdraw-signals",

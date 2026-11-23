@@ -2,7 +2,7 @@
  * .agents/scripts/scdraw-fs.js
  *
  * ShadowClaw File System & OPFS (Origin Private File System) integration for ShadowClaw Draw.
- * Persists .svg, .png, .webp, .jpg, and .scdraw.json drawings into conversation workspaces.
+ * Persists .svg, .png, .webp, .jpg, .scdraw.json, .scdraw-anim.json, .gif, .apng, .webm, and .mp4 files into conversation workspaces.
  */
 
 export const DEFAULT_GROUP_ID = "br:main";

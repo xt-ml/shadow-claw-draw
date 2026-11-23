@@ -1,7 +1,7 @@
 ---
 title: "Animation Studio Tools & Export"
 created: "2026-11-23T12:00:00Z"
-updated: "2026-11-23T12:00:00Z"
+updated: "2026-11-23T12:40:00Z"
 slug: "animation-studio-tools"
 ---
 
@@ -41,14 +41,37 @@ slug: "animation-studio-tools"
 
 ---
 
+### Topbar, Full Screen Mode & Mobile Layout
+
+- **Primary Actions**: `Vector` | `Bitmap` | `Animation` switcher, `Play` / `Pause`, `Undo`, `Redo`, `Save` (writes `animation.scdraw-anim.json` to OPFS), **Full Screen** (`#scdraw-anim-fullscreen`), and panel toggles (`Tools`, `Timeline`, `Layers`, `Export`).
+- **Secondary Bar (`More ▾` on mobile/tablet, always open at `>= 1024px`)**: `Mode` (`Vector Anim` / `Bitmap Anim`), `New`, `Import Media`, and `Rasterize → Bitmap` (visible in Vector Anim mode).
+- **Mobile Layout (`< 640px`)**: Switches between `Stage | Timeline | Layers | Export` tabs (with `Export` / `Capture` sub-tabs in the right pane) above `<scdraw-statusbar>`.
+
+---
+
+### Timeline, Capture & Limits
+
+- **Timeline (`<scdraw-timeline>`)**: Defaults to `800×600` (`Vector Anim`) or `512×512` (`Bitmap Anim`) at `1–60` FPS (`12 fps` / `83 ms` default), `0.25×`–`4×` speed multipliers, `Loop` / `Once` / `Ping-Pong` playback modes, up to `MAX_ANIMATION_FRAMES = 500`, and separate undo/redo stacks (`MAX_HISTORY = 100` for Vector Anim, `MAX_ANIMATION_BITMAP_HISTORY = 25` for Bitmap Anim).
+- **Capture & Clip (`<scdraw-capture-panel>`)**: Provides `Screen` and `Webcam` capture, `Record`, `Stop`, `PiP`, `Start Delay` (`0–30s`, default `3s`), `Max Timer` (`0–30s`, default `5s`), `Extract FPS` (`1–30`, default `12`), `Max Width` (`64–1024`, default `512`), and `Extract Clip → Frames`.
+
+---
+
 ### Keyboard Shortcuts
 
 - **`Space`**: Play / Pause
 - **`,` / `.`**: Previous / Next frame
 - **`Home` / `End`**: First / Last frame
 - **`O`**: Toggle Onion Skinning
+- **`Escape`**: Exit Full Screen mode
 - **`Alt + ArrowLeft` / `Alt + ArrowRight`** (on focused frame card): Reorder frame
 - **`Ctrl/Cmd + Z` / `Ctrl/Cmd + Shift + Z`**: Undo / Redo
+
+---
+
+### Declarative WebMCP Automation
+
+Agents can author, tween, trim, capture, and export animations programmatically with all 10 animation tools:
+`scdraw_new_animation`, `scdraw_get_animation_status`, `scdraw_animation_manage_frame`, `scdraw_animation_tween`, `scdraw_animation_trim`, `scdraw_animation_playback`, `scdraw_animation_capture_studio`, `scdraw_animation_rasterize_to_bitmap`, `scdraw_export_animated_svg`, and `scdraw_export_animation`.
 
 ---
 
