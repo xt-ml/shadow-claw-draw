@@ -64,6 +64,10 @@ export class FakeCanvasContext2D {
     this.calls.push({ op: "clearRect", x, y, w, h });
   }
 
+  fillRect(x, y, w, h) {
+    this.calls.push({ op: "fillRect", x, y, w, h, fillStyle: this.fillStyle });
+  }
+
   drawImage(img, ...args) {
     this.calls.push({ op: "drawImage", img, args, filter: this.filter });
   }

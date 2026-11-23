@@ -227,3 +227,83 @@ test("DrawEngine Animation: active-frame projection, undo/redo, studio capture, 
   assert.equal(typeof isScreenCaptureSupported(), "boolean");
   assert.equal(engine.getStatus().animation.frameCount, 4);
 });
+
+test("DrawEngine Animation: Send to Anim works from Bitmap Studio even when animationDoc starts in vector mode, and supports transparent/custom backgrounds", async () => {
+  const engine = new DrawEngine();
+  // Initial animation mode is vector; user draws in Bitmap Studio and clicks Send to Anim
+  assert.equal(engine.animationDoc.get().mode, "vector");
+  engine.newBitmapDocument({
+    width: 24,
+    height: 24,
+    background: "#ffffff",
+    name: "Hero Sprite",
+  });
+  engine.dispatchBitmapCommand({
+    type: "flood_fill",
+    layerId: engine.activeBitmapLayerId.get(),
+    x: 4,
+    y: 4,
+    color: "#38bdf8",
+  });
+
+  const capBitmapRes = engine.captureCurrentStudioToAnimationFrame({
+    source: "bitmap",
+  });
+  assert.equal(capBitmapRes.ok, true);
+  assert.equal(engine.animationDoc.get().mode, "bitmap");
+  assert.equal(engine.animationDoc.get().width, 24);
+  assert.equal(engine.animationDoc.get().height, 24);
+  assert.equal(engine.animationDoc.get().frames.length, 1);
+  // Undo in Animation Studio restores previous vector animation
+  engine.setActiveStudio("animation");
+  assert.equal(engine.undo(), true);
+  assert.equal(engine.animationDoc.get().mode, "vector");
+  assert.equal(engine.redo(), true);
+  assert.equal(engine.animationDoc.get().mode, "bitmap");
+
+  // Sending from Vector Studio while in bitmap mode also switches cleanly
+  engine.newVectorDocument({ width: 40, height: 30, background: "#ffffff" });
+  const capVecRes = engine.captureCurrentStudioToAnimationFrame({
+    source: "vector",
+  });
+  assert.equal(capVecRes.ok, true);
+  assert.equal(engine.animationDoc.get().mode, "vector");
+  assert.equal(engine.animationDoc.get().width, 40);
+
+  // Switch back to bitmap animation and test background rendering ("transparent" vs solid color)
+  engine.newBitmapDocument({
+    width: 8,
+    height: 8,
+    background: "transparent",
+  });
+  engine.captureCurrentStudioToAnimationFrame({ source: "bitmap" });
+  const fillCalls = [];
+  const makeTrackedCanvas = (w, h) => {
+    const c = createFakeCanvasFactory()(w, h);
+    const ctx = c.getContext("2d");
+    ctx.fillRect = (x, y, rw, rh) => {
+      fillCalls.push({ fillStyle: ctx.fillStyle, x, y, rw, rh });
+    };
+    return c;
+  };
+
+  engine.dispatchAnimationCommand({
+    type: "set_background",
+    background: "transparent",
+  });
+  const cTrans = await engine.renderAnimationFrameToCanvas(0, {
+    canvasFactory: makeTrackedCanvas,
+  });
+  assert.equal(fillCalls.length, 0);
+  const pxTrans = cTrans.getContext("2d").getImageData(0, 0, 8, 8).data;
+  assert.equal(pxTrans[3], 0);
+
+  engine.dispatchAnimationCommand({
+    type: "set_background",
+    background: "#112233",
+  });
+  await engine.renderAnimationFrameToCanvas(0, {
+    canvasFactory: makeTrackedCanvas,
+  });
+  assert.ok(fillCalls.some((c) => c.fillStyle === "#112233"));
+});

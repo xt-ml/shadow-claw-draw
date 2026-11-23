@@ -448,15 +448,19 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
       }
     });
 
-    root
-      .getElementById("scdraw-bmp-send-anim")
-      ?.addEventListener("click", () => {
-        try {
-          scdraw.captureCurrentStudioToAnimationFrame({ source: "bitmap" });
-        } catch (err) {
-          scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
-        }
-      });
+    const sendAnimBtn = root.getElementById("scdraw-bmp-send-anim");
+    sendAnimBtn?.addEventListener("click", () => {
+      try {
+        scdraw.captureCurrentStudioToAnimationFrame({ source: "bitmap" });
+        sendAnimBtn.textContent = "Sent ✓";
+        clearTimeout(this._sendAnimTimer);
+        this._sendAnimTimer = setTimeout(() => {
+          sendAnimBtn.textContent = "Send to Anim";
+        }, 1400);
+      } catch (err) {
+        scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
+      }
+    });
 
     root.getElementById("scdraw-bmp-sel-all")?.addEventListener("click", () => {
       scdraw.dispatchBitmapCommand({ type: "select_all" });

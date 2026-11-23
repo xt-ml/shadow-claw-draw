@@ -124,3 +124,48 @@ test("Quantize: Bayer positional dither is deterministic across static regions a
   assert.equal(fs[0], pal.transparentIndex);
   assert.equal(fs[1], pal.transparentIndex);
 });
+
+test("Quantize: preserves pure white background alongside >200 unique stroke colors (no green tint)", () => {
+  const w = 64;
+  const h = 64;
+  const rgba = makeSolidRgba(w, h, 255, 255, 255, 255);
+  // Paint 300 distinct antialiased colors
+  for (let i = 0; i < 300; i++) {
+    const p = i * 4;
+    rgba[p] = i % 256;
+    rgba[p + 1] = (i * 3) % 256;
+    rgba[p + 2] = (i * 7) % 256;
+    rgba[p + 3] = 255;
+  }
+
+  const pal = buildPalette([{ rgba, width: w, height: h }], {
+    maxColors: 64,
+    reserveTransparent: true,
+  });
+
+  let hasWhite = false;
+  for (let i = 0; i < pal.colorCount; i++) {
+    const r = pal.palette[i * 3];
+    const g = pal.palette[i * 3 + 1];
+    const b = pal.palette[i * 3 + 2];
+    if (r >= 248 && g >= 248 && b >= 248) {
+      hasWhite = true;
+      break;
+    }
+  }
+  assert.equal(
+    hasWhite,
+    true,
+    "Palette must preserve white instead of overwriting blue with Lab b*",
+  );
+
+  const idx = quantizeFrameToIndexed(rgba, w, h, pal, { dither: "none" });
+  const bgIdx = idx[w * h - 1];
+  const br = pal.palette[bgIdx * 3];
+  const bg = pal.palette[bgIdx * 3 + 1];
+  const bb = pal.palette[bgIdx * 3 + 2];
+  assert.ok(
+    br >= 245 && bg >= 245 && bb >= 245,
+    `Expected near-white background pixel, got rgb(${br},${bg},${bb})`,
+  );
+});

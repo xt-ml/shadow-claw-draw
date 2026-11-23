@@ -98,4 +98,20 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(wbSrc, /installPageSwipeGuard/);
   assert.match(wbSrc, /setupWorkbenchFullscreen/);
   assert.match(wbSrc, /prefers-reduced-motion/);
+
+  const layersSrc = readFileSync(
+    resolve(ROOT, ".agents/scripts/components/scdraw-layers-panel.js"),
+    "utf8",
+  );
+  assert.match(layersSrc, /scdraw-layers__body/);
+  assert.match(layersSrc, /\.scdraw-layers__body[\s\S]*overflow-y:\s*auto/);
+  assert.match(layersSrc, /\.scdraw-layers__body[\s\S]*touch-action:\s*pan-y/);
+
+  const exportSrc = readFileSync(
+    resolve(ROOT, ".agents/scripts/components/scdraw-export-panel.js"),
+    "utf8",
+  );
+  assert.match(exportSrc, /scdraw-exp-bg-transparent/);
+  assert.match(exportSrc, /scdraw-exp-bg-color/);
+  assert.match(exportSrc, /set_background/);
 });

@@ -279,7 +279,7 @@
       "name": "scdraw-bitmap-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap-workbench.",
       "url": "../../.agents/scripts/components/scdraw-bitmap-workbench.js",
-      "digest": "sha256:55438f10592ec7ed91a34b172c135effbe81494ae12f8922fd1d5cf812d60603"
+      "digest": "sha256:96922e4b89fcfc964fe8956a9b99d9263ecae4331c10a422e245c91f16fd8b58"
     },
     {
       "name": "scdraw-capture-panel",
@@ -291,7 +291,7 @@
       "name": "scdraw-export-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-export-panel.",
       "url": "../../.agents/scripts/components/scdraw-export-panel.js",
-      "digest": "sha256:d8e857b742a7fa90487c5050db203a61faf6085bc41748a1287de7e3f63874dc"
+      "digest": "sha256:4dc84895763a770f0175e180275b1b8181a0ee004cab9c3c5830d81880643e78"
     },
     {
       "name": "scdraw-filter-panel",
@@ -309,7 +309,7 @@
       "name": "scdraw-layers-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-layers-panel.",
       "url": "../../.agents/scripts/components/scdraw-layers-panel.js",
-      "digest": "sha256:a3d601455e71597b824f7eaf2d19c0df0b6bf5dc7baaa8e3404b079a1e015d6d"
+      "digest": "sha256:f59de6765109076102813c02077a6251b3a90cb06816f235913f7bf7ab0f4f04"
     },
     {
       "name": "scdraw-resize-handle",
@@ -351,7 +351,7 @@
       "name": "scdraw-vector-workbench",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-vector-workbench.",
       "url": "../../.agents/scripts/components/scdraw-vector-workbench.js",
-      "digest": "sha256:df6af8d255d184b225b8dc4fecb0582387ea35dccbc00bc6922550e9b438727f"
+      "digest": "sha256:8b819abafdb57315108600e3d3658b861532989878f04959c2a7f1a62996d4f2"
     },
     {
       "name": "scdraw-adapter",
@@ -369,7 +369,7 @@
       "name": "scdraw-animation",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-animation.",
       "url": "../../.agents/scripts/scdraw-animation.js",
-      "digest": "sha256:7758c073abc24a0ee656dfca2852888757d8cc77df008fb5f2f77d4028732a80"
+      "digest": "sha256:cf565c4c14e76f424da6b87ef96ca71b844a7c02b5f8e79ccef8f7b01684d12a"
     },
     {
       "name": "scdraw-apng-codec",
@@ -405,7 +405,7 @@
       "name": "scdraw-engine",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
       "url": "../../.agents/scripts/scdraw-engine.js",
-      "digest": "sha256:8f2fe78b8b8a4ea62a0ab9e642b0506901209e7e83902efca0d8ca22e7b47f72"
+      "digest": "sha256:4375ccdbd34a155025d29b68fda74b43cd22c3b8a0c7eece61b545e4cc678dac"
     },
     {
       "name": "scdraw-filters",
@@ -441,7 +441,7 @@
       "name": "scdraw-quantize",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-quantize.",
       "url": "../../.agents/scripts/scdraw-quantize.js",
-      "digest": "sha256:f03dc9527cdf861b8386f82e8d011484e5cd5d0e2baaf04c4cf1f6d67608ffef"
+      "digest": "sha256:23d8cfbf36b53d6e4fe593c7d9acb28b6ace901b839ea2bd2e33d5a6e7a88848"
     },
     {
       "name": "scdraw-schema",

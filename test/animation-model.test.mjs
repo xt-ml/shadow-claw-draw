@@ -132,3 +132,28 @@ test("Animation Model: playback sequence handles pingpong, speedMultiplier, and 
   const cloned = cloneAnimationDocument(seqDoc);
   assert.equal(cloned.frames.length, 5);
 });
+
+test("Animation Model: set_background updates document, exportSettings.includeBackgroundRect, and all frames", () => {
+  const doc = createAnimationDocument({
+    mode: "vector",
+    width: 100,
+    height: 100,
+  });
+  const rTrans = applyAnimationCommand(doc, {
+    type: "set_background",
+    background: "transparent",
+  });
+  assert.equal(rTrans.changed, true);
+  assert.equal(rTrans.doc.background, "transparent");
+  assert.equal(rTrans.doc.exportSettings.includeBackgroundRect, false);
+  assert.equal(rTrans.doc.frames[0].doc.background, "transparent");
+
+  const rHex = applyAnimationCommand(rTrans.doc, {
+    type: "set_background",
+    background: "#112233",
+  });
+  assert.equal(rHex.changed, true);
+  assert.equal(rHex.doc.background, "#112233");
+  assert.equal(rHex.doc.exportSettings.includeBackgroundRect, true);
+  assert.equal(rHex.doc.frames[0].doc.background, "#112233");
+});

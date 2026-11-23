@@ -385,15 +385,19 @@ export class DrawVectorWorkbenchElement extends BaseElement {
       }
     });
 
-    root
-      .getElementById("scdraw-vec-send-anim")
-      ?.addEventListener("click", () => {
-        try {
-          scdraw.captureCurrentStudioToAnimationFrame({ source: "vector" });
-        } catch (err) {
-          scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
-        }
-      });
+    const sendAnimBtn = root.getElementById("scdraw-vec-send-anim");
+    sendAnimBtn?.addEventListener("click", () => {
+      try {
+        scdraw.captureCurrentStudioToAnimationFrame({ source: "vector" });
+        sendAnimBtn.textContent = "Sent ✓";
+        clearTimeout(this._sendAnimTimer);
+        this._sendAnimTimer = setTimeout(() => {
+          sendAnimBtn.textContent = "Send to Anim";
+        }, 1400);
+      } catch (err) {
+        scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
+      }
+    });
 
     for (const btn of root.querySelectorAll(".scdraw-vector-wb__tab")) {
       btn.addEventListener("click", () => {

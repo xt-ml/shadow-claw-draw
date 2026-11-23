@@ -81,6 +81,7 @@ export class DrawLayersPanelElement extends BaseElement {
   }
 
   _renderList() {
+    const bodyEl = this.shadowRoot?.getElementById("scdraw-layers-body");
     const listEl = this.shadowRoot?.getElementById("scdraw-layers-list");
     const controlsEl = this.shadowRoot?.getElementById(
       "scdraw-layer-active-props",
@@ -101,7 +102,7 @@ export class DrawLayersPanelElement extends BaseElement {
         ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>'
         : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 4.8-.9"/></svg>';
 
-    const prevScrollTop = listEl.scrollTop;
+    const prevScrollTop = bodyEl ? bodyEl.scrollTop : listEl.scrollTop;
     listEl.innerHTML = displayLayers
       .map((l) => {
         const isSel = l.id === activeLayer?.id;
@@ -134,7 +135,8 @@ export class DrawLayersPanelElement extends BaseElement {
         </div>`;
       })
       .join("");
-    listEl.scrollTop = prevScrollTop;
+    if (bodyEl) bodyEl.scrollTop = prevScrollTop;
+    else listEl.scrollTop = prevScrollTop;
 
     if (controlsEl && activeLayer) {
       const opVal = Math.round((activeLayer.opacity ?? 1) * 100);
@@ -190,12 +192,25 @@ export class DrawLayersPanelElement extends BaseElement {
         }
         .scdraw-layers { display: flex; flex-direction: column; height: 100%; min-width: 0; min-height: 0; }
         .scdraw-layers__actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+        .scdraw-layers__body {
+          display: flex;
+          flex-direction: column;
+          flex: 1 1 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
+          min-height: 0;
+          min-width: 0;
+        }
         .scdraw-layers__props {
-          padding: 0.5rem 0.6rem;
+          padding: 0.4rem 0.55rem;
           border-bottom: 1px solid var(--border-subtle);
           display: flex;
           flex-direction: column;
-          gap: 0.45rem;
+          gap: 0.35rem;
           font-size: 0.75rem;
           min-width: 0;
           flex-shrink: 0;
@@ -223,15 +238,8 @@ export class DrawLayersPanelElement extends BaseElement {
           display: flex;
           flex-direction: column;
           gap: 0.3rem;
-          padding: 0.5rem;
-          overflow-y: auto;
-          overflow-x: hidden;
-          overscroll-behavior: contain;
-          -webkit-overflow-scrolling: touch;
-          touch-action: pan-y;
-          scrollbar-gutter: stable;
-          flex: 1 1 0;
-          min-height: 0;
+          padding: 0.45rem 0.5rem;
+          flex: 0 0 auto;
           min-width: 0;
         }
         .scdraw-layers__item {
@@ -243,6 +251,7 @@ export class DrawLayersPanelElement extends BaseElement {
           border-radius: 6px;
           background: var(--bg-app);
           cursor: pointer;
+          touch-action: pan-y;
           min-width: 0;
           flex-shrink: 0;
         }
@@ -277,8 +286,10 @@ export class DrawLayersPanelElement extends BaseElement {
             <button type="button" id="scdraw-layer-del" class="scdraw-btn scdraw-btn--sm scdraw-btn--danger" aria-label="Delete Layer" title="Delete Layer">Del</button>
           </div>
         </header>
-        <div id="scdraw-layer-active-props" class="scdraw-layers__props"></div>
-        <div id="scdraw-layers-list" class="scdraw-layers__list scdraw-scrollable" role="listbox" aria-label="Layer stack"></div>
+        <div id="scdraw-layers-body" class="scdraw-layers__body scdraw-scrollable">
+          <div id="scdraw-layer-active-props" class="scdraw-layers__props"></div>
+          <div id="scdraw-layers-list" class="scdraw-layers__list" role="listbox" aria-label="Layer stack"></div>
+        </div>
       </section>
     `;
 

@@ -82,7 +82,7 @@ test("Layers & Inspector: ARIA listbox, min-width: 0 slider grid, readable butto
   );
   assert.match(
     layersSrc,
-    /\.scdraw-layers__list[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
+    /\.scdraw-layers__body[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
   );
   assert.match(layersSrc, /scdraw-scrollable/);
   assert.match(layersSrc, /scrollTop/);

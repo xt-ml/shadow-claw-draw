@@ -540,6 +540,25 @@ export function applyAnimationCommand(doc, cmd) {
       };
     }
 
+    case "set_background": {
+      const bg =
+        cmd.background === "transparent"
+          ? "transparent"
+          : String(cmd.background || "#ffffff");
+      next.background = bg;
+      next.exportSettings.includeBackgroundRect = bg !== "transparent";
+      for (const f of frames) {
+        if (f.doc) {
+          f.doc = { ...f.doc, background: bg };
+        }
+      }
+      return {
+        doc: next,
+        changed: true,
+        result: { ok: true, background: bg },
+      };
+    }
+
     case "resize_animation": {
       const w = clamp(
         Math.round(cmd.width || next.width),

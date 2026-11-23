@@ -23,6 +23,7 @@ export class DrawExportPanelElement extends BaseElement {
     this._dispose = null;
     this._lastExport = null;
     this._previewUrl = null;
+    this._lastSolidBg = "#ffffff";
   }
 
   connectedCallback() {
@@ -56,6 +57,23 @@ export class DrawExportPanelElement extends BaseElement {
 
     const fmtSel = root.getElementById("scdraw-exp-format");
     if (fmtSel) fmtSel.value = fmt;
+
+    const bg = anim.background || "#ffffff";
+    const isTrans = bg === "transparent";
+    if (!isTrans && /^#[0-9a-f]{6}$/i.test(bg)) {
+      this._lastSolidBg = bg;
+    }
+    const bgTransChk = root.getElementById("scdraw-exp-bg-transparent");
+    const bgColorIn = root.getElementById("scdraw-exp-bg-color");
+    if (bgTransChk) bgTransChk.checked = isTrans;
+    if (bgColorIn) {
+      bgColorIn.disabled = isTrans;
+      if (/^#[0-9a-f]{6}$/i.test(bg)) {
+        bgColorIn.value = bg;
+      } else if (this._lastSolidBg) {
+        bgColorIn.value = this._lastSolidBg;
+      }
+    }
 
     const gifSec = root.getElementById("scdraw-exp-sec-gif");
     const svgSec = root.getElementById("scdraw-exp-sec-svg");
@@ -156,6 +174,28 @@ export class DrawExportPanelElement extends BaseElement {
       .getElementById("scdraw-exp-format")
       ?.addEventListener("change", (e) => {
         patchExport({ format: e.target.value });
+      });
+    root
+      .getElementById("scdraw-exp-bg-transparent")
+      ?.addEventListener("change", (e) => {
+        const background = e.target.checked
+          ? "transparent"
+          : this._lastSolidBg || "#ffffff";
+        scdraw.dispatchAnimationCommand({
+          type: "set_background",
+          background,
+        });
+      });
+    root
+      .getElementById("scdraw-exp-bg-color")
+      ?.addEventListener("input", (e) => {
+        this._lastSolidBg = e.target.value;
+        const bgTransChk = root.getElementById("scdraw-exp-bg-transparent");
+        if (bgTransChk) bgTransChk.checked = false;
+        scdraw.dispatchAnimationCommand({
+          type: "set_background",
+          background: e.target.value,
+        });
       });
     root
       .getElementById("scdraw-exp-gif-engine")
@@ -278,7 +318,14 @@ export class DrawExportPanelElement extends BaseElement {
           object-fit: contain;
           border-radius: 6px;
           border: 1px solid var(--border);
-          background: var(--bg-app);
+          background-color: #ffffff;
+          background-image:
+            linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+            linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+            linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+          background-size: 16px 16px;
+          background-position: 0 0, 0 8px, 8px -8px, -8px 0;
         }
       </style>
       <div class="scdraw-panel" role="region" aria-label="Export and Press">
@@ -297,6 +344,17 @@ export class DrawExportPanelElement extends BaseElement {
               <option value="mp4">MP4 Video (FFmpeg CDN)</option>
               <option value="spritesheet">PNG Sprite Sheet</option>
             </select>
+          </div>
+
+          <div class="scdraw-export__row">
+            <label for="scdraw-exp-bg-color">Background</label>
+            <div style="display:flex;align-items:center;gap:0.45rem;min-width:0">
+              <input id="scdraw-exp-bg-color" type="color" class="scdraw-input" value="#ffffff" aria-label="Animation background color" style="width:36px;height:28px;padding:2px" />
+              <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.74rem;white-space:nowrap">
+                <input id="scdraw-exp-bg-transparent" type="checkbox" />
+                <span>Transparent</span>
+              </label>
+            </div>
           </div>
 
           <div id="scdraw-exp-sec-gif" style="display:flex;flex-direction:column;gap:0.4rem">

@@ -485,19 +485,74 @@ export class DrawEngine {
     insertAfterActive = true,
     name,
     delayMs,
+    strictMode = false,
   } = {}) {
     const anim = this.animationDoc.get();
     const srcMode =
       source === "bitmap" || source === "vector" ? source : anim.mode;
-    if (srcMode !== anim.mode) {
-      throw new Error(
-        `Cannot capture ${srcMode} studio into ${anim.mode} animation directly. Switch animation mode or rasterize first.`,
-      );
-    }
     const snapshot =
       srcMode === "bitmap"
         ? cloneBitmapDocument(this.bitmapDoc.get())
         : deepClone(this.vectorDoc.get());
+
+    if (srcMode !== anim.mode) {
+      if (strictMode) {
+        throw new Error(
+          `Cannot capture ${srcMode} studio into ${anim.mode} animation directly. Switch animation mode or rasterize first.`,
+        );
+      }
+      const prevAnim = anim;
+      const prevIdx = this.activeFrameIndex.get();
+      this._animationUndoStack.push({
+        doc: prevAnim,
+        activeFrameIndex: prevIdx,
+      });
+      if (this._animationUndoStack.length > MAX_ANIMATION_BITMAP_HISTORY) {
+        this._animationUndoStack.shift();
+      }
+      this._animationRedoStack = [];
+
+      const nextAnim = createAnimationDocument({
+        mode: srcMode,
+        width: snapshot.width || prevAnim.width,
+        height: snapshot.height || prevAnim.height,
+        background: snapshot.background || prevAnim.background,
+        fps: prevAnim.fps,
+        loopCount: prevAnim.loopCount,
+        loopMode: prevAnim.loopMode,
+        speedMultiplier: prevAnim.speedMultiplier,
+        name: prevAnim.name,
+      });
+      nextAnim.exportSettings = {
+        ...prevAnim.exportSettings,
+        includeBackgroundRect:
+          (snapshot.background || nextAnim.background) !== "transparent",
+      };
+      nextAnim.frames[0] = createAnimationFrame({
+        name: name || "Studio Frame 1",
+        delayMs: delayMs ?? Math.round(1000 / (nextAnim.fps || 12)),
+        mode: srcMode,
+        width: nextAnim.width,
+        height: nextAnim.height,
+        background: nextAnim.background,
+        doc: snapshot,
+      });
+
+      batch(() => {
+        this.isPlaying.set(false);
+        this.animationDoc.set(nextAnim);
+        this.activeFrameIndex.set(0);
+        this._projectActiveFrameToStudioDoc(nextAnim, 0);
+        this.dirty.set(true);
+        this.revision.set(this.revision.get() + 1);
+        this.statusMessage.set(
+          `Switched Animation Studio to ${srcMode} mode and captured frame`,
+        );
+        this._syncHistoryFlags();
+      });
+      return { ok: true, modeSwitched: true, frameIndex: 0 };
+    }
+
     const afterIndex = insertAfterActive
       ? this.activeFrameIndex.get()
       : anim.frames.length - 1;
@@ -788,24 +843,35 @@ export class DrawEngine {
     const ctx = outCanvas.getContext("2d");
 
     if (anim.mode === "bitmap") {
-      if (targetW === frame.doc.width && targetH === frame.doc.height) {
-        this.renderBitmapToContext(ctx, frame.doc, {
-          canvasFactory: makeCanvas,
-        });
-      } else {
-        const tmp = makeCanvas(frame.doc.width, frame.doc.height);
-        this.renderBitmapToContext(tmp.getContext("2d"), frame.doc, {
-          canvasFactory: makeCanvas,
-        });
-        ctx.drawImage(tmp, 0, 0, targetW, targetH);
+      const tmp = makeCanvas(frame.doc.width, frame.doc.height);
+      this.renderBitmapToContext(
+        tmp.getContext("2d"),
+        { ...frame.doc, background: "transparent" },
+        { canvasFactory: makeCanvas },
+      );
+      ctx.clearRect(0, 0, targetW, targetH);
+      if (
+        anim.background &&
+        anim.background !== "transparent" &&
+        typeof ctx.fillRect === "function"
+      ) {
+        ctx.save();
+        ctx.fillStyle = anim.background;
+        ctx.fillRect(0, 0, targetW, targetH);
+        ctx.restore();
       }
+      ctx.drawImage(tmp, 0, 0, targetW, targetH);
       return outCanvas;
     }
 
-    const svg = serializeVectorDocumentToSvg(frame.doc, {
-      includeBackgroundRect:
-        anim.background && anim.background !== "transparent",
-    });
+    const svg = serializeVectorDocumentToSvg(
+      { ...frame.doc, background: anim.background },
+      {
+        includeBackgroundRect: Boolean(
+          anim.background && anim.background !== "transparent",
+        ),
+      },
+    );
     const pixels = await this._rasterizeSvgToPixels(svg, targetW, targetH, {
       rasterizer,
       canvasFactory: makeCanvas,

@@ -76,16 +76,16 @@ function makeBox(entries) {
   let sumB = 0;
 
   for (const e of entries) {
-    if (e.L < minL) minL = e.L;
-    if (e.L > maxL) maxL = e.L;
-    if (e.a < minA) minA = e.a;
-    if (e.a > maxA) maxA = e.a;
-    if (e.b < minB) minB = e.b;
-    if (e.b > maxB) maxB = e.b;
+    if (e.labL < minL) minL = e.labL;
+    if (e.labL > maxL) maxL = e.labL;
+    if (e.labA < minA) minA = e.labA;
+    if (e.labA > maxA) maxA = e.labA;
+    if (e.labB < minB) minB = e.labB;
+    if (e.labB > maxB) maxB = e.labB;
     totalWeight += e.count;
-    sumL += e.L * e.count;
-    sumA += e.a * e.count;
-    sumB += e.b * e.count;
+    sumL += e.labL * e.count;
+    sumA += e.labA * e.count;
+    sumB += e.labB * e.count;
   }
 
   const meanL = totalWeight > 0 ? sumL / totalWeight : 0;
@@ -96,9 +96,9 @@ function makeBox(entries) {
   let errA = 0;
   let errB = 0;
   for (const e of entries) {
-    const dL = e.L - meanL;
-    const dA = e.a - meanA;
-    const dB = e.b - meanB;
+    const dL = e.labL - meanL;
+    const dA = e.labA - meanA;
+    const dB = e.labB - meanB;
     errL += dL * dL * e.count;
     errA += dA * dA * e.count;
     errB += dB * dB * e.count;
@@ -123,13 +123,13 @@ function makeBox(entries) {
 }
 
 function splitBox(box) {
-  let axis = "L";
+  let axis = "labL";
   let mean = box.meanL;
   if (box.errA >= box.errL && box.errA >= box.errB) {
-    axis = "a";
+    axis = "labA";
     mean = box.meanA;
   } else if (box.errB >= box.errL && box.errB >= box.errA) {
-    axis = "b";
+    axis = "labB";
     mean = box.meanB;
   }
 
@@ -212,7 +212,15 @@ export function buildPalette(
         const g = Math.round(b.gSum / b.count);
         const bl = Math.round(b.bSum / b.count);
         const lab = rgbToLab(r, g, bl);
-        entries.push({ r, g, b: bl, count: b.count, ...lab });
+        entries.push({
+          r,
+          g,
+          b: bl,
+          count: b.count,
+          labL: lab.L,
+          labA: lab.a,
+          labB: lab.b,
+        });
       }
     } else {
       entries = [];
@@ -221,7 +229,15 @@ export function buildPalette(
         const g = (key >> 8) & 0xff;
         const b = key & 0xff;
         const lab = rgbToLab(r, g, b);
-        entries.push({ r, g, b, count, ...lab });
+        entries.push({
+          r,
+          g,
+          b,
+          count,
+          labL: lab.L,
+          labA: lab.a,
+          labB: lab.b,
+        });
       }
     }
 
