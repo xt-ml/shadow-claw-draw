@@ -6,7 +6,7 @@
 
 **[ShadowClaw Draw](https://xt-ml.github.io/shadow-claw-draw/)** is a dual-page, mobile-first, accessible **Vector (SVG)** and **Bitmap (Canvas 2D)** graphical studio built with plain Vanilla ESM JavaScript, Web Components (`scdraw-*`), TC39 Signals, OPFS workspace storage, and 26 declarative WebMCP tools (`scdraw_*`), powered by [ShadowClaw](https://github.com/xt-ml/shadow-claw).
 
-[![ShadowClaw Draw Screenshot](pages/resources/assets/screenshots/scdraw-studio-1024x768.png)](https://xt-ml.github.io/shadow-claw-draw/)
+[![ShadowClaw Draw Screenshot](pages/resources/assets/screenshots/scdraw-studio-1920x961.png)](https://xt-ml.github.io/shadow-claw-draw/)
 
 ## Two Studios, One Shared Engine
 
