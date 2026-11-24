@@ -139,7 +139,7 @@
       "name": "scdraw_export_animation",
       "description": "Render and export the active Animation Studio timeline as GIF (GIMP CIE Lab + delta optimize or Gifski + Gifsicle), APNG, Animated SVG, WebM, MP4, or PNG Sprite Sheet.",
       "url": "../../.agents/tools/scdraw_export_animation.json",
-      "digest": "sha256:c9154904cebb89788ed68ea4428cc7786facd9aaf7ad470da79d5da7bc7cf8a7"
+      "digest": "sha256:e8a4e025a9519a5d5e5270824f2a0840f3e9a84c83fc956fea92b5a9355fc677"
     },
     {
       "name": "scdraw_export_png",
@@ -261,7 +261,7 @@
       "name": "scdraw-animation-stage",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-animation-stage.",
       "url": "../../.agents/scripts/components/scdraw-animation-stage.js",
-      "digest": "sha256:d3ba42a9e20b3541240d9e31caeab877ad7802ca5d5aa8f7ef2b869354054528"
+      "digest": "sha256:79c8d221fd3f5e1343754aecc25fbaa2739a7a2e06e6e7754489466c75de9062"
     },
     {
       "name": "scdraw-animation-workbench",
@@ -285,13 +285,13 @@
       "name": "scdraw-capture-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-capture-panel.",
       "url": "../../.agents/scripts/components/scdraw-capture-panel.js",
-      "digest": "sha256:12eaac3226047a915f3e33abb5787ef8817e5ee66f7ac43ab4026479baef6341"
+      "digest": "sha256:26adb01d41cc5ba82a1632e4d49405429d427c7de9aba2e5acc58b2321526f9d"
     },
     {
       "name": "scdraw-export-panel",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-export-panel.",
       "url": "../../.agents/scripts/components/scdraw-export-panel.js",
-      "digest": "sha256:b9ff0a03dd32100097efa5d15dc0181209170d0c2f4fa1b60ca99e24d02cecc8"
+      "digest": "sha256:21d322e720f4766582ba3a99d96a02fa1468314788efa3fe3dddc9e51f2aff13"
     },
     {
       "name": "scdraw-filter-panel",
@@ -369,7 +369,7 @@
       "name": "scdraw-animation",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-animation.",
       "url": "../../.agents/scripts/scdraw-animation.js",
-      "digest": "sha256:cf565c4c14e76f424da6b87ef96ca71b844a7c02b5f8e79ccef8f7b01684d12a"
+      "digest": "sha256:1ee0eb42571344645ad1dd1b9fbcd07c445c8ce0d220f3445fb1047f1043ba91"
     },
     {
       "name": "scdraw-apng-codec",
@@ -387,7 +387,7 @@
       "name": "scdraw-capture",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-capture.",
       "url": "../../.agents/scripts/scdraw-capture.js",
-      "digest": "sha256:c6ff233f81c827e808b876802c6d50d87ad1391d8d4237f9f2011447f594c9d6"
+      "digest": "sha256:e422f4b8db434a9d014d4d8fa1120a96bed861d0573932fcd58aef301f167f27"
     },
     {
       "name": "scdraw-element",
@@ -399,13 +399,13 @@
       "name": "scdraw-encoders",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-encoders.",
       "url": "../../.agents/scripts/scdraw-encoders.js",
-      "digest": "sha256:d2bc69df7d9fd21a3d615fc73a38398cd0ecdf2747c6d090f0188419cffcfcf0"
+      "digest": "sha256:6f8102b0d20ffc7cf1bb630257280b55ec0c6bb981489c77a7c78a1e0ab362f7"
     },
     {
       "name": "scdraw-engine",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
       "url": "../../.agents/scripts/scdraw-engine.js",
-      "digest": "sha256:6cad7a671ed7ebfd3b6584112f49546ea737d4872c41b062d8533db2b1214d47"
+      "digest": "sha256:16d47c5d1d52bed4f41d07de86bd888c223ab9996e93f9aafbede644d07e9980"
     },
     {
       "name": "scdraw-filters",
@@ -447,7 +447,7 @@
       "name": "scdraw-schema",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-schema.",
       "url": "../../.agents/scripts/scdraw-schema.js",
-      "digest": "sha256:a2836a74dd299028e43d05ec1dba6dfdf3f1011674525716704bf59478a4ea52"
+      "digest": "sha256:a3b28895622120e039ad30178106548bcd5e019eef4923b7f7c29aa8d011131b"
     },
     {
       "name": "scdraw-signals",
@@ -465,7 +465,7 @@
       "name": "scdraw-tools-metadata",
       "description": "Portable ESM engine logic and tool execution handler for scdraw-tools-metadata.",
       "url": "../../.agents/scripts/scdraw-tools-metadata.js",
-      "digest": "sha256:f16109be9fc1353aa7a4cc180b83c266f8dcf731e5c616f33e6bae7357e5cd21"
+      "digest": "sha256:66b91a59b7cd49815372afd1be5928c0cf69bbc1bd77ddfbb8861dafccf6937c"
     },
     {
       "name": "scdraw-tween",

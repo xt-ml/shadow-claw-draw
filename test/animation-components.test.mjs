@@ -114,6 +114,11 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(exportSrc, /scdraw-exp-bg-transparent/);
   assert.match(exportSrc, /scdraw-exp-bg-color/);
   assert.match(exportSrc, /set_background/);
+  assert.match(exportSrc, /scdraw-exp-resolution/);
+  assert.match(exportSrc, /scdraw-exp-quality/);
+  assert.match(exportSrc, /scdraw-exp-include-audio/);
+  assert.match(exportSrc, /scdraw-exp-audio-bitrate/);
+  assert.match(exportSrc, /scdraw-exp-video-preview/);
 
   // Layout & overflow regression checks
   assert.doesNotMatch(
@@ -153,6 +158,10 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
     resolve(ROOT, ".agents/scripts/components/scdraw-capture-panel.js"),
     "utf8",
   );
+  assert.match(captureSrc, /scdraw-cap-mic/);
+  assert.match(captureSrc, /scdraw-cap-audio-mode/);
+  assert.match(captureSrc, /scdraw-cap-mic-device/);
+  assert.match(captureSrc, /scdraw-cap-res/);
   for (const [label, src, bodyCls] of [
     ["scdraw-export-panel.js", exportSrc, "scdraw-export__body"],
     ["scdraw-capture-panel.js", captureSrc, "scdraw-capture__body"],

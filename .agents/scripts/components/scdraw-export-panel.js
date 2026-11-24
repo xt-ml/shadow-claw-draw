@@ -11,6 +11,11 @@ import { SHARED_STYLES } from "./scdraw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { formatFileSize } from "../scdraw-fs.js";
+import {
+  resolveOutputDimensions,
+  qualityToCrf,
+  computeVideoBitsPerSecond,
+} from "../scdraw-encoders.js";
 
 const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
 
@@ -32,7 +37,8 @@ export class DrawExportPanelElement extends BaseElement {
     this._dispose = effect(() => {
       const anim = scdraw.animationDoc.get();
       const prog = scdraw.exportProgress.get();
-      this._syncUI(anim, prog);
+      const audio = scdraw.animationAudio.get();
+      this._syncUI(anim, prog, audio);
     });
   }
 
@@ -49,7 +55,7 @@ export class DrawExportPanelElement extends BaseElement {
     }
   }
 
-  _syncUI(anim, prog) {
+  _syncUI(anim, prog, audio) {
     const root = this.shadowRoot;
     if (!root || !anim) return;
     const es = anim.exportSettings || {};
@@ -73,6 +79,88 @@ export class DrawExportPanelElement extends BaseElement {
       } else if (this._lastSolidBg) {
         bgColorIn.value = this._lastSolidBg;
       }
+    }
+
+    const resSec = root.getElementById("scdraw-exp-sec-resolution");
+    const resSel = root.getElementById("scdraw-exp-resolution");
+    const customDims = root.getElementById("scdraw-exp-custom-dims");
+    const outWIn = root.getElementById("scdraw-exp-out-w");
+    const outHIn = root.getElementById("scdraw-exp-out-h");
+    const dimOut = root.getElementById("scdraw-exp-dim-out");
+    const preset = es.resolutionPreset || "source";
+    if (resSec) resSec.hidden = fmt === "svg";
+    if (resSel) resSel.value = preset;
+    if (customDims) customDims.hidden = preset !== "custom" || fmt === "svg";
+    if (outWIn) {
+      outWIn.value = String(es.outputWidth > 0 ? es.outputWidth : anim.width);
+    }
+    if (outHIn) {
+      outHIn.value = String(
+        es.outputHeight > 0 ? es.outputHeight : anim.height,
+      );
+    }
+    const resolved = resolveOutputDimensions({
+      srcWidth: anim.width,
+      srcHeight: anim.height,
+      resolutionPreset: preset,
+      outputWidth: es.outputWidth || 0,
+      outputHeight: es.outputHeight || 0,
+      resizeMax: es.resizeMax || 0,
+      ensureEven: fmt === "mp4",
+    });
+    if (dimOut) {
+      dimOut.textContent = `${resolved.width}×${resolved.height} px`;
+    }
+
+    const qualitySec = root.getElementById("scdraw-exp-sec-quality");
+    const qualityIn = root.getElementById("scdraw-exp-quality");
+    const qualityVal = root.getElementById("scdraw-exp-quality-val");
+    const q = es.quality ?? 85;
+    const showQuality =
+      fmt === "mp4" ||
+      fmt === "webm" ||
+      (fmt === "gif" && (es.gifEngine || "native") === "gifski");
+    if (qualitySec) qualitySec.hidden = !showQuality;
+    if (qualityIn) qualityIn.value = String(q);
+    if (qualityVal) {
+      if (fmt === "mp4") {
+        qualityVal.textContent = `${q}% (CRF ${qualityToCrf(q, "mp4")})`;
+      } else if (fmt === "webm") {
+        const mbps = (
+          computeVideoBitsPerSecond({
+            width: resolved.width,
+            height: resolved.height,
+            fps: anim.fps || 12,
+            quality: q,
+            videoBitrateKbps: es.videoBitrateKbps || 0,
+          }) / 1_000_000
+        ).toFixed(1);
+        qualityVal.textContent = `${q}% (~${mbps} Mbps)`;
+      } else {
+        qualityVal.textContent = `${q}%`;
+      }
+    }
+
+    const videoSec = root.getElementById("scdraw-exp-sec-video");
+    const isVideoFmt = fmt === "webm" || fmt === "mp4";
+    if (videoSec) videoSec.hidden = !isVideoFmt;
+    const incAudioChk = root.getElementById("scdraw-exp-include-audio");
+    const audioBrSel = root.getElementById("scdraw-exp-audio-bitrate");
+    const audioStatus = root.getElementById("scdraw-exp-audio-status");
+    const audioClearBtn = root.getElementById("scdraw-exp-audio-clear");
+    if (incAudioChk) incAudioChk.checked = es.includeAudio !== false;
+    if (audioBrSel) {
+      audioBrSel.value = String(es.audioBitrateKbps ?? 128);
+      audioBrSel.disabled = es.includeAudio === false;
+    }
+    if (audioStatus) {
+      audioStatus.textContent =
+        audio && audio.bytes?.byteLength > 0
+          ? `${audio.name} (${formatFileSize(audio.bytes.byteLength)})`
+          : "None (attach in Capture or Load Audio)";
+    }
+    if (audioClearBtn) {
+      audioClearBtn.disabled = !(audio && audio.bytes?.byteLength > 0);
     }
 
     const gifSec = root.getElementById("scdraw-exp-sec-gif");
@@ -139,13 +227,28 @@ export class DrawExportPanelElement extends BaseElement {
       this._previewUrl = URL.createObjectURL(blob);
 
       const preview = root?.getElementById("scdraw-exp-preview");
+      const videoPreview = root?.getElementById("scdraw-exp-video-preview");
+      const isVideo = res.extension === "webm" || res.extension === "mp4";
       if (preview) {
-        preview.hidden = res.extension === "webm" || res.extension === "mp4";
-        preview.src = this._previewUrl;
+        preview.hidden = isVideo;
+        if (isVideo) {
+          preview.removeAttribute("src");
+        } else {
+          preview.src = this._previewUrl;
+        }
+      }
+      if (videoPreview) {
+        videoPreview.hidden = !isVideo;
+        if (isVideo) {
+          videoPreview.src = this._previewUrl;
+        } else {
+          videoPreview.removeAttribute("src");
+        }
       }
       const sizeOut = root?.getElementById("scdraw-exp-size");
       if (sizeOut) {
-        sizeOut.textContent = `${formatFileSize(res.bytes.byteLength)} (${res.engineUsed})`;
+        const audioTag = res.hasAudio ? " + audio" : "";
+        sizeOut.textContent = `${formatFileSize(res.bytes.byteLength)} (${res.engineUsed}${audioTag})`;
       }
       const dlBtn = root?.getElementById("scdraw-exp-download");
       const saveBtn = root?.getElementById("scdraw-exp-opfs");
@@ -159,7 +262,7 @@ export class DrawExportPanelElement extends BaseElement {
         );
       }
     } catch (err) {
-      scdraw.statusMessage.set(`Export failed: ${err.message}`);
+      scdraw.statusMessage.set(`Export failed: ${err?.message || String(err)}`);
     }
   }
 
@@ -196,6 +299,63 @@ export class DrawExportPanelElement extends BaseElement {
           type: "set_background",
           background: e.target.value,
         });
+      });
+    root
+      .getElementById("scdraw-exp-resolution")
+      ?.addEventListener("change", (e) => {
+        patchExport({ resolutionPreset: e.target.value });
+      });
+    root.getElementById("scdraw-exp-out-w")?.addEventListener("change", (e) => {
+      patchExport({ outputWidth: Number(e.target.value) || 0 });
+    });
+    root.getElementById("scdraw-exp-out-h")?.addEventListener("change", (e) => {
+      patchExport({ outputHeight: Number(e.target.value) || 0 });
+    });
+    root
+      .getElementById("scdraw-exp-quality")
+      ?.addEventListener("input", (e) => {
+        patchExport({ quality: Number(e.target.value) || 85 });
+      });
+    root
+      .getElementById("scdraw-exp-include-audio")
+      ?.addEventListener("change", (e) => {
+        patchExport({ includeAudio: e.target.checked });
+      });
+    root
+      .getElementById("scdraw-exp-audio-bitrate")
+      ?.addEventListener("change", (e) => {
+        patchExport({ audioBitrateKbps: Number(e.target.value) || 128 });
+      });
+    root
+      .getElementById("scdraw-exp-audio-load")
+      ?.addEventListener("click", () => {
+        root.getElementById("scdraw-exp-audio-file")?.click();
+      });
+    root
+      .getElementById("scdraw-exp-audio-file")
+      ?.addEventListener("change", async (e) => {
+        const file = e.target?.files?.[0];
+        if (!file) return;
+        try {
+          const bytes = new Uint8Array(await file.arrayBuffer());
+          scdraw.setAnimationAudio({
+            name: file.name || "audio.webm",
+            mimeType: file.type || "audio/webm",
+            bytes,
+            source: "file",
+          });
+        } catch (err) {
+          scdraw.statusMessage.set(
+            `Audio load failed: ${err?.message || String(err)}`,
+          );
+        } finally {
+          e.target.value = "";
+        }
+      });
+    root
+      .getElementById("scdraw-exp-audio-clear")
+      ?.addEventListener("click", () => {
+        scdraw.clearAnimationAudio();
       });
     root
       .getElementById("scdraw-exp-gif-engine")
@@ -262,7 +422,9 @@ export class DrawExportPanelElement extends BaseElement {
             saveToWorkspace: true,
           });
         } catch (err) {
-          scdraw.statusMessage.set(`Save failed: ${err.message}`);
+          scdraw.statusMessage.set(
+            `Save failed: ${err?.message || String(err)}`,
+          );
         }
       });
 
@@ -384,6 +546,71 @@ export class DrawExportPanelElement extends BaseElement {
             </div>
           </div>
 
+          <div id="scdraw-exp-sec-resolution" style="display:flex;flex-direction:column;gap:0.4rem">
+            <div class="scdraw-export__row">
+              <label for="scdraw-exp-resolution">Resolution</label>
+              <select id="scdraw-exp-resolution" class="scdraw-select">
+                <option value="source">Canvas Source</option>
+                <option value="360p">360p (640×360)</option>
+                <option value="480p">480p (854×480)</option>
+                <option value="720p">720p (1280×720)</option>
+                <option value="1080p">1080p (1920×1080)</option>
+                <option value="square-512">Square 512</option>
+                <option value="square-1080">Square 1080</option>
+                <option value="custom">Custom W×H</option>
+              </select>
+            </div>
+            <div id="scdraw-exp-custom-dims" class="scdraw-export__row" hidden>
+              <label for="scdraw-exp-out-w">Output W×H</label>
+              <div style="display:flex;align-items:center;gap:0.25rem;min-width:0">
+                <input id="scdraw-exp-out-w" type="number" class="scdraw-input" min="16" max="4096" value="800" aria-label="Output width" />
+                <span>×</span>
+                <input id="scdraw-exp-out-h" type="number" class="scdraw-input" min="16" max="4096" value="600" aria-label="Output height" />
+              </div>
+            </div>
+            <div class="scdraw-export__row">
+              <span>Output Size</span>
+              <span id="scdraw-exp-dim-out" style="font-size:0.72rem;color:var(--text-secondary)">800×600 px</span>
+            </div>
+          </div>
+
+          <div id="scdraw-exp-sec-quality" hidden style="display:flex;flex-direction:column;gap:0.3rem">
+            <div class="scdraw-export__row">
+              <label for="scdraw-exp-quality">Quality</label>
+              <div style="display:flex;align-items:center;gap:0.35rem;min-width:0">
+                <input id="scdraw-exp-quality" type="range" min="1" max="100" value="85" style="flex:1 1 auto;min-width:0" />
+                <span id="scdraw-exp-quality-val" style="font-size:0.7rem;color:var(--text-secondary);white-space:nowrap">85%</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="scdraw-exp-sec-video" hidden style="display:flex;flex-direction:column;gap:0.4rem">
+            <label style="display:flex;align-items:center;gap:0.4rem">
+              <input id="scdraw-exp-include-audio" type="checkbox" checked />
+              <span>Include Audio Track</span>
+            </label>
+            <div class="scdraw-export__row">
+              <label for="scdraw-exp-audio-bitrate">Audio Bitrate</label>
+              <select id="scdraw-exp-audio-bitrate" class="scdraw-select">
+                <option value="64">64 kbps</option>
+                <option value="96">96 kbps</option>
+                <option value="128" selected>128 kbps</option>
+                <option value="192">192 kbps</option>
+                <option value="256">256 kbps</option>
+                <option value="320">320 kbps</option>
+              </select>
+            </div>
+            <div class="scdraw-export__row">
+              <span>Audio Source</span>
+              <span id="scdraw-exp-audio-status" style="font-size:0.72rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">None (attach in Capture or Load Audio)</span>
+            </div>
+            <div class="scdraw-export__actions">
+              <button type="button" id="scdraw-exp-audio-load" class="scdraw-btn scdraw-btn--sm">Load Audio</button>
+              <button type="button" id="scdraw-exp-audio-clear" class="scdraw-btn scdraw-btn--sm" disabled>Clear Audio</button>
+              <input id="scdraw-exp-audio-file" type="file" accept="audio/*,.wav,.mp3,.ogg,.webm,.m4a,.aac" hidden />
+            </div>
+          </div>
+
           <div id="scdraw-exp-sec-gif" style="display:flex;flex-direction:column;gap:0.4rem">
             <div class="scdraw-export__row">
               <label for="scdraw-exp-gif-engine">Engine</label>
@@ -451,6 +678,7 @@ export class DrawExportPanelElement extends BaseElement {
           </div>
 
           <img id="scdraw-exp-preview" class="scdraw-export__preview" alt="Exported animation preview" hidden />
+          <video id="scdraw-exp-video-preview" class="scdraw-export__preview" controls playsinline hidden></video>
         </div>
       </div>
     `;

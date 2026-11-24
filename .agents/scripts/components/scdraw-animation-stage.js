@@ -252,6 +252,20 @@ export class DrawAnimationStageElement extends BaseElement {
       }
 
       if (
+        type.startsWith("audio/") ||
+        /\.(wav|mp3|ogg|m4a|aac|opus)$/i.test(name)
+      ) {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        scdraw.setAnimationAudio({
+          name: file.name || "audio.webm",
+          mimeType: file.type || "audio/webm",
+          bytes,
+          source: "file",
+        });
+        return;
+      }
+
+      if (
         type.startsWith("video/") ||
         name.endsWith(".webm") ||
         name.endsWith(".mp4")
@@ -267,9 +281,18 @@ export class DrawAnimationStageElement extends BaseElement {
           mode: "bitmap",
           replace: true,
         });
+        const videoBytes = new Uint8Array(await file.arrayBuffer());
+        if (videoBytes.byteLength > 0) {
+          scdraw.setAnimationAudio({
+            name: file.name || "imported-video.webm",
+            mimeType: file.type || "video/webm",
+            bytes: videoBytes,
+            source: "file",
+          });
+        }
       }
     } catch (err) {
-      scdraw.statusMessage.set(`Import failed: ${err.message}`);
+      scdraw.statusMessage.set(`Import failed: ${err?.message || String(err)}`);
     }
   }
 

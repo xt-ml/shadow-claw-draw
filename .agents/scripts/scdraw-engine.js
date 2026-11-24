@@ -44,6 +44,7 @@ import {
   unoptimizeAnimationFrames,
 } from "./scdraw-gif-optimize.js";
 import {
+  resolveOutputDimensions,
   encodeAnimationToGif,
   encodeAnimationToApng,
   encodeAnimationToSvg,
@@ -123,6 +124,7 @@ export class DrawEngine {
 
     // Animation state
     this.animationDoc = new State(initialAnimation);
+    this.animationAudio = new State(null);
     this.activeFrameIndex = new State(0);
     this.isPlaying = new State(false);
     this.exportProgress = new State({ active: false, ratio: 0, stage: "" });
@@ -413,6 +415,7 @@ export class DrawEngine {
     batch(() => {
       this.isPlaying.set(false);
       this.animationDoc.set(doc);
+      this.animationAudio.set(null);
       this.activeFrameIndex.set(0);
       this._animationUndoStack = [];
       this._animationRedoStack = [];
@@ -432,6 +435,53 @@ export class DrawEngine {
       fps: doc.fps,
       frameCount: doc.frames.length,
     };
+  }
+
+  setAnimationAudio(track) {
+    if (!track || !track.bytes) {
+      throw new Error("setAnimationAudio requires audio track bytes.");
+    }
+    const bytes =
+      track.bytes instanceof Uint8Array
+        ? track.bytes
+        : track.bytes instanceof ArrayBuffer
+          ? new Uint8Array(track.bytes)
+          : new Uint8Array(
+              track.bytes.buffer,
+              track.bytes.byteOffset,
+              track.bytes.byteLength,
+            );
+    const normalized = {
+      name: String(track.name || "audio.webm"),
+      mimeType: String(track.mimeType || "audio/webm"),
+      bytes,
+      source: String(track.source || "file"),
+      durationMs: Math.max(0, Math.round(Number(track.durationMs) || 0)),
+    };
+    batch(() => {
+      this.animationAudio.set(normalized);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(
+        `Attached audio "${normalized.name}" (${normalized.bytes.byteLength} bytes)`,
+      );
+    });
+    return {
+      ok: true,
+      audio: {
+        ...normalized,
+        bytes: undefined,
+        byteLength: normalized.bytes.byteLength,
+      },
+    };
+  }
+
+  clearAnimationAudio() {
+    batch(() => {
+      this.animationAudio.set(null);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set("Removed animation audio track");
+    });
+    return { ok: true };
   }
 
   selectAnimationFrame(index, { syncRevision = true } = {}) {
@@ -1226,6 +1276,20 @@ export class DrawEngine {
         return { ok: true, format: "svg", ...res };
       }
 
+      const rawResizeMax = options.resizeMax ?? es.resizeMax ?? 0;
+      const resolutionPreset =
+        options.resolutionPreset ?? es.resolutionPreset ?? "source";
+      const { width: outW, height: outH } = resolveOutputDimensions({
+        srcWidth: anim.width,
+        srcHeight: anim.height,
+        resolutionPreset,
+        outputWidth: options.outputWidth ?? es.outputWidth ?? 0,
+        outputHeight: options.outputHeight ?? es.outputHeight ?? 0,
+        resizeMax: rawResizeMax,
+        ensureEven: format === "mp4",
+      });
+      const needsScale = outW !== anim.width || outH !== anim.height;
+
       const canvases = [];
       const rgbaFrames = [];
       const delaysMs = [];
@@ -1235,14 +1299,20 @@ export class DrawEngine {
           ((i - start) / total) * 0.4,
           `Rendering frame ${i - start + 1}/${total}...`,
         );
-        const canvas = await this.renderAnimationFrameToCanvas(i, {
+        const rawCanvas = await this.renderAnimationFrameToCanvas(i, {
           canvasFactory: makeCanvas,
           rasterizer: options.rasterizer,
         });
+        let canvas = rawCanvas;
+        if (needsScale) {
+          canvas = makeCanvas(outW, outH);
+          const scaledCtx = canvas.getContext("2d");
+          scaledCtx.drawImage(rawCanvas, 0, 0, outW, outH);
+        }
         canvases.push(canvas);
         const ctx = canvas.getContext("2d");
         const rgba = new Uint8ClampedArray(
-          ctx.getImageData(0, 0, anim.width, anim.height).data,
+          ctx.getImageData(0, 0, outW, outH).data,
         );
         const delayMs = anim.frames[i].delayMs;
         rgbaFrames.push({ rgba, delayMs });
@@ -1252,8 +1322,8 @@ export class DrawEngine {
       let result;
       if (format === "gif") {
         result = await encodeAnimationToGif(rgbaFrames, {
-          width: anim.width,
-          height: anim.height,
+          width: outW,
+          height: outH,
           loopCount: anim.loopCount,
           colors: options.colors ?? es.colors ?? 200,
           dither: options.dither ?? es.dither ?? "bayer",
@@ -1261,7 +1331,7 @@ export class DrawEngine {
           gifEngine: options.gifEngine ?? es.gifEngine ?? "native",
           quality: options.quality ?? es.quality ?? 85,
           gifsicleLossy: options.gifsicleLossy ?? es.gifsicleLossy ?? 0,
-          resizeMax: options.resizeMax ?? es.resizeMax ?? 0,
+          resizeMax: 0,
           gifskiLoader: options.gifskiLoader,
           gifsicleLoader: options.gifsicleLoader,
           onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
@@ -1277,8 +1347,8 @@ export class DrawEngine {
         });
       } else if (format === "spritesheet") {
         result = await encodeAnimationToSpriteSheet(canvases, {
-          width: anim.width,
-          height: anim.height,
+          width: outW,
+          height: outH,
           columns: options.columns ?? es.spriteColumns ?? 0,
           padding: options.padding ?? es.spritePadding ?? 0,
           canvasFactory: makeCanvas,
@@ -1289,8 +1359,15 @@ export class DrawEngine {
           format,
           delaysMs,
           fps: anim.fps,
-          width: anim.width,
-          height: anim.height,
+          width: outW,
+          height: outH,
+          quality: options.quality ?? es.quality ?? 85,
+          videoBitrateKbps:
+            options.videoBitrateKbps ?? es.videoBitrateKbps ?? 0,
+          includeAudio: options.includeAudio ?? es.includeAudio ?? true,
+          audioBitrateKbps:
+            options.audioBitrateKbps ?? es.audioBitrateKbps ?? 128,
+          audioTrack: options.audioTrack ?? this.animationAudio.get(),
           canvasFactory: makeCanvas,
           ffmpegLoader: options.ffmpegLoader,
           onProgress: (r, s) => onProgress(0.4 + r * 0.6, s),
@@ -1616,6 +1693,15 @@ export class DrawEngine {
         isPlaying: this.isPlaying.get(),
         onionSkin: a.onionSkin,
         exportSettings: a.exportSettings,
+        audio: this.animationAudio.get()
+          ? {
+              name: this.animationAudio.get().name,
+              mimeType: this.animationAudio.get().mimeType,
+              source: this.animationAudio.get().source,
+              durationMs: this.animationAudio.get().durationMs,
+              byteLength: this.animationAudio.get().bytes.byteLength,
+            }
+          : null,
       },
     };
   }

@@ -1,11 +1,23 @@
 /**
  * .agents/scripts/scdraw-capture.js
  *
- * Screen / Webcam Capture & Zero-WASM Video Frame Extraction for ShadowClaw Draw.
+ * Screen, Webcam & Microphone Capture & Zero-WASM Video Frame Extraction for ShadowClaw Draw.
  * Ported cleanly from GIFWorks (`GIFWorksRecorder.ts`, `startRecording.ts`, `stopRecording.ts`).
  */
 
 import { clamp } from "./scdraw-schema.js";
+
+const CAPTURE_RESOLUTIONS = {
+  "360p": { width: 640, height: 360 },
+  "480p": { width: 854, height: 480 },
+  "720p": { width: 1280, height: 720 },
+  "1080p": { width: 1920, height: 1080 },
+};
+
+function getMediaDevices(override) {
+  if (override) return override;
+  return typeof navigator !== "undefined" ? navigator.mediaDevices : null;
+}
 
 export function isScreenCaptureSupported() {
   return Boolean(
@@ -23,46 +35,257 @@ export function isWebcamCaptureSupported() {
   );
 }
 
-export async function startScreenCapture() {
-  if (!isScreenCaptureSupported()) {
+export function isMicrophoneCaptureSupported() {
+  return isWebcamCaptureSupported();
+}
+
+export async function listAudioInputDevices(mediaDevices) {
+  const md = getMediaDevices(mediaDevices);
+  if (!md || typeof md.enumerateDevices !== "function") return [];
+  try {
+    const devices = await md.enumerateDevices();
+    return (devices || [])
+      .filter((d) => d && d.kind === "audioinput")
+      .map((d, i) => ({
+        deviceId: d.deviceId || "",
+        label: d.label || `Microphone ${i + 1}`,
+      }));
+  } catch (_) {
+    return [];
+  }
+}
+
+export function buildAudioConstraints({
+  enabled = false,
+  deviceId = "",
+  echoCancellation = true,
+  noiseSuppression = true,
+  autoGainControl = true,
+} = {}) {
+  if (!enabled) return false;
+  const constraints = {
+    echoCancellation: Boolean(echoCancellation),
+    noiseSuppression: Boolean(noiseSuppression),
+    autoGainControl: Boolean(autoGainControl),
+  };
+  if (deviceId) {
+    constraints.deviceId = { exact: String(deviceId) };
+  }
+  return constraints;
+}
+
+export function buildVideoConstraints(resolutionPreset = "source", extra = {}) {
+  const target = CAPTURE_RESOLUTIONS[resolutionPreset];
+  const hasExtra = extra && Object.keys(extra).length > 0;
+  if (!target) {
+    return hasExtra ? { ...extra } : true;
+  }
+  return {
+    width: { ideal: target.width },
+    height: { ideal: target.height },
+    ...(hasExtra ? extra : {}),
+  };
+}
+
+export function selectRecorderMimeType({
+  hasVideo = true,
+  hasAudio = false,
+} = {}) {
+  const isSupported =
+    typeof MediaRecorder !== "undefined" &&
+    typeof MediaRecorder.isTypeSupported === "function"
+      ? (mime) => MediaRecorder.isTypeSupported(mime)
+      : () => false;
+
+  let candidates;
+  if (!hasVideo && hasAudio) {
+    candidates = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+    ];
+  } else if (hasVideo && hasAudio) {
+    candidates = [
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm; codecs=vp9",
+      "video/webm; codecs=vp8",
+      "video/webm",
+    ];
+  } else {
+    candidates = [
+      "video/webm;codecs=vp9",
+      "video/webm;codecs=vp8",
+      "video/webm; codecs=vp9",
+      "video/webm; codecs=vp8",
+      "video/webm",
+    ];
+  }
+
+  for (const mime of candidates) {
+    if (isSupported(mime)) return mime;
+  }
+  return !hasVideo && hasAudio ? "audio/webm" : "video/webm";
+}
+
+function mergeMediaStreams(primaryStream, micStream) {
+  const videoTracks = primaryStream?.getVideoTracks?.() || [];
+  const primaryAudio = primaryStream?.getAudioTracks?.() || [];
+  const micAudio = micStream?.getAudioTracks?.() || [];
+  let audioTracks = [...primaryAudio, ...micAudio];
+  let audioContext = null;
+
+  const AudioCtx =
+    typeof globalThis !== "undefined" &&
+    (globalThis.AudioContext || globalThis.webkitAudioContext);
+  if (primaryAudio.length > 0 && micAudio.length > 0 && AudioCtx) {
+    try {
+      audioContext = new AudioCtx();
+      const dest = audioContext.createMediaStreamDestination();
+      const s1 = new MediaStream(primaryAudio);
+      const s2 = new MediaStream(micAudio);
+      audioContext.createMediaStreamSource(s1).connect(dest);
+      audioContext.createMediaStreamSource(s2).connect(dest);
+      audioTracks = dest.stream.getAudioTracks();
+    } catch (_) {
+      try {
+        audioContext?.close?.();
+      } catch (_) {}
+      audioContext = null;
+    }
+  }
+
+  const allTracks = [...videoTracks, ...audioTracks];
+  let merged;
+  if (typeof MediaStream !== "undefined") {
+    merged = new MediaStream(allTracks);
+  } else {
+    merged = {
+      getTracks: () => allTracks,
+      getVideoTracks: () => videoTracks,
+      getAudioTracks: () => audioTracks,
+    };
+  }
+  merged._sourceStreams = [primaryStream, micStream].filter(Boolean);
+  if (audioContext) merged._audioContext = audioContext;
+  return merged;
+}
+
+export async function startScreenCapture({
+  includeSystemAudio = false,
+  includeMicrophone = false,
+  audioDeviceId = "",
+  resolutionPreset = "source",
+  mediaDevices,
+} = {}) {
+  const md = getMediaDevices(mediaDevices);
+  if (!md || typeof md.getDisplayMedia !== "function") {
     throw new Error(
       "Screen capture (getDisplayMedia) is not supported in this browser.",
     );
   }
-  return await navigator.mediaDevices.getDisplayMedia({
-    video: { cursor: "always" },
-    audio: false,
+  const displayStream = await md.getDisplayMedia({
+    video: buildVideoConstraints(resolutionPreset, { cursor: "always" }),
+    audio: Boolean(includeSystemAudio),
   });
+  if (!includeMicrophone) {
+    return displayStream;
+  }
+  if (typeof md.getUserMedia !== "function") {
+    stopMediaStream(displayStream);
+    throw new Error(
+      "Microphone capture (getUserMedia) is not supported in this browser.",
+    );
+  }
+  let micStream;
+  try {
+    micStream = await md.getUserMedia({
+      video: false,
+      audio: buildAudioConstraints({ enabled: true, deviceId: audioDeviceId }),
+    });
+  } catch (err) {
+    stopMediaStream(displayStream);
+    throw err;
+  }
+  return mergeMediaStreams(displayStream, micStream);
 }
 
-export async function startWebcamCapture() {
-  if (!isWebcamCaptureSupported()) {
+export async function startWebcamCapture({
+  includeMicrophone = false,
+  audioDeviceId = "",
+  resolutionPreset = "source",
+  mediaDevices,
+} = {}) {
+  const md = getMediaDevices(mediaDevices);
+  if (!md || typeof md.getUserMedia !== "function") {
     throw new Error(
       "Webcam capture (getUserMedia) is not supported in this browser.",
     );
   }
-  return await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: false,
+  return await md.getUserMedia({
+    video: buildVideoConstraints(resolutionPreset),
+    audio: buildAudioConstraints({
+      enabled: includeMicrophone,
+      deviceId: audioDeviceId,
+    }),
+  });
+}
+
+export async function startMicrophoneCapture({
+  audioDeviceId = "",
+  mediaDevices,
+} = {}) {
+  const md = getMediaDevices(mediaDevices);
+  if (!md || typeof md.getUserMedia !== "function") {
+    throw new Error(
+      "Microphone capture (getUserMedia) is not supported in this browser.",
+    );
+  }
+  return await md.getUserMedia({
+    video: false,
+    audio: buildAudioConstraints({ enabled: true, deviceId: audioDeviceId }),
   });
 }
 
 export function stopMediaStream(stream) {
-  if (!stream || typeof stream.getTracks !== "function") return;
-  for (const track of stream.getTracks()) {
+  if (!stream) return;
+  if (typeof stream.getTracks === "function") {
+    for (const track of stream.getTracks()) {
+      try {
+        track.stop();
+      } catch (_) {}
+    }
+  }
+  if (Array.isArray(stream._sourceStreams)) {
+    for (const src of stream._sourceStreams) {
+      stopMediaStream(src);
+    }
+  }
+  if (
+    stream._audioContext &&
+    typeof stream._audioContext.close === "function"
+  ) {
     try {
-      track.stop();
+      stream._audioContext.close();
     } catch (_) {}
   }
 }
 
 /**
  * Record a MediaStream with GIFWorks-style countdown ("Ready / Set / Go") and auto-stop timer.
- * Returns { stop, cancel, promise } where promise resolves to { blob, durationMs }.
+ * Returns { stop, cancel, promise } where promise resolves to { blob, durationMs, hasVideo, hasAudio, mimeType }.
  */
 export function recordMediaStream(
   stream,
-  { startDelaySec = 3, timerSec = 5, onCountdown, onTick, onStateChange } = {},
+  {
+    startDelaySec = 3,
+    timerSec = 5,
+    videoBitsPerSecond,
+    audioBitsPerSecond,
+    onCountdown,
+    onTick,
+    onStateChange,
+  } = {},
 ) {
   if (!stream || typeof MediaRecorder === "undefined") {
     throw new Error("MediaRecorder is unavailable for stream capture.");
@@ -70,6 +293,8 @@ export function recordMediaStream(
 
   const delaySec = clamp(Math.round(startDelaySec), 0, 30);
   const limitSec = clamp(Math.round(timerSec), 0, 30);
+  const hasVideo = (stream.getVideoTracks?.() || []).length > 0;
+  const hasAudio = (stream.getAudioTracks?.() || []).length > 0;
 
   let cancelled = false;
   let recorder = null;
@@ -103,7 +328,13 @@ export function recordMediaStream(
     } else if (!cancelled) {
       cancelled = true;
       onStateChange?.("idle");
-      resolvePromise({ blob: null, durationMs: 0 });
+      resolvePromise({
+        blob: null,
+        durationMs: 0,
+        hasVideo,
+        hasAudio,
+        mimeType: "",
+      });
     }
   };
 
@@ -116,18 +347,27 @@ export function recordMediaStream(
       } catch (_) {}
     }
     onStateChange?.("idle");
-    resolvePromise({ blob: null, durationMs: 0 });
+    resolvePromise({
+      blob: null,
+      durationMs: 0,
+      hasVideo,
+      hasAudio,
+      mimeType: "",
+    });
   };
 
   const beginRecording = () => {
     if (cancelled) return;
-    const mimeType = MediaRecorder.isTypeSupported("video/webm; codecs=vp9")
-      ? "video/webm; codecs=vp9"
-      : MediaRecorder.isTypeSupported("video/webm; codecs=vp8")
-        ? "video/webm; codecs=vp8"
-        : "video/webm";
+    const mimeType = selectRecorderMimeType({ hasVideo, hasAudio });
+    const recOpts = { mimeType };
+    if (hasVideo && Number(videoBitsPerSecond) > 0) {
+      recOpts.videoBitsPerSecond = Math.round(Number(videoBitsPerSecond));
+    }
+    if (hasAudio && Number(audioBitsPerSecond) > 0) {
+      recOpts.audioBitsPerSecond = Math.round(Number(audioBitsPerSecond));
+    }
 
-    recorder = new MediaRecorder(stream, { mimeType });
+    recorder = new MediaRecorder(stream, recOpts);
     recorder.ondataavailable = (e) => {
       if (e.data && e.data.size > 0) chunks.push(e.data);
     };
@@ -135,9 +375,16 @@ export function recordMediaStream(
       cleanupTimers();
       if (cancelled) return;
       const durationMs = Math.max(0, Date.now() - startedAt);
-      const blob = new Blob(chunks, { type: mimeType.split(";")[0] });
+      const baseType = mimeType.split(";")[0];
+      const blob = new Blob(chunks, { type: baseType });
       onStateChange?.("recorded");
-      resolvePromise({ blob, durationMs });
+      resolvePromise({
+        blob,
+        durationMs,
+        hasVideo,
+        hasAudio,
+        mimeType: baseType,
+      });
     };
     recorder.onerror = (e) => {
       cleanupTimers();

@@ -157,3 +157,53 @@ test("Animation Model: set_background updates document, exportSettings.includeBa
   assert.equal(rHex.doc.exportSettings.includeBackgroundRect, true);
   assert.equal(rHex.doc.frames[0].doc.background, "#112233");
 });
+
+test("Animation Model: exportSettings initializes and validates resolution, quality, and audio output options", () => {
+  const doc = createAnimationDocument({ mode: "vector" });
+  assert.equal(doc.exportSettings.resolutionPreset, "source");
+  assert.equal(doc.exportSettings.outputWidth, 0);
+  assert.equal(doc.exportSettings.outputHeight, 0);
+  assert.equal(doc.exportSettings.quality, 85);
+  assert.equal(doc.exportSettings.videoBitrateKbps, 0);
+  assert.equal(doc.exportSettings.includeAudio, true);
+  assert.equal(doc.exportSettings.audioBitrateKbps, 128);
+
+  const rValid = applyAnimationCommand(doc, {
+    type: "set_export_settings",
+    patch: {
+      resolutionPreset: "720p",
+      outputWidth: 1280,
+      outputHeight: 720,
+      quality: 92,
+      videoBitrateKbps: 3500,
+      includeAudio: false,
+      audioBitrateKbps: 192,
+    },
+  });
+  assert.equal(rValid.changed, true);
+  assert.equal(rValid.doc.exportSettings.resolutionPreset, "720p");
+  assert.equal(rValid.doc.exportSettings.outputWidth, 1280);
+  assert.equal(rValid.doc.exportSettings.outputHeight, 720);
+  assert.equal(rValid.doc.exportSettings.quality, 92);
+  assert.equal(rValid.doc.exportSettings.videoBitrateKbps, 3500);
+  assert.equal(rValid.doc.exportSettings.includeAudio, false);
+  assert.equal(rValid.doc.exportSettings.audioBitrateKbps, 192);
+
+  const rClamped = applyAnimationCommand(doc, {
+    type: "set_export_settings",
+    patch: {
+      resolutionPreset: "bogus-preset",
+      outputWidth: 4,
+      outputHeight: 9999,
+      quality: 250,
+      videoBitrateKbps: 999999,
+      audioBitrateKbps: 12,
+    },
+  });
+  assert.equal(rClamped.doc.exportSettings.resolutionPreset, "source");
+  assert.equal(rClamped.doc.exportSettings.outputWidth, 16);
+  assert.equal(rClamped.doc.exportSettings.outputHeight, 4096);
+  assert.equal(rClamped.doc.exportSettings.quality, 100);
+  assert.equal(rClamped.doc.exportSettings.videoBitrateKbps, 50000);
+  assert.equal(rClamped.doc.exportSettings.audioBitrateKbps, 32);
+});

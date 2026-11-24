@@ -53,6 +53,17 @@ export const EXPORT_FORMATS = [
   "mp4",
   "spritesheet",
 ];
+export const RESOLUTION_PRESETS = [
+  "source",
+  "360p",
+  "480p",
+  "720p",
+  "1080p",
+  "square-512",
+  "square-1080",
+  "custom",
+];
+export const AUDIO_BITRATE_PRESETS = [64, 96, 128, 192, 256, 320];
 
 export const VECTOR_TOOLS = [
   "select",

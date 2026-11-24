@@ -27,6 +27,7 @@ import {
   SPEED_MULTIPLIERS,
   DITHER_MODES,
   EXPORT_FORMATS,
+  RESOLUTION_PRESETS,
   clamp,
   createUid,
   deepClone,
@@ -168,6 +169,12 @@ export function createAnimationDocument({
       colors: 200,
       optimizeDelta: true,
       quality: 85,
+      videoBitrateKbps: 0,
+      resolutionPreset: "source",
+      outputWidth: 0,
+      outputHeight: 0,
+      includeAudio: true,
+      audioBitrateKbps: 128,
       gifsicleLossy: 0,
       resizeMax: 0,
       svgEngine: "smil",
@@ -525,8 +532,43 @@ export function applyAnimationCommand(doc, cmd) {
       const merged = { ...next.exportSettings, ...patch };
       if (!EXPORT_FORMATS.includes(merged.format)) merged.format = "gif";
       if (!DITHER_MODES.includes(merged.dither)) merged.dither = "bayer";
+      if (!RESOLUTION_PRESETS.includes(merged.resolutionPreset)) {
+        merged.resolutionPreset = "source";
+      }
+      merged.outputWidth =
+        Number(merged.outputWidth) > 0
+          ? clamp(
+              Math.round(merged.outputWidth),
+              MIN_CANVAS_SIZE,
+              MAX_CANVAS_SIZE,
+            )
+          : 0;
+      merged.outputHeight =
+        Number(merged.outputHeight) > 0
+          ? clamp(
+              Math.round(merged.outputHeight),
+              MIN_CANVAS_SIZE,
+              MAX_CANVAS_SIZE,
+            )
+          : 0;
+      merged.resizeMax = clamp(
+        Math.round(merged.resizeMax ?? 0),
+        0,
+        MAX_CANVAS_SIZE,
+      );
       merged.colors = clamp(Math.round(merged.colors ?? 200), 2, 256);
       merged.quality = clamp(Math.round(merged.quality ?? 85), 1, 100);
+      merged.videoBitrateKbps = clamp(
+        Math.round(merged.videoBitrateKbps ?? 0),
+        0,
+        50000,
+      );
+      merged.includeAudio = merged.includeAudio !== false;
+      merged.audioBitrateKbps = clamp(
+        Math.round(merged.audioBitrateKbps ?? 128),
+        32,
+        320,
+      );
       merged.gifsicleLossy = clamp(
         Math.round(merged.gifsicleLossy ?? 0),
         0,

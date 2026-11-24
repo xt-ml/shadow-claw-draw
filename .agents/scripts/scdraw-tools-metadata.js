@@ -1212,6 +1212,42 @@ export const TOOLS_METADATA = [
           minimum: 1,
           maximum: 100,
         },
+        videoBitrateKbps: {
+          type: "integer",
+          minimum: 0,
+          maximum: 50000,
+        },
+        resolutionPreset: {
+          type: "string",
+          enum: [
+            "source",
+            "360p",
+            "480p",
+            "720p",
+            "1080p",
+            "square-512",
+            "square-1080",
+            "custom",
+          ],
+        },
+        outputWidth: {
+          type: "integer",
+          minimum: 0,
+          maximum: 4096,
+        },
+        outputHeight: {
+          type: "integer",
+          minimum: 0,
+          maximum: 4096,
+        },
+        includeAudio: {
+          type: "boolean",
+        },
+        audioBitrateKbps: {
+          type: "integer",
+          minimum: 32,
+          maximum: 320,
+        },
         gifsicleLossy: {
           type: "integer",
           minimum: 0,
