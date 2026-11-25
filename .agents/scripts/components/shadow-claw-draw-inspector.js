@@ -387,7 +387,7 @@ export class ShadowClawDrawInspector extends BaseElement {
           resize: vertical;
         }
       </style>
-      <section class="scdraw-panel shadow-claw-draw-inspector" role="region" aria-label="Properties and SVG XML Inspector">
+      <section class="scdraw-panel scdraw-inspector" role="region" aria-label="Properties and SVG XML Inspector">
         <header class="scdraw-panel__header">
           <span>Inspector</span>
           <button

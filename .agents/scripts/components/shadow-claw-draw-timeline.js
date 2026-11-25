@@ -604,7 +604,7 @@ export class ShadowClawDrawTimeline extends BaseElement {
           }
         }
       </style>
-      <div class="shadow-claw-draw-timeline scdraw-scrollable" role="region" aria-label="Animation Timeline">
+      <div class="scdraw-timeline scdraw-scrollable" role="region" aria-label="Animation Timeline">
         <div class="scdraw-timeline__controls">
           <div class="scdraw-timeline__group" role="toolbar" aria-label="Playback transport">
             <button type="button" id="scdraw-tl-first" class="scdraw-btn scdraw-btn--sm" aria-label="First frame">⏮</button>

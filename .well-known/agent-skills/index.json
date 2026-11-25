@@ -273,7 +273,7 @@
       "name": "shadow-claw-draw-bitmap-canvas",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-bitmap-canvas.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-bitmap-canvas.js",
-      "digest": "sha256:a80c22b3156331ebd574ab67859a24a0df29b60cdbb2b5f597bf1c934a4bd35b"
+      "digest": "sha256:ba86b6b69adf2257f73652ac6e651b2bf32aa7bb5d7f953a41e99bfc9cd74d2d"
     },
     {
       "name": "shadow-claw-draw-bitmap-workbench",
@@ -297,13 +297,13 @@
       "name": "shadow-claw-draw-filter-panel",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-filter-panel.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-filter-panel.js",
-      "digest": "sha256:d04cbe5062277e5371d695cb7656ef366d4f6e1341bdbefd574c65067b7cc3b4"
+      "digest": "sha256:a6053f03baf5b6c2c9ac3f273c75281a9f2d2963bbeb616be10d43a0647cbed1"
     },
     {
       "name": "shadow-claw-draw-inspector",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-inspector.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-inspector.js",
-      "digest": "sha256:7258affb09caf4234099fb32e913c54c317a4888bc663c762895193442e4300c"
+      "digest": "sha256:1f94ade1eb5d322aea652599a63dda98e4451cbbaebcaf42c8b0e6ca6abbf2e7"
     },
     {
       "name": "shadow-claw-draw-layers-panel",
@@ -333,19 +333,19 @@
       "name": "shadow-claw-draw-timeline",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-timeline.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-timeline.js",
-      "digest": "sha256:1aadab34b9371c87169dbb5fa0dc8983a71dc18e931dfe9a8d2edccd94985caf"
+      "digest": "sha256:10bec04cf16faffdd4403a05a2d92f528d1904bd53552980b113dbfe9cc2f68b"
     },
     {
       "name": "shadow-claw-draw-toolbox",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-toolbox.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-toolbox.js",
-      "digest": "sha256:6ed7714a5627c29adeb435e21cd429ab45b0722cb28a9035990b8a6b3a551c18"
+      "digest": "sha256:0d93f73e6a864770086c8ab497c482f5f8a0448149bd108e6c72e9ffc0b0e514"
     },
     {
       "name": "shadow-claw-draw-vector-canvas",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-vector-canvas.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-vector-canvas.js",
-      "digest": "sha256:fd03c22bb91dd25cede66909ba2a69e4c606a77362ce892c6cf121f3b40cd48e"
+      "digest": "sha256:b3d830674549cadbfe8c331395aa556fd372c876a55454662809a4d558cde348"
     },
     {
       "name": "shadow-claw-draw-vector-workbench",

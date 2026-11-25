@@ -704,7 +704,7 @@ export class ShadowClawDrawBitmapCanvas extends BaseElement {
           pointer-events: none;
         }
       </style>
-      <div class="shadow-claw-draw-bitmap-canvas">
+      <div class="scdraw-bitmap-canvas">
         <div
           id="scdraw-bmp-stage-wrap"
           class="scdraw-bitmap-canvas__stage"

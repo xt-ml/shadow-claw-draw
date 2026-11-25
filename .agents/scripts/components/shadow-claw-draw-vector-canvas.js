@@ -999,7 +999,7 @@ export class ShadowClawDrawVectorCanvas extends BaseElement {
           box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
       </style>
-      <div class="shadow-claw-draw-vector-canvas">
+      <div class="scdraw-vector-canvas">
         <div id="scdraw-text-bar" class="scdraw-vector-canvas__text-bar hidden" role="dialog" aria-label="Insert SVG Text">
           <input id="scdraw-text-input" type="text" class="scdraw-input" aria-label="SVG text content" />
           <button type="button" id="scdraw-text-commit" class="scdraw-btn scdraw-btn--primary scdraw-btn--sm">Place Text</button>

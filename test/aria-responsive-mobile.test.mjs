@@ -49,6 +49,7 @@ test("Toolbox & StatusBar: readable SVG + text labels, horizontal mobile scroll 
   assert.match(toolboxSrc, /aria-label=/);
   assert.match(toolboxSrc, /aria-pressed=/);
   assert.match(toolboxSrc, /\.scdraw-toolbox__/);
+  assert.match(toolboxSrc, /class="scdraw-toolbox scdraw-scrollable"/);
   assert.match(toolboxSrc, /scdraw-toolbox__label/);
   assert.match(toolboxSrc, /<svg/);
   assert.match(toolboxSrc, /container-type:\s*inline-size/);
@@ -101,6 +102,7 @@ test("Layers & Inspector: ARIA listbox, min-width: 0 slider grid, readable butto
     /\.scdraw-inspector__body[\s\S]*?overflow-y:\s*auto[\s\S]*?touch-action:\s*pan-y[\s\S]*?scrollbar-gutter:\s*stable[\s\S]*?min-height:\s*0/,
   );
   assert.match(inspectorSrc, /scdraw-scrollable/);
+  assert.match(inspectorSrc, /class="scdraw-panel scdraw-inspector"/);
   assert.doesNotMatch(inspectorSrc, /\balert\s*\(/);
 });
 
@@ -125,6 +127,11 @@ test("Vector Canvas & Workbench: fit-to-viewport scaling, safe margin:auto cente
   assert.match(canvasSrc, /role=["']application["']|role=["']region["']/);
   assert.match(canvasSrc, /aria-label=/);
   assert.match(canvasSrc, /\.scdraw-vector-canvas__/);
+  assert.match(canvasSrc, /<div class="scdraw-vector-canvas">/);
+  assert.match(
+    canvasSrc,
+    /\.scdraw-vector-canvas\s*\{[\s\S]*?display:\s*flex;[\s\S]*?flex-direction:\s*column;[\s\S]*?height:\s*100%;[\s\S]*?min-height:\s*240px/,
+  );
 
   assert.match(
     wbSrc,
@@ -195,6 +202,7 @@ test("Bitmap UI (<shadow-claw-draw-filter-panel>, <shadow-claw-draw-bitmap-canva
   assert.match(filterSrc, /scdraw-scrollable/);
   assert.match(filterSrc, /@media\s*\(\s*pointer:\s*coarse\s*\)/);
   assert.match(filterSrc, /\.scdraw-filter-panel__/);
+  assert.match(filterSrc, /class="scdraw-panel scdraw-filter-panel"/);
   assert.doesNotMatch(filterSrc, /@material\/web/);
   assert.doesNotMatch(filterSrc, /\balert\s*\(/);
 
@@ -213,6 +221,11 @@ test("Bitmap UI (<shadow-claw-draw-filter-panel>, <shadow-claw-draw-bitmap-canva
   assert.match(bmpCanvasSrc, /role=["']application["']|role=["']region["']/);
   assert.match(bmpCanvasSrc, /aria-label=/);
   assert.match(bmpCanvasSrc, /\.scdraw-bitmap-canvas__/);
+  assert.match(bmpCanvasSrc, /<div class="scdraw-bitmap-canvas">/);
+  assert.match(
+    bmpCanvasSrc,
+    /\.scdraw-bitmap-canvas\s*\{[\s\S]*?display:\s*flex;[\s\S]*?flex-direction:\s*column;[\s\S]*?height:\s*100%;[\s\S]*?min-height:\s*240px/,
+  );
   assert.match(bmpCanvasSrc, /move-selection/);
   assert.match(bmpCanvasSrc, /cutBitmapSelection/);
   assert.match(bmpCanvasSrc, /copyBitmapSelection/);
@@ -310,4 +323,16 @@ test("Bitmap UI (<shadow-claw-draw-filter-panel>, <shadow-claw-draw-bitmap-canva
   assert.match(animWbSrc, /installPageSwipeGuard/);
   assert.match(animWbSrc, /setupWorkbenchFullscreen/);
   assert.match(animWbSrc, /prefers-reduced-motion/);
+});
+
+test("Component root wrapper CSS classes stay aligned with .scdraw-* BEM selectors", async () => {
+  const entries = await fs.readdir(COMPONENTS_DIR);
+  for (const name of entries.filter((f) => f.endsWith(".js"))) {
+    const src = await readComp(name);
+    assert.doesNotMatch(
+      src,
+      /class="[^"]*\bshadow-claw-draw-/,
+      `${name} must use .scdraw-* BEM classes instead of shadow-claw-draw-* tag names`,
+    );
+  }
 });

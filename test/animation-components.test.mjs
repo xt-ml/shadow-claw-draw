@@ -153,10 +153,7 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
     /\.scdraw-anim-wb__workspace\s*\{[^}]*flex:\s*1\s+0\s+clamp\(/,
   );
 
-  assert.match(
-    timelineSrc,
-    /class="shadow-claw-draw-timeline scdraw-scrollable"/,
-  );
+  assert.match(timelineSrc, /class="scdraw-timeline scdraw-scrollable"/);
   assert.match(
     timelineSrc,
     /\.scdraw-timeline\s*\{[^}]*height:\s*auto[^}]*overflow-y:\s*auto/,

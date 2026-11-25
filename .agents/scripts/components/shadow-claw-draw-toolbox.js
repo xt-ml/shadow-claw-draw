@@ -466,7 +466,7 @@ export class ShadowClawDrawToolbox extends BaseElement {
           }
         }
       </style>
-      <div class="shadow-claw-draw-toolbox scdraw-scrollable" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
+      <div class="scdraw-toolbox scdraw-scrollable" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
         <div class="scdraw-toolbox__colors">
           <div class="scdraw-toolbox__swatch-pair">
             <div class="scdraw-toolbox__swatch-item">

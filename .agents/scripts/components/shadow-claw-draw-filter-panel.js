@@ -216,7 +216,7 @@ export class ShadowClawDrawFilterPanel extends BaseElement {
           }
         }
       </style>
-      <section class="scdraw-panel shadow-claw-draw-filter-panel" role="region" aria-label="Bitmap Filters and Image Manipulation">
+      <section class="scdraw-panel scdraw-filter-panel" role="region" aria-label="Bitmap Filters and Image Manipulation">
         <header class="scdraw-panel__header">
           <span>Filters &amp; Transforms</span>
           <button type="button" id="scdraw-f-reset-filters" class="scdraw-btn scdraw-btn--sm">Clear Filters</button>
