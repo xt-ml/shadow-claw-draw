@@ -50,7 +50,7 @@ After selecting a `<path>` element, switch to **Node** (`A`) to reshape its curv
 
 - **Move Anchors**: Drag any amber anchor node (`data-handle="anchor"`) to reposition its vertex in real time.
 - **Drag Control Handles**: Drag either cyan cubic Bezier control handle (`handleIn`, `handleOut`) connected to the anchor to bend incoming/outgoing segments.
-- **Node Modes (`scdraw-vector.js`)**: Pure node operations (`set_node`, `insert_node`, `delete_node`, `close_path`) support `"cusp"`, `"smooth"`, and `"symmetric"` handle constraints, addressable via `scdraw_update_element` or `scdraw_import_svg` / the live **XML** editor.
+- **Node Modes (`shadow-claw-draw-vector.js`)**: Pure node operations (`set_node`, `insert_node`, `delete_node`, `close_path`) support `"cusp"`, `"smooth"`, and `"symmetric"` handle constraints, addressable via `scdraw_update_element` or `scdraw_import_svg` / the live **XML** editor.
 
 ### Freehand Pencil (`B`)
 

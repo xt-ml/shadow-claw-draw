@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import {
   serializeAnimatedVectorDocumentToSvg,
   parseAnimatedSvgToAnimationDocument,
-} from "../.agents/scripts/scdraw-anim-svg.js";
+} from "../.agents/scripts/shadow-claw-draw-anim-svg.js";
 import {
   createAnimationDocument,
   applyAnimationCommand,
-} from "../.agents/scripts/scdraw-animation.js";
-import { normalizeVectorElement } from "../.agents/scripts/scdraw-vector.js";
+} from "../.agents/scripts/shadow-claw-draw-animation.js";
+import { normalizeVectorElement } from "../.agents/scripts/shadow-claw-draw-vector.js";
 
 test("Animated SVG Codec: serializes SMIL animated SVG with interpolation and round-trips", () => {
   let anim = createAnimationDocument({
@@ -43,7 +43,7 @@ test("Animated SVG Codec: serializes SMIL animated SVG with interpolation and ro
     interpolate: true,
   });
 
-  assert.match(svg, /<svg[^>]+data-scdraw-animation="true"/);
+  assert.match(svg, /<svg[^>]+data-shadow-claw-draw-animation="true"/);
   assert.match(svg, /<animateTransform/);
   assert.match(svg, /<animate[^>]+attributeName="fill"/);
 

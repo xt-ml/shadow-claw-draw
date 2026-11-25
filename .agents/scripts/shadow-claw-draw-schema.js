@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-schema.js
+ * .agents/scripts/shadow-claw-draw-schema.js
  *
  * Canonical constants, limits, tool lists, and tiny shared helpers
  * for ShadowClaw Draw (Vector, Bitmap & Animation studios).

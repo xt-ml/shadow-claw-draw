@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-tween.js
+ * .agents/scripts/shadow-claw-draw-tween.js
  *
  * Pure zero-DOM Vector Keyframe Tweening, Bezier Path Morphing & Motion Trajectory module.
  *
@@ -10,15 +10,15 @@
  * - Interpolates transforms, geometry, colors, opacities, and morphed paths
  */
 
-import { clamp, roundNum, deepClone } from "./scdraw-schema.js";
-import { parseHexColor, rgbaToHex } from "./scdraw-bitmap.js";
+import { clamp, roundNum, deepClone } from "./shadow-claw-draw-schema.js";
+import { parseHexColor, rgbaToHex } from "./shadow-claw-draw-bitmap.js";
 import {
   parseSvgPathData,
   pathDataToNodes,
   nodesToPathData,
   computeElementBBox,
   normalizeVectorElement,
-} from "./scdraw-vector.js";
+} from "./shadow-claw-draw-vector.js";
 
 export function evaluateEasing(t, easing = "linear") {
   const x = clamp(Number(t) || 0, 0, 1);

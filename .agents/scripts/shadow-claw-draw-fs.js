@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-fs.js
+ * .agents/scripts/shadow-claw-draw-fs.js
  *
  * ShadowClaw File System & OPFS (Origin Private File System) integration for ShadowClaw Draw.
  * Delegates conversation storage and mocks to `shadow-claw/utils/workspace-fs`, adding Draw

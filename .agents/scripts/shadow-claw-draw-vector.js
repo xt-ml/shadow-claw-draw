@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-vector.js
+ * .agents/scripts/shadow-claw-draw-vector.js
  *
  * Pure zero-DOM Vector Document Model, Transactional Reducer, Bezier Node Math,
  * Alignment/Distribution, and Geometry Helpers for ShadowClaw Draw.
@@ -24,7 +24,7 @@ import {
   roundNum,
   createUid,
   deepClone,
-} from "./scdraw-schema.js";
+} from "./shadow-claw-draw-schema.js";
 
 /**
  * Parse an SVG path `d` attribute into normalized absolute commands

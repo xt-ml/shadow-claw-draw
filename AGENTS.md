@@ -21,17 +21,17 @@ Three-studio, browser-native **Vector (SVG)**, **Bitmap (Canvas 2D)**, and **Ani
   - Tools prefix: `scdraw_*` (36 declarative tools)
   - Custom Elements prefix: `scdraw-*` (15 Web Components)
   - Broadcast Channels: `scdraw-commands`, `scdraw-results`, `scdraw-state`
-  - Web Lock: `scdraw-engine`
+  - Web Lock: `shadow-claw-draw-engine`
   - Engine singleton: `globalThis.__scdraw`
 
 ## Architecture & Guardrails
 
 1. **Zero-DOM Pure Logic Modules**:
-   - Vector model, Bezier node editing, RDP freehand smoothing, alignment/distribution, and bounding-box math live in `.agents/scripts/scdraw-vector.js` and `.agents/scripts/scdraw-svg-codec.js` (canonical constants in `.agents/scripts/scdraw-schema.js`: `MAX_CANVAS_SIZE = 4096`, `MAX_HISTORY = 100`, `BLEND_MODES` = 8 modes).
-   - Bitmap multi-layer pixel compositing, GIMP-inspired blend modes, document-space coordinate mapping (`docToLayerPoint`), non-destructive moved-layer auto-expansion (`ensureLayerCoversDocRect`), rectangular & inverted selection masking (`isDocPointSelected`, `clampSelectionToDoc`), Cut/Copy/Paste (`extractSelectionPixels`), brush/eraser dab rasterizer, scanline flood fill, and pixel transforms live in `.agents/scripts/scdraw-bitmap.js`.
-   - Real-time 10-group Canvas filter pipeline (`blur`, `brightness`, `contrast`, `saturation`, `grayscale`, `hueRotate`, `invert`, `opacity`, `sepia`, `drop-shadow` offsets/blur/color) and crop/fit math ported from `<x-canvas-image-manipulation>` live in `.agents/scripts/scdraw-filters.js`.
-   - Animation frame/timeline model (`MAX_ANIMATION_FRAMES = 500`, `MAX_ANIMATION_BITMAP_HISTORY = 25`), cubic Bezier path-morph & arc-length trajectory tweening, CIE L\*a\*b\* quantization & Bayer/Floyd-Steinberg dithering, delta-frame GIF89a optimization & LZW codec, Web Worker GIF encoding, pure-JS APNG codec, SMIL/CSS Animated SVG codec, screen/webcam capture helpers, and unified encoder adapters live in `.agents/scripts/scdraw-animation.js`, `scdraw-tween.js`, `scdraw-quantize.js`, `scdraw-gif-optimize.js`, `scdraw-gif-codec.js`, `scdraw-gif-worker.js`, `scdraw-apng-codec.js`, `scdraw-anim-svg.js`, `scdraw-capture.js`, and `scdraw-encoders.js`.
-   - Reactive `DrawEngine` state, `bitmapClipboard` signal, undo/redo stacks, and OPFS helpers live in `.agents/scripts/scdraw-engine.js`, `.agents/scripts/scdraw-signals.js`, and `.agents/scripts/scdraw-fs.js`.
+   - Vector model, Bezier node editing, RDP freehand smoothing, alignment/distribution, and bounding-box math live in `.agents/scripts/shadow-claw-draw-vector.js` and `.agents/scripts/shadow-claw-draw-svg-codec.js` (canonical constants in `.agents/scripts/shadow-claw-draw-schema.js`: `MAX_CANVAS_SIZE = 4096`, `MAX_HISTORY = 100`, `BLEND_MODES` = 8 modes).
+   - Bitmap multi-layer pixel compositing, GIMP-inspired blend modes, document-space coordinate mapping (`docToLayerPoint`), non-destructive moved-layer auto-expansion (`ensureLayerCoversDocRect`), rectangular & inverted selection masking (`isDocPointSelected`, `clampSelectionToDoc`), Cut/Copy/Paste (`extractSelectionPixels`), brush/eraser dab rasterizer, scanline flood fill, and pixel transforms live in `.agents/scripts/shadow-claw-draw-bitmap.js`.
+   - Real-time 10-group Canvas filter pipeline (`blur`, `brightness`, `contrast`, `saturation`, `grayscale`, `hueRotate`, `invert`, `opacity`, `sepia`, `drop-shadow` offsets/blur/color) and crop/fit math ported from `<x-canvas-image-manipulation>` live in `.agents/scripts/shadow-claw-draw-filters.js`.
+   - Animation frame/timeline model (`MAX_ANIMATION_FRAMES = 500`, `MAX_ANIMATION_BITMAP_HISTORY = 25`), cubic Bezier path-morph & arc-length trajectory tweening, CIE L\*a\*b\* quantization & Bayer/Floyd-Steinberg dithering, delta-frame GIF89a optimization & LZW codec, Web Worker GIF encoding, pure-JS APNG codec, SMIL/CSS Animated SVG codec, screen/webcam capture helpers, and unified encoder adapters live in `.agents/scripts/shadow-claw-draw-animation.js`, `shadow-claw-draw-tween.js`, `shadow-claw-draw-quantize.js`, `shadow-claw-draw-gif-optimize.js`, `shadow-claw-draw-gif-codec.js`, `shadow-claw-draw-gif-worker.js`, `shadow-claw-draw-apng-codec.js`, `shadow-claw-draw-anim-svg.js`, `shadow-claw-draw-capture.js`, and `shadow-claw-draw-encoders.js`.
+   - Reactive `DrawEngine` state, `bitmapClipboard` signal, undo/redo stacks, and OPFS helpers live in `.agents/scripts/shadow-claw-draw-engine.js`, `.agents/scripts/shadow-claw-draw-signals.js`, and `.agents/scripts/shadow-claw-draw-fs.js`.
 
 2. **Mobile-First Responsive UI, Full Screen, Swipe Guard & WCAG 2.1 AA**:
    - All custom elements in `.agents/scripts/components/scdraw-*.js` use mobile-first `min-width` `@container` queries (`>= 640px`, `>= 1024px`) with `@supports not (container-type: inline-size)` fallbacks, `@media (pointer: coarse)` 44px touch targets (including horizontal scroll strips with `flex: 0 0 auto`), BEM classes (`.scdraw-*__*`), `touch-action: none` + Pointer Events (`setPointerCapture`), keyboard shortcuts, and `aria-live="polite"` status reporting (never `alert()` / `confirm()` / `prompt()`).
@@ -40,7 +40,7 @@ Three-studio, browser-native **Vector (SVG)**, **Bitmap (Canvas 2D)**, and **Ani
    - **Full Screen Workbench Controller**: All three workbenches (`<shadow-claw-draw-vector-workbench>`, `<shadow-claw-draw-bitmap-workbench>`, and `<shadow-claw-draw-animation-workbench>`) wire `setupWorkbenchFullscreen` (`shadow-claw-draw-styles.js`), supporting Fullscreen API plus `100dvw × 100dvh` (`100vw × 100vh` fallback) fixed overlay positioning, temporary host `.page` `transform` neutralization on activation/restoration, and `!e.defaultPrevented` `Escape` ordering so canvas selection/text cancel takes priority over exiting fullscreen.
 
 3. **Declarative Tools, Skills & Docs**:
-   - Single source of truth for all 36 tools is `bin/tool-manifest.mjs`. Regenerate `.agents/tools/*.json` and `.agents/scripts/scdraw-tools-metadata.js` via `npm run build:tools` (avoid Prettier formatting `.agents/scripts/scdraw-tools-metadata.js` afterward unless keeping `check:tools` happy) and verify with `npm run check:tools`.
+   - Single source of truth for all 36 tools is `bin/tool-manifest.mjs`. Regenerate `.agents/tools/*.json` and `.agents/scripts/shadow-claw-draw-tools-metadata.js` via `npm run build:tools` (avoid Prettier formatting `.agents/scripts/shadow-claw-draw-tools-metadata.js` afterward unless keeping `check:tools` happy) and verify with `npm run check:tools`.
    - Keep `test/pages.test.mjs` branding identity checks green across `pages/main/MEMORY.md`, `AGENTS.md`, `pages/resources/`, and `theme.css`.
    - Regenerate `.well-known/agent-skills/index.json` via `npm run skills:index` after editing any script or skill under `.agents/`.
 
@@ -49,7 +49,7 @@ Three-studio, browser-native **Vector (SVG)**, **Bitmap (Canvas 2D)**, and **Ani
 ```bash
 npm test                  # Run all node:test unit, engine, page, and a11y suites
 npm run check             # Run namespace isolation and tool drift checks
-npm run build:tools       # Regenerate .agents/tools/*.json and scdraw-tools-metadata.js
+npm run build:tools       # Regenerate .agents/tools/*.json and shadow-claw-draw-tools-metadata.js
 npm run skills:index      # Regenerate .well-known/agent-skills/index.json
 npm run dev               # Launch local preview server (shadow-claw dev)
 npm run build             # Production build to dist/public/

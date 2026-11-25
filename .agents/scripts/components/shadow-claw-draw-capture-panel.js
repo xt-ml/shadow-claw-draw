@@ -9,9 +9,9 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { formatFileSize } from "../scdraw-fs.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { formatFileSize } from "../shadow-claw-draw-fs.js";
 import {
   isScreenCaptureSupported,
   isMicrophoneCaptureSupported,
@@ -22,7 +22,7 @@ import {
   stopMediaStream,
   recordMediaStream,
   extractFramesFromVideoBlob,
-} from "../scdraw-capture.js";
+} from "../shadow-claw-draw-capture.js";
 
 import {
   BaseElement,

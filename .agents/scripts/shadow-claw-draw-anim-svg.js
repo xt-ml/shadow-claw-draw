@@ -1,23 +1,26 @@
 /**
- * .agents/scripts/scdraw-anim-svg.js
+ * .agents/scripts/shadow-claw-draw-anim-svg.js
  *
  * Pure zero-DOM Animated SVG (SMIL & CSS @keyframes) Serializer & Round-Trip Parser.
  * Supports both cel-frame switching and true property/transform/path interpolation.
  */
 
-import { roundNum } from "./scdraw-schema.js";
+import { roundNum } from "./shadow-claw-draw-schema.js";
 import {
   escapeXml,
   unescapeXml,
   serializeVectorDocumentToSvg,
   parseSvgToVectorDocument,
-} from "./scdraw-svg-codec.js";
+} from "./shadow-claw-draw-svg-codec.js";
 import {
   createAnimationDocument,
   createAnimationFrame,
   computePlaybackSequence,
-} from "./scdraw-animation.js";
-import { computeElementBBox, findAllElements } from "./scdraw-vector.js";
+} from "./shadow-claw-draw-animation.js";
+import {
+  computeElementBBox,
+  findAllElements,
+} from "./shadow-claw-draw-vector.js";
 
 function easingToKeySpline(easing) {
   switch (easing) {
@@ -222,7 +225,7 @@ export function serializeAnimatedVectorDocumentToSvg(
 
   const delaysAttr = seq.map((i) => animDoc.frames[i].delayMs).join(",");
   const lines = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${roundNum(animDoc.width)}" height="${roundNum(animDoc.height)}" viewBox="0 0 ${roundNum(animDoc.width)} ${roundNum(animDoc.height)}" data-scdraw-animation="true" data-scdraw-name="${escapeXml(animDoc.name)}" data-scdraw-fps="${roundNum(animDoc.fps)}" data-scdraw-frame-delays="${escapeXml(delaysAttr)}" data-scdraw-loop-count="${animDoc.loopCount}" data-scdraw-loop-mode="${escapeXml(animDoc.loopMode)}" data-scdraw-bg="${escapeXml(animDoc.background)}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${roundNum(animDoc.width)}" height="${roundNum(animDoc.height)}" viewBox="0 0 ${roundNum(animDoc.width)} ${roundNum(animDoc.height)}" data-shadow-claw-draw-animation="true" data-scdraw-name="${escapeXml(animDoc.name)}" data-scdraw-fps="${roundNum(animDoc.fps)}" data-scdraw-frame-delays="${escapeXml(delaysAttr)}" data-scdraw-loop-count="${animDoc.loopCount}" data-scdraw-loop-mode="${escapeXml(animDoc.loopMode)}" data-scdraw-bg="${escapeXml(animDoc.background)}">`,
   ];
 
   const gradients = animDoc.frames[seq[0]]?.doc?.defs?.gradients || [];

@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DrawEngine, scdraw } from "../.agents/scripts/scdraw-engine.js";
-import { MAX_HISTORY } from "../.agents/scripts/scdraw-schema.js";
+import {
+  DrawEngine,
+  scdraw,
+} from "../.agents/scripts/shadow-claw-draw-engine.js";
+import { MAX_HISTORY } from "../.agents/scripts/shadow-claw-draw-schema.js";
 
 test("DrawEngine: exports global singleton on globalThis.__scdraw with reactive signals", () => {
   assert.ok(scdraw instanceof DrawEngine);

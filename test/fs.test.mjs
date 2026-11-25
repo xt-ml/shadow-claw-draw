@@ -15,9 +15,9 @@ import {
   deleteWorkspaceFile,
   setMockFsStorage,
   resetMockFsStorage,
-} from "../.agents/scripts/scdraw-fs.js";
+} from "../.agents/scripts/shadow-claw-draw-fs.js";
 
-test("scdraw-fs: sanitizeGroupId, unsanitizeGroupId, and sanitizeFilename block traversal", () => {
+test("shadow-claw-draw-fs: sanitizeGroupId, unsanitizeGroupId, and sanitizeFilename block traversal", () => {
   assert.equal(sanitizeGroupId("br:main"), "br-main");
   assert.equal(sanitizeGroupId(""), "br-main");
   assert.equal(unsanitizeGroupId("br-main"), "br:main");
@@ -29,7 +29,7 @@ test("scdraw-fs: sanitizeGroupId, unsanitizeGroupId, and sanitizeFilename block 
   assert.throws(() => sanitizeFilename(".."), /invalid filename/i);
 });
 
-test("scdraw-fs: classifyDrawFile & formatting helpers", () => {
+test("shadow-claw-draw-fs: classifyDrawFile & formatting helpers", () => {
   assert.deepEqual(classifyDrawFile("logo.svg"), {
     format: "svg",
     isVector: true,
@@ -56,7 +56,7 @@ test("scdraw-fs: classifyDrawFile & formatting helpers", () => {
   assert.equal(formatFileSize(2048), "2.0 KB");
 });
 
-test("scdraw-fs: save, list, read, and delete workspace files across conversations", async () => {
+test("shadow-claw-draw-fs: save, list, read, and delete workspace files across conversations", async () => {
   resetMockFsStorage();
 
   const convs = await listConversations();

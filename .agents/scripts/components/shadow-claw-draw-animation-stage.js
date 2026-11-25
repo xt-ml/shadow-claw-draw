@@ -7,12 +7,12 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { computePlaybackSequence } from "../scdraw-animation.js";
-import { decodeGifFile, decodeApngFile } from "../scdraw-encoders.js";
-import { parseAnimatedSvgToAnimationDocument } from "../scdraw-anim-svg.js";
-import { extractFramesFromVideoBlob } from "../scdraw-capture.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { computePlaybackSequence } from "../shadow-claw-draw-animation.js";
+import { decodeGifFile, decodeApngFile } from "../shadow-claw-draw-encoders.js";
+import { parseAnimatedSvgToAnimationDocument } from "../shadow-claw-draw-anim-svg.js";
+import { extractFramesFromVideoBlob } from "../shadow-claw-draw-capture.js";
 import "./shadow-claw-draw-vector-canvas.js";
 import "./shadow-claw-draw-bitmap-canvas.js";
 

@@ -151,7 +151,9 @@ test("Site Config: Draw branding, directPages, customElements, and security sand
 
   const scripts = config.customElements?.scripts || [];
   const elScript = scripts.find((s) => s.id === "shadow-claw-draw-element");
-  const adapterScript = scripts.find((s) => s.id === "scdraw-adapter");
+  const adapterScript = scripts.find(
+    (s) => s.id === "shadow-claw-draw-adapter",
+  );
   assert.ok(elScript && elScript.global === true && elScript.autoload === true);
   assert.ok(
     adapterScript &&

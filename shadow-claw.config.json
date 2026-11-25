@@ -76,9 +76,9 @@
         "hasInit": false
       },
       {
-        "id": "scdraw-adapter",
-        "name": "scdraw-adapter",
-        "src": ".agents/scripts/scdraw-adapter.js",
+        "id": "shadow-claw-draw-adapter",
+        "name": "shadow-claw-draw-adapter",
+        "src": ".agents/scripts/shadow-claw-draw-adapter.js",
         "global": true,
         "autoload": true,
         "hasInit": true

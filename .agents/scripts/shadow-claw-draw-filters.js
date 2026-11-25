@@ -1,12 +1,12 @@
 /**
- * .agents/scripts/scdraw-filters.js
+ * .agents/scripts/shadow-claw-draw-filters.js
  *
  * Ported & generalized from <x-canvas-image-manipulation>
  * (/packages/kherrick/apps/apps/src/app/pages/playground/x-canvas-image-manipulation/x-canvas-image-manipulation.ts)
  * into zero-dependency Vanilla ESM JavaScript for ShadowClaw Draw.
  */
 
-import { clamp, roundNum } from "./scdraw-schema.js";
+import { clamp, roundNum } from "./shadow-claw-draw-schema.js";
 
 export const DEFAULT_SHADOW_COLOR = "#000000";
 

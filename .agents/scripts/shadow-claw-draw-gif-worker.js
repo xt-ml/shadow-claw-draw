@@ -1,11 +1,11 @@
 /**
- * .agents/scripts/scdraw-gif-worker.js
+ * .agents/scripts/shadow-claw-draw-gif-worker.js
  *
  * Offline Module Web Worker for ShadowClaw Draw GIF89a encoding & decoding.
  * Uses pure-JS GIMP-ported quantization, delta optimization, and LZW codec.
  */
 
-import { encodeGif, decodeGif } from "./scdraw-gif-codec.js";
+import { encodeGif, decodeGif } from "./shadow-claw-draw-gif-codec.js";
 
 if (
   typeof self !== "undefined" &&

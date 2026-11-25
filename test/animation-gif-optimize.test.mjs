@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   optimizeAnimationFrames,
   unoptimizeAnimationFrames,
-} from "../.agents/scripts/scdraw-gif-optimize.js";
+} from "../.agents/scripts/shadow-claw-draw-gif-optimize.js";
 
 function makeCanvasRgba(w, h, r = 0, g = 0, b = 0, a = 255) {
   const px = new Uint8ClampedArray(w * h * 4);

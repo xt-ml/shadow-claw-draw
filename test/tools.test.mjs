@@ -7,8 +7,8 @@ import { TOOLS } from "../bin/tool-manifest.mjs";
 import {
   handleToolDispatch,
   registerNativeWebMcp,
-} from "../.agents/scripts/scdraw-adapter.js";
-import { resetMockFsStorage } from "../.agents/scripts/scdraw-fs.js";
+} from "../.agents/scripts/shadow-claw-draw-adapter.js";
+import { resetMockFsStorage } from "../.agents/scripts/shadow-claw-draw-fs.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -472,7 +472,7 @@ test("Adapter: Animation Studio tools execute end-to-end (new, frame CRUD, tween
     interpolate: true,
   });
   assert.equal(svgOut.ok, true);
-  assert.match(svgOut.svg, /data-scdraw-animation="true"/);
+  assert.match(svgOut.svg, /data-shadow-claw-draw-animation="true"/);
 
   const animStatus = await handleToolDispatch(
     "scdraw_get_animation_status",

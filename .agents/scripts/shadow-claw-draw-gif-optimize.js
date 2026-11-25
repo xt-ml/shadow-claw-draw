@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-gif-optimize.js
+ * .agents/scripts/shadow-claw-draw-gif-optimize.js
  *
  * Pure zero-DOM GIF Animation Delta Optimizer & Unoptimizer.
  *

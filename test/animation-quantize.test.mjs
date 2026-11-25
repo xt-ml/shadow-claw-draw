@@ -6,7 +6,7 @@ import {
   linearToSrgb,
   buildPalette,
   quantizeFrameToIndexed,
-} from "../.agents/scripts/scdraw-quantize.js";
+} from "../.agents/scripts/shadow-claw-draw-quantize.js";
 
 function makeSolidRgba(w, h, r, g, b, a = 255) {
   const out = new Uint8ClampedArray(w * h * 4);

@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-gif-codec.js
+ * .agents/scripts/shadow-claw-draw-gif-codec.js
  *
  * Pure zero-DOM GIF89a Encoder & GIF87a/89a Decoder for ShadowClaw Draw.
  *
@@ -11,12 +11,15 @@
  * - Interlaced pass reconstruction & disposal compositing on decode
  */
 
-import { clamp } from "./scdraw-schema.js";
-import { buildPalette, quantizeFrameToIndexed } from "./scdraw-quantize.js";
+import { clamp } from "./shadow-claw-draw-schema.js";
+import {
+  buildPalette,
+  quantizeFrameToIndexed,
+} from "./shadow-claw-draw-quantize.js";
 import {
   optimizeAnimationFrames,
   unoptimizeAnimationFrames,
-} from "./scdraw-gif-optimize.js";
+} from "./shadow-claw-draw-gif-optimize.js";
 
 function colorsToBpp(colorCount) {
   let bpp = 1;

@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-signals.js
+ * .agents/scripts/shadow-claw-draw-signals.js
  *
  * Reactive Signals re-exported from ShadowClaw's canonical bundle (`shadow-claw/signals`).
  */

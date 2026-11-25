@@ -3,13 +3,13 @@ import assert from "node:assert/strict";
 import {
   createVectorDocument,
   applyVectorCommand,
-} from "../.agents/scripts/scdraw-vector.js";
+} from "../.agents/scripts/shadow-claw-draw-vector.js";
 import {
   serializeVectorDocumentToSvg,
   parseSvgToVectorDocument,
   parseSvgPathData,
   formatSvgPathData,
-} from "../.agents/scripts/scdraw-svg-codec.js";
+} from "../.agents/scripts/shadow-claw-draw-svg-codec.js";
 
 test("SVG Codec: parseSvgPathData & formatSvgPathData handle M/L/H/V/C/Q/Z (abs and rel)", () => {
   const cmds = parseSvgPathData(

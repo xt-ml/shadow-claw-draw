@@ -22,7 +22,7 @@ import {
   isDocPointSelected,
   clampSelectionToDoc,
   extractSelectionPixels,
-} from "../.agents/scripts/scdraw-bitmap.js";
+} from "../.agents/scripts/shadow-claw-draw-bitmap.js";
 
 test("Bitmap Ops: createBitmapDocument, color parsing, and locked layer guard", () => {
   const doc = createBitmapDocument({

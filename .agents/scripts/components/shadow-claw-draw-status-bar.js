@@ -12,8 +12,8 @@ import {
   defineElement,
 } from "shadow-claw/components/shadow-claw-element";
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
 
 export class ShadowClawDrawStatusBar extends ShadowClawElement {
   static get observedAttributes() {

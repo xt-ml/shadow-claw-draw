@@ -8,8 +8,8 @@ import {
   computePlaybackSequence,
   computeTotalDurationMs,
   formatTimecode,
-} from "../.agents/scripts/scdraw-animation.js";
-import { normalizeVectorElement } from "../.agents/scripts/scdraw-vector.js";
+} from "../.agents/scripts/shadow-claw-draw-animation.js";
+import { normalizeVectorElement } from "../.agents/scripts/shadow-claw-draw-vector.js";
 
 test("Animation Model: createAnimationDocument initializes defaults for vector and bitmap modes", () => {
   const vecAnim = createAnimationDocument({ mode: "vector" });

@@ -12,7 +12,7 @@ import {
   pathDataToNodes,
   computeElementBBox,
   computeSelectionBBox,
-} from "../.agents/scripts/scdraw-vector.js";
+} from "../.agents/scripts/shadow-claw-draw-vector.js";
 
 test("Vector Model: createVectorDocument builds schema v1 with default Layer 1", () => {
   const doc = createVectorDocument({

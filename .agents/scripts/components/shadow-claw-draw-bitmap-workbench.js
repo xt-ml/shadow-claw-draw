@@ -23,9 +23,9 @@ export {
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
 };
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { getAppBasePath } from "../scdraw-fs.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { getAppBasePath } from "../shadow-claw-draw-fs.js";
 import "./shadow-claw-draw-toolbox.js";
 import "./shadow-claw-draw-bitmap-canvas.js";
 import "./shadow-claw-draw-layers-panel.js";
@@ -345,13 +345,15 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
     const root = this.shadowRoot;
     if (!root) return;
 
-    const moreBtn = root.getElementById("scdraw-bitmap-more-toggle");
-    const secondaryBar = root.getElementById("scdraw-bitmap-secondary-bar");
+    const moreBtn = root.getElementById("shadow-claw-draw-bitmap-more-toggle");
+    const secondaryBar = root.getElementById(
+      "shadow-claw-draw-bitmap-secondary-bar",
+    );
     moreBtn?.addEventListener("click", () => {
       this._moreOpen = !this._moreOpen;
       moreBtn.setAttribute("aria-expanded", String(this._moreOpen));
       secondaryBar?.classList.toggle(
-        "scdraw-bitmap-wb__secondary-bar--open",
+        "shadow-claw-draw-bitmap-wb__secondary-bar--open",
         this._moreOpen,
       );
     });
@@ -1000,10 +1002,10 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
               </div>
               <button
                 type="button"
-                id="scdraw-bitmap-more-toggle"
+                id="shadow-claw-draw-bitmap-more-toggle"
                 class="scdraw-btn scdraw-btn--sm scdraw-bitmap-wb__more-toggle"
                 aria-expanded="false"
-                aria-controls="scdraw-bitmap-secondary-bar">More ▾</button>
+                aria-controls="shadow-claw-draw-bitmap-secondary-bar">More ▾</button>
             </div>
           </div>
 

@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { resolveObjectURL } from "node:buffer";
-import { DrawEngine } from "../.agents/scripts/scdraw-engine.js";
+import { DrawEngine } from "../.agents/scripts/shadow-claw-draw-engine.js";
 import {
   classifyDrawFile,
   resetMockFsStorage,
-} from "../.agents/scripts/scdraw-fs.js";
+} from "../.agents/scripts/shadow-claw-draw-fs.js";
 import {
   CDN_URLS,
   toExactArrayBuffer,
@@ -20,7 +20,7 @@ import {
   encodeAnimationToSpriteSheet,
   encodeAnimationToApng,
   decodeGifFile,
-} from "../.agents/scripts/scdraw-encoders.js";
+} from "../.agents/scripts/shadow-claw-draw-encoders.js";
 import {
   isScreenCaptureSupported,
   isMicrophoneCaptureSupported,
@@ -32,8 +32,8 @@ import {
   startMicrophoneCapture,
   stopMediaStream,
   listAudioInputDevices,
-} from "../.agents/scripts/scdraw-capture.js";
-import { decodeGif } from "../.agents/scripts/scdraw-gif-codec.js";
+} from "../.agents/scripts/shadow-claw-draw-capture.js";
+import { decodeGif } from "../.agents/scripts/shadow-claw-draw-gif-codec.js";
 import { FakeCanvasElement } from "./helpers/fake-canvas-context.mjs";
 
 const createFakeCanvasFactory = () => (w, h) => {
@@ -206,7 +206,7 @@ test("DrawEngine Animation: active-frame projection, undo/redo, studio capture, 
     engine: "smil",
   });
   assert.equal(svgExport.mimeType, "image/svg+xml");
-  assert.match(svgExport.text, /data-scdraw-animation="true"/);
+  assert.match(svgExport.text, /data-shadow-claw-draw-animation="true"/);
 
   const makeSolid = (w, h, r, g, b) => {
     const u = new Uint8ClampedArray(w * h * 4);

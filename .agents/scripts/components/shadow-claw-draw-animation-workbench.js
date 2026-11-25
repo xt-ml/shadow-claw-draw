@@ -12,9 +12,9 @@ import {
   installPageSwipeGuard,
   setupWorkbenchFullscreen,
 } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { getAppBasePath } from "../scdraw-fs.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { getAppBasePath } from "../shadow-claw-draw-fs.js";
 import "./shadow-claw-draw-toolbox.js";
 import "./shadow-claw-draw-animation-stage.js";
 import "./shadow-claw-draw-timeline.js";

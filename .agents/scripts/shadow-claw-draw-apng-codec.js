@@ -1,12 +1,12 @@
 /**
- * .agents/scripts/scdraw-apng-codec.js
+ * .agents/scripts/shadow-claw-draw-apng-codec.js
  *
  * Pure zero-DOM Animated PNG (APNG) Muxer & Demuxer for ShadowClaw Draw.
  * Combines standard PNG frames (e.g. from Canvas 2D export) into a spec-compliant
  * APNG (acTL / fcTL / IDAT / fdAT) with full 32-bit RGBA transparency.
  */
 
-import { clamp } from "./scdraw-schema.js";
+import { clamp } from "./shadow-claw-draw-schema.js";
 
 const PNG_SIG = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 

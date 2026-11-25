@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { encodeGif, decodeGif } from "../.agents/scripts/scdraw-gif-codec.js";
+import {
+  encodeGif,
+  decodeGif,
+} from "../.agents/scripts/shadow-claw-draw-gif-codec.js";
 
 function makeFrame(w, h, r, g, b, a = 255) {
   const out = new Uint8ClampedArray(w * h * 4);

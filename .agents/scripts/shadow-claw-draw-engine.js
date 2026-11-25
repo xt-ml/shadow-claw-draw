@@ -1,27 +1,27 @@
 /**
- * .agents/scripts/scdraw-engine.js
+ * .agents/scripts/shadow-claw-draw-engine.js
  *
  * Reactive DrawEngine singleton managing Vector Studio, Bitmap Studio,
  * and Animation Studio state, per-studio undo/redo history stacks,
  * Canvas/SVG rendering, cross-studio bridges, and OPFS I/O.
  */
 
-import { State, batch } from "./scdraw-signals.js";
+import { State, batch } from "./shadow-claw-draw-signals.js";
 import {
   MAX_HISTORY,
   MAX_ANIMATION_BITMAP_HISTORY,
   clamp,
   deepClone,
-} from "./scdraw-schema.js";
+} from "./shadow-claw-draw-schema.js";
 import {
   createVectorDocument,
   applyVectorCommand,
   findAllElements,
-} from "./scdraw-vector.js";
+} from "./shadow-claw-draw-vector.js";
 import {
   serializeVectorDocumentToSvg,
   parseSvgToVectorDocument,
-} from "./scdraw-svg-codec.js";
+} from "./shadow-claw-draw-svg-codec.js";
 import {
   createBitmapDocument,
   createBitmapLayer,
@@ -29,8 +29,8 @@ import {
   compositeBitmapLayers,
   applyBitmapCommand,
   extractSelectionPixels,
-} from "./scdraw-bitmap.js";
-import { buildCanvasFilterString } from "./scdraw-filters.js";
+} from "./shadow-claw-draw-bitmap.js";
+import { buildCanvasFilterString } from "./shadow-claw-draw-filters.js";
 import {
   createAnimationDocument,
   createAnimationFrame,
@@ -38,11 +38,11 @@ import {
   applyAnimationCommand,
   getEffectiveFrameRange,
   computeTotalDurationMs,
-} from "./scdraw-animation.js";
+} from "./shadow-claw-draw-animation.js";
 import {
   optimizeAnimationFrames,
   unoptimizeAnimationFrames,
-} from "./scdraw-gif-optimize.js";
+} from "./shadow-claw-draw-gif-optimize.js";
 import {
   resolveOutputDimensions,
   encodeAnimationToGif,
@@ -51,13 +51,13 @@ import {
   encodeAnimationToSpriteSheet,
   encodeAnimationToVideo,
   canvasToPngUint8Array,
-} from "./scdraw-encoders.js";
+} from "./shadow-claw-draw-encoders.js";
 import {
   DEFAULT_GROUP_ID,
   saveWorkspaceFile,
   readWorkspaceFile,
   listWorkspaceFiles,
-} from "./scdraw-fs.js";
+} from "./shadow-claw-draw-fs.js";
 
 function uint8ToBase64(u8) {
   if (typeof Buffer !== "undefined") {

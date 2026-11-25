@@ -23,9 +23,9 @@ export {
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
 };
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { getAppBasePath } from "../scdraw-fs.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { getAppBasePath } from "../shadow-claw-draw-fs.js";
 import "./shadow-claw-draw-toolbox.js";
 import "./shadow-claw-draw-vector-canvas.js";
 import "./shadow-claw-draw-layers-panel.js";
@@ -306,13 +306,15 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
     const root = this.shadowRoot;
     if (!root) return;
 
-    const moreBtn = root.getElementById("scdraw-vector-more-toggle");
-    const secondaryBar = root.getElementById("scdraw-vector-secondary-bar");
+    const moreBtn = root.getElementById("shadow-claw-draw-vector-more-toggle");
+    const secondaryBar = root.getElementById(
+      "shadow-claw-draw-vector-secondary-bar",
+    );
     moreBtn?.addEventListener("click", () => {
       this._moreOpen = !this._moreOpen;
       moreBtn.setAttribute("aria-expanded", String(this._moreOpen));
       secondaryBar?.classList.toggle(
-        "scdraw-vector-wb__secondary-bar--open",
+        "shadow-claw-draw-vector-wb__secondary-bar--open",
         this._moreOpen,
       );
     });
@@ -857,10 +859,10 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
               </div>
               <button
                 type="button"
-                id="scdraw-vector-more-toggle"
+                id="shadow-claw-draw-vector-more-toggle"
                 class="scdraw-btn scdraw-btn--sm scdraw-vector-wb__more-toggle"
                 aria-expanded="false"
-                aria-controls="scdraw-vector-secondary-bar">More ▾</button>
+                aria-controls="shadow-claw-draw-vector-secondary-bar">More ▾</button>
             </div>
           </div>
 

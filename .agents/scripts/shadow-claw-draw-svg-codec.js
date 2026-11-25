@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-svg-codec.js
+ * .agents/scripts/shadow-claw-draw-svg-codec.js
  *
  * Pure-JS SVG 1.1/2.0 Serializer & Security-Hardened XML Parser.
  * Zero DOM dependencies so it executes natively in Node.js tests,
@@ -15,8 +15,8 @@ import {
   computeElementBBox,
   parseSvgPathData,
   formatSvgPathData,
-} from "./scdraw-vector.js";
-import { clamp, roundNum, createUid } from "./scdraw-schema.js";
+} from "./shadow-claw-draw-vector.js";
+import { clamp, roundNum, createUid } from "./shadow-claw-draw-schema.js";
 
 export { parseSvgPathData, formatSvgPathData };
 

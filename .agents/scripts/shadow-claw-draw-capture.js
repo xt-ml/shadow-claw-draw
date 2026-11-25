@@ -1,11 +1,11 @@
 /**
- * .agents/scripts/scdraw-capture.js
+ * .agents/scripts/shadow-claw-draw-capture.js
  *
  * Screen, Webcam & Microphone Capture & Zero-WASM Video Frame Extraction for ShadowClaw Draw.
  * Ported cleanly from GIFWorks (`GIFWorksRecorder.ts`, `startRecording.ts`, `stopRecording.ts`).
  */
 
-import { clamp } from "./scdraw-schema.js";
+import { clamp } from "./shadow-claw-draw-schema.js";
 
 const CAPTURE_RESOLUTIONS = {
   "360p": { width: 640, height: 360 },

@@ -11,7 +11,7 @@ import {
   computeFittedRect,
   clampCropRect,
   resetFilters,
-} from "../.agents/scripts/scdraw-filters.js";
+} from "../.agents/scripts/shadow-claw-draw-filters.js";
 
 test("Filters: createDefaultFilters matches x-canvas-image-manipulation bounds and defaults", () => {
   const f = createDefaultFilters();

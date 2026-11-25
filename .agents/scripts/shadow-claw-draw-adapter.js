@@ -1,21 +1,21 @@
 /**
- * .agents/scripts/scdraw-adapter.js
+ * .agents/scripts/shadow-claw-draw-adapter.js
  *
  * ShadowClaw Page Adapter & WebMCP IPC Bridge for ShadowClaw Draw.
- * Coordinates leader election via Web Locks ("scdraw-engine"), handles
+ * Coordinates leader election via Web Locks ("shadow-claw-draw-engine"), handles
  * BroadcastChannel IPC ("scdraw-commands", "scdraw-results", "scdraw-state"),
  * and registers declarative tools into navigator/document.modelContext.
  */
 
-import { scdraw } from "./scdraw-engine.js";
-import { TOOLS_METADATA } from "./scdraw-tools-metadata.js";
+import { scdraw } from "./shadow-claw-draw-engine.js";
+import { TOOLS_METADATA } from "./shadow-claw-draw-tools-metadata.js";
 import {
   createToolAdapterBridge,
   registerNativeWebMcp as registerWebMcpTools,
 } from "shadow-claw/utils/tool-adapter-bridge";
 
 const bridge = createToolAdapterBridge({
-  lockName: "scdraw-engine",
+  lockName: "shadow-claw-draw-engine",
   commandsChannel: "scdraw-commands",
   resultsChannel: "scdraw-results",
   stateChannel: "scdraw-state",

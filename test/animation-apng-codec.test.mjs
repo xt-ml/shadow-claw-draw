@@ -4,7 +4,7 @@ import {
   crc32,
   encodeApngFromPngFrames,
   decodeApngToPngFrames,
-} from "../.agents/scripts/scdraw-apng-codec.js";
+} from "../.agents/scripts/shadow-claw-draw-apng-codec.js";
 
 /**
  * Build a minimal valid RGBA PNG Uint8Array in pure JS using uncompressed DEFLATE blocks

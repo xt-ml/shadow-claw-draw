@@ -6,7 +6,7 @@ import {
   Computed,
   effect,
   batch,
-} from "../.agents/scripts/scdraw-signals.js";
+} from "../.agents/scripts/shadow-claw-draw-signals.js";
 
 test("Signals: exports Signal polyfill and aliases", () => {
   assert.ok(Signal);

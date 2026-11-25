@@ -261,55 +261,55 @@
       "name": "shadow-claw-draw-animation-stage",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-animation-stage.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-animation-stage.js",
-      "digest": "sha256:e923018cfb1fa474548ebfb40b1a008a94228e152e7702b4775926791f76b332"
+      "digest": "sha256:15a6d7c2896c822d2f4154a4491ec75645e5e17bb82e486dda36166e1311f894"
     },
     {
       "name": "shadow-claw-draw-animation-workbench",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-animation-workbench.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-animation-workbench.js",
-      "digest": "sha256:d9f4c8e0362f6b08bea9f7c4ab7003e4ee59224b4d3ed4825acb0c80dbec71e8"
+      "digest": "sha256:b57ad451d362e2665b7fec152d27bf95b0b40dcfad1a7c5ec05217ef09f896c4"
     },
     {
       "name": "shadow-claw-draw-bitmap-canvas",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-bitmap-canvas.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-bitmap-canvas.js",
-      "digest": "sha256:ba86b6b69adf2257f73652ac6e651b2bf32aa7bb5d7f953a41e99bfc9cd74d2d"
+      "digest": "sha256:eb41be351cdb41eb8d681a8596ffd1e1a77ca6acb93a01951f670846f4038a67"
     },
     {
       "name": "shadow-claw-draw-bitmap-workbench",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-bitmap-workbench.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-bitmap-workbench.js",
-      "digest": "sha256:c494a9cb9a2e7d2b14c7c72d853ba806dfca079be7b9b06e9bbad450acbfc59e"
+      "digest": "sha256:116d5c2f64823d8ca5585dbf5fe3ad0fc6dcf4421c9f633e34330b01c647de01"
     },
     {
       "name": "shadow-claw-draw-capture-panel",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-capture-panel.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-capture-panel.js",
-      "digest": "sha256:3ce79929a7e5a24117dd4a4ac31887e9e691356929c361ba9b0469ccb1a57966"
+      "digest": "sha256:a8e2fd7e2f407d74f8c0ef7af00e560f9a09c5e388ca23bda43349fa9f27952d"
     },
     {
       "name": "shadow-claw-draw-export-panel",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-export-panel.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-export-panel.js",
-      "digest": "sha256:69579341664e5a27eef3104d1dcccafb7b21d8dfaa2a7f0b5d2be3ca5ae3dc58"
+      "digest": "sha256:4c53ecc87f6280054e93f0d8e551b2d8d3fc11103de6ab326409bc6f47e5e2b1"
     },
     {
       "name": "shadow-claw-draw-filter-panel",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-filter-panel.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-filter-panel.js",
-      "digest": "sha256:a6053f03baf5b6c2c9ac3f273c75281a9f2d2963bbeb616be10d43a0647cbed1"
+      "digest": "sha256:0834ae8eee9fd1c602adffac01000ee321d678538d70f08a54aa19c719cf2eab"
     },
     {
       "name": "shadow-claw-draw-inspector",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-inspector.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-inspector.js",
-      "digest": "sha256:1f94ade1eb5d322aea652599a63dda98e4451cbbaebcaf42c8b0e6ca6abbf2e7"
+      "digest": "sha256:4b9081d561faa1e9a03842216bc6e4dd796c23078b50f7757f8861859dd7bf4b"
     },
     {
       "name": "shadow-claw-draw-layers-panel",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-layers-panel.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-layers-panel.js",
-      "digest": "sha256:7d5f4cd81d23d50ea6f9aeb541e8975a6409dd76afcaf801b58d50cf8f07209d"
+      "digest": "sha256:73c270cf9711e90cdbcfea8f93ce21413d4600a42ffea30e3d34b0d41737e26e"
     },
     {
       "name": "shadow-claw-draw-resize-handle",
@@ -321,7 +321,7 @@
       "name": "shadow-claw-draw-status-bar",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-status-bar.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-status-bar.js",
-      "digest": "sha256:10ea07c420d56b848a236c6834d37f4caf8ec762878b08f802c6a233b429520e"
+      "digest": "sha256:27571af696f6ae249c3dd3a4f485e999d27dbf697796d3140ee6f6084ad93c8a"
     },
     {
       "name": "shadow-claw-draw-styles",
@@ -333,151 +333,151 @@
       "name": "shadow-claw-draw-timeline",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-timeline.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-timeline.js",
-      "digest": "sha256:10bec04cf16faffdd4403a05a2d92f528d1904bd53552980b113dbfe9cc2f68b"
+      "digest": "sha256:0b8c6c4d08c7aba8ecb78e05728e93c7b8a141c051e47da099462db50215ff32"
     },
     {
       "name": "shadow-claw-draw-toolbox",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-toolbox.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-toolbox.js",
-      "digest": "sha256:0d93f73e6a864770086c8ab497c482f5f8a0448149bd108e6c72e9ffc0b0e514"
+      "digest": "sha256:109953b0173576b6a911d5dddffc8fc0aaf42b9e6d94b4b7e1ac58fc456228b4"
     },
     {
       "name": "shadow-claw-draw-vector-canvas",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-vector-canvas.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-vector-canvas.js",
-      "digest": "sha256:b3d830674549cadbfe8c331395aa556fd372c876a55454662809a4d558cde348"
+      "digest": "sha256:8791781fa5d4a12fee34862b220ac238b2976074d6a814435a544de18165e165"
     },
     {
       "name": "shadow-claw-draw-vector-workbench",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-vector-workbench.",
       "url": "../../.agents/scripts/components/shadow-claw-draw-vector-workbench.js",
-      "digest": "sha256:3e52834bcc71752685f411738eee8ce8d9a7277c243bb94e2ec27e5f3f0dfde7"
+      "digest": "sha256:a3398a9ff80477fd8622e2573300f25cc92a4b3d81e233ff6cc17129da36dab7"
     },
     {
-      "name": "scdraw-adapter",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-adapter.",
-      "url": "../../.agents/scripts/scdraw-adapter.js",
-      "digest": "sha256:058e6edd4f453dada3b86f2e818f90d9804e6f432c74a1e07d29bdd78ad8c3f1"
+      "name": "shadow-claw-draw-adapter",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-adapter.",
+      "url": "../../.agents/scripts/shadow-claw-draw-adapter.js",
+      "digest": "sha256:d7e5be8dadfeed1cb8488157dfc7e248d325255066021e154538dde30b0b5127"
     },
     {
-      "name": "scdraw-anim-svg",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-anim-svg.",
-      "url": "../../.agents/scripts/scdraw-anim-svg.js",
-      "digest": "sha256:0f1416b431a79ea9d726d1f42e5b9523dfe5189d58933f4ba43a0d427f8f72da"
+      "name": "shadow-claw-draw-anim-svg",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-anim-svg.",
+      "url": "../../.agents/scripts/shadow-claw-draw-anim-svg.js",
+      "digest": "sha256:afdc4c332f29472ff55dcc7db16364713acd37c3c20aed8dabddd82800ab8b7e"
     },
     {
-      "name": "scdraw-animation",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-animation.",
-      "url": "../../.agents/scripts/scdraw-animation.js",
-      "digest": "sha256:1ee0eb42571344645ad1dd1b9fbcd07c445c8ce0d220f3445fb1047f1043ba91"
+      "name": "shadow-claw-draw-animation",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-animation.",
+      "url": "../../.agents/scripts/shadow-claw-draw-animation.js",
+      "digest": "sha256:4fe238647eda791eec9189dfe36c5178ca207329d861fff545033b918076267c"
     },
     {
-      "name": "scdraw-apng-codec",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-apng-codec.",
-      "url": "../../.agents/scripts/scdraw-apng-codec.js",
-      "digest": "sha256:bc7b02b339d324f7d0e16c7e5dc3576cccd5bc7aea99802de49641d41d2ce5ef"
+      "name": "shadow-claw-draw-apng-codec",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-apng-codec.",
+      "url": "../../.agents/scripts/shadow-claw-draw-apng-codec.js",
+      "digest": "sha256:e9c586ad277018c16b4ea21d5135d641494fae6e738a8ced732d52b5b7c17dc7"
     },
     {
-      "name": "scdraw-bitmap",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-bitmap.",
-      "url": "../../.agents/scripts/scdraw-bitmap.js",
-      "digest": "sha256:985c8e94701c17e9cccefc48d27c32c3588be3c35e7201c3a51982a1185fecd8"
+      "name": "shadow-claw-draw-bitmap",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-bitmap.",
+      "url": "../../.agents/scripts/shadow-claw-draw-bitmap.js",
+      "digest": "sha256:963a08f17aaaca4e75136eb6a06eef7438272d51b72122acf456c7f32cb75a7f"
     },
     {
-      "name": "scdraw-capture",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-capture.",
-      "url": "../../.agents/scripts/scdraw-capture.js",
-      "digest": "sha256:e422f4b8db434a9d014d4d8fa1120a96bed861d0573932fcd58aef301f167f27"
-    },
-    {
-      "name": "scdraw-encoders",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-encoders.",
-      "url": "../../.agents/scripts/scdraw-encoders.js",
-      "digest": "sha256:6f8102b0d20ffc7cf1bb630257280b55ec0c6bb981489c77a7c78a1e0ab362f7"
-    },
-    {
-      "name": "scdraw-engine",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-engine.",
-      "url": "../../.agents/scripts/scdraw-engine.js",
-      "digest": "sha256:16d47c5d1d52bed4f41d07de86bd888c223ab9996e93f9aafbede644d07e9980"
-    },
-    {
-      "name": "scdraw-filters",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-filters.",
-      "url": "../../.agents/scripts/scdraw-filters.js",
-      "digest": "sha256:afb744ba5710b822997aa5b40dcae7ecb406ffb78e8368e26c28831d5f8a4490"
-    },
-    {
-      "name": "scdraw-fs",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-fs.",
-      "url": "../../.agents/scripts/scdraw-fs.js",
-      "digest": "sha256:eed7cba8c4582f79bbf7a18de190f470fa6212c31d4e1c188a463d674c099e42"
-    },
-    {
-      "name": "scdraw-gif-codec",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-codec.",
-      "url": "../../.agents/scripts/scdraw-gif-codec.js",
-      "digest": "sha256:5f481bb4bdd8b50bbeba26adb7c96d661404f0bbb48d043cd6b92f2643aa5cc3"
-    },
-    {
-      "name": "scdraw-gif-optimize",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-optimize.",
-      "url": "../../.agents/scripts/scdraw-gif-optimize.js",
-      "digest": "sha256:da00ee3ec6a1bbe486e39981ce446e94dd0c480d9fbe04f7cefa1db7ff9a85f6"
-    },
-    {
-      "name": "scdraw-gif-worker",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-gif-worker.",
-      "url": "../../.agents/scripts/scdraw-gif-worker.js",
-      "digest": "sha256:e6f19338f1fd402805e63dbc1a5c2aaeaa8082f52ddc2713786f4ca102e822bd"
-    },
-    {
-      "name": "scdraw-quantize",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-quantize.",
-      "url": "../../.agents/scripts/scdraw-quantize.js",
-      "digest": "sha256:23d8cfbf36b53d6e4fe593c7d9acb28b6ace901b839ea2bd2e33d5a6e7a88848"
-    },
-    {
-      "name": "scdraw-schema",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-schema.",
-      "url": "../../.agents/scripts/scdraw-schema.js",
-      "digest": "sha256:a3b28895622120e039ad30178106548bcd5e019eef4923b7f7c29aa8d011131b"
-    },
-    {
-      "name": "scdraw-signals",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-signals.",
-      "url": "../../.agents/scripts/scdraw-signals.js",
-      "digest": "sha256:185ee2bf9e33e67da5ec28d1aa9ec4e3411650f8ee27151a2bc43731e32d1ad3"
-    },
-    {
-      "name": "scdraw-svg-codec",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-svg-codec.",
-      "url": "../../.agents/scripts/scdraw-svg-codec.js",
-      "digest": "sha256:2801e9160e6fe3dafb68f0b87abf37fc3748fa51854ae0f894b1b0c8a0117281"
-    },
-    {
-      "name": "scdraw-tools-metadata",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-tools-metadata.",
-      "url": "../../.agents/scripts/scdraw-tools-metadata.js",
-      "digest": "sha256:66b91a59b7cd49815372afd1be5928c0cf69bbc1bd77ddfbb8861dafccf6937c"
-    },
-    {
-      "name": "scdraw-tween",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-tween.",
-      "url": "../../.agents/scripts/scdraw-tween.js",
-      "digest": "sha256:77a86c9b577f2aaff06de926c910de86cb3f831a408a4d32c8aa2e3423a61b04"
-    },
-    {
-      "name": "scdraw-vector",
-      "description": "Portable ESM engine logic and tool execution handler for scdraw-vector.",
-      "url": "../../.agents/scripts/scdraw-vector.js",
-      "digest": "sha256:2241a031688aa74a2e6a38d40057f3458bc5e591b81d2a5886200202bcf6657d"
+      "name": "shadow-claw-draw-capture",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-capture.",
+      "url": "../../.agents/scripts/shadow-claw-draw-capture.js",
+      "digest": "sha256:5ef5545d025be5ef2ba9ef74a37e1d1fe9eb17c9d220c248d88f8f3330a3ca2f"
     },
     {
       "name": "shadow-claw-draw-element",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-element.",
       "url": "../../.agents/scripts/shadow-claw-draw-element.js",
       "digest": "sha256:840d580a0a07e8ac80cc4e320a01984761c1dc79a2bc13d700eb28ff9643852b"
+    },
+    {
+      "name": "shadow-claw-draw-encoders",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-encoders.",
+      "url": "../../.agents/scripts/shadow-claw-draw-encoders.js",
+      "digest": "sha256:91d374bf137e580c19b6fa40e1a2b015c887fa8ecdbcd1dbaa27fc4820fa8afb"
+    },
+    {
+      "name": "shadow-claw-draw-engine",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-engine.",
+      "url": "../../.agents/scripts/shadow-claw-draw-engine.js",
+      "digest": "sha256:1b0b35469701d8cd0ec1cb3e9af786f79d5f16d0b63216d6cc3a5da71a5a1a3c"
+    },
+    {
+      "name": "shadow-claw-draw-filters",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-filters.",
+      "url": "../../.agents/scripts/shadow-claw-draw-filters.js",
+      "digest": "sha256:162861b33a7229f4c466b8c2b905edb288f10dad1cbf702259136e345b5cc88d"
+    },
+    {
+      "name": "shadow-claw-draw-fs",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-fs.",
+      "url": "../../.agents/scripts/shadow-claw-draw-fs.js",
+      "digest": "sha256:b279a782a664c86995908f573f2a17d6660bc1ccab7be83cc879c3326c6b0e39"
+    },
+    {
+      "name": "shadow-claw-draw-gif-codec",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-gif-codec.",
+      "url": "../../.agents/scripts/shadow-claw-draw-gif-codec.js",
+      "digest": "sha256:8d22f3e11d2e4263c9de04787830a5ea15fba554dbddb4020e8f19ce1c9a11ee"
+    },
+    {
+      "name": "shadow-claw-draw-gif-optimize",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-gif-optimize.",
+      "url": "../../.agents/scripts/shadow-claw-draw-gif-optimize.js",
+      "digest": "sha256:c933577ae14da68aa2798e1802103e3c4d01950db36b9f69c50bd90f7c243992"
+    },
+    {
+      "name": "shadow-claw-draw-gif-worker",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-gif-worker.",
+      "url": "../../.agents/scripts/shadow-claw-draw-gif-worker.js",
+      "digest": "sha256:7c110362a6734ae8e5363a5cf1997d4618db4d95043d3347fa9ea7d99be229c9"
+    },
+    {
+      "name": "shadow-claw-draw-quantize",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-quantize.",
+      "url": "../../.agents/scripts/shadow-claw-draw-quantize.js",
+      "digest": "sha256:971cff1b3104ae24e85c5bf7e97decf2bf18c158ad3aa1ddb0a1f5248fc7c666"
+    },
+    {
+      "name": "shadow-claw-draw-schema",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-schema.",
+      "url": "../../.agents/scripts/shadow-claw-draw-schema.js",
+      "digest": "sha256:b4e2c71a4f25deb3c69184794ce4774ac54a869dc69ddb28d94b2a10240be376"
+    },
+    {
+      "name": "shadow-claw-draw-signals",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-signals.",
+      "url": "../../.agents/scripts/shadow-claw-draw-signals.js",
+      "digest": "sha256:d96571c600c24dd293b591914b674f29388c2932a74d70e07271da30e40fa004"
+    },
+    {
+      "name": "shadow-claw-draw-svg-codec",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-svg-codec.",
+      "url": "../../.agents/scripts/shadow-claw-draw-svg-codec.js",
+      "digest": "sha256:4d159869370c1594ed293fb4359f124daa66db7e6b2a75b73a1c197c4889f908"
+    },
+    {
+      "name": "shadow-claw-draw-tools-metadata",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-tools-metadata.",
+      "url": "../../.agents/scripts/shadow-claw-draw-tools-metadata.js",
+      "digest": "sha256:4ddfa6a22ede0d513bda2fe8e280d2929d73e61eefbeb8620d77e15b52cac410"
+    },
+    {
+      "name": "shadow-claw-draw-tween",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-tween.",
+      "url": "../../.agents/scripts/shadow-claw-draw-tween.js",
+      "digest": "sha256:f11d0c980fdd1bef63926f1300a9656aaae1823ef6a2e9795ae1e87ec693a097"
+    },
+    {
+      "name": "shadow-claw-draw-vector",
+      "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-vector.",
+      "url": "../../.agents/scripts/shadow-claw-draw-vector.js",
+      "digest": "sha256:0d611e068bd930625ea50ef87b77f53686bf878ce0bcfef41d99fd79ed08cb89"
     }
   ],
   "dependencies": {
@@ -536,27 +536,27 @@
       "../../.agents/scripts/components/shadow-claw-draw-toolbox.js",
       "../../.agents/scripts/components/shadow-claw-draw-vector-canvas.js",
       "../../.agents/scripts/components/shadow-claw-draw-vector-workbench.js",
-      "../../.agents/scripts/scdraw-adapter.js",
-      "../../.agents/scripts/scdraw-anim-svg.js",
-      "../../.agents/scripts/scdraw-animation.js",
-      "../../.agents/scripts/scdraw-apng-codec.js",
-      "../../.agents/scripts/scdraw-bitmap.js",
-      "../../.agents/scripts/scdraw-capture.js",
-      "../../.agents/scripts/scdraw-encoders.js",
-      "../../.agents/scripts/scdraw-engine.js",
-      "../../.agents/scripts/scdraw-filters.js",
-      "../../.agents/scripts/scdraw-fs.js",
-      "../../.agents/scripts/scdraw-gif-codec.js",
-      "../../.agents/scripts/scdraw-gif-optimize.js",
-      "../../.agents/scripts/scdraw-gif-worker.js",
-      "../../.agents/scripts/scdraw-quantize.js",
-      "../../.agents/scripts/scdraw-schema.js",
-      "../../.agents/scripts/scdraw-signals.js",
-      "../../.agents/scripts/scdraw-svg-codec.js",
-      "../../.agents/scripts/scdraw-tools-metadata.js",
-      "../../.agents/scripts/scdraw-tween.js",
-      "../../.agents/scripts/scdraw-vector.js",
-      "../../.agents/scripts/shadow-claw-draw-element.js"
+      "../../.agents/scripts/shadow-claw-draw-adapter.js",
+      "../../.agents/scripts/shadow-claw-draw-anim-svg.js",
+      "../../.agents/scripts/shadow-claw-draw-animation.js",
+      "../../.agents/scripts/shadow-claw-draw-apng-codec.js",
+      "../../.agents/scripts/shadow-claw-draw-bitmap.js",
+      "../../.agents/scripts/shadow-claw-draw-capture.js",
+      "../../.agents/scripts/shadow-claw-draw-element.js",
+      "../../.agents/scripts/shadow-claw-draw-encoders.js",
+      "../../.agents/scripts/shadow-claw-draw-engine.js",
+      "../../.agents/scripts/shadow-claw-draw-filters.js",
+      "../../.agents/scripts/shadow-claw-draw-fs.js",
+      "../../.agents/scripts/shadow-claw-draw-gif-codec.js",
+      "../../.agents/scripts/shadow-claw-draw-gif-optimize.js",
+      "../../.agents/scripts/shadow-claw-draw-gif-worker.js",
+      "../../.agents/scripts/shadow-claw-draw-quantize.js",
+      "../../.agents/scripts/shadow-claw-draw-schema.js",
+      "../../.agents/scripts/shadow-claw-draw-signals.js",
+      "../../.agents/scripts/shadow-claw-draw-svg-codec.js",
+      "../../.agents/scripts/shadow-claw-draw-tools-metadata.js",
+      "../../.agents/scripts/shadow-claw-draw-tween.js",
+      "../../.agents/scripts/shadow-claw-draw-vector.js"
     ]
   }
 }

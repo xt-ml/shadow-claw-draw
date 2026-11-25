@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-animation.js
+ * .agents/scripts/shadow-claw-draw-animation.js
  *
  * Pure zero-DOM Animation Document Model & Command Reducer for ShadowClaw Draw.
  * Supports dual Vector & Bitmap frame sequences, structural pixel sharing,
@@ -31,14 +31,14 @@ import {
   clamp,
   createUid,
   deepClone,
-} from "./scdraw-schema.js";
-import { createVectorDocument } from "./scdraw-vector.js";
+} from "./shadow-claw-draw-schema.js";
+import { createVectorDocument } from "./shadow-claw-draw-vector.js";
 import {
   createBitmapDocument,
   cloneBitmapDocument,
   applyBitmapCommand,
-} from "./scdraw-bitmap.js";
-import { interpolateVectorDocuments } from "./scdraw-tween.js";
+} from "./shadow-claw-draw-bitmap.js";
+import { interpolateVectorDocuments } from "./shadow-claw-draw-tween.js";
 
 function cloneFrameDoc(doc, mode, { deepCopyPixels = false } = {}) {
   if (!doc) return null;

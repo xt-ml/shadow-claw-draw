@@ -20,7 +20,7 @@ import {
   setupWorkbenchFullscreen,
 } from "../.agents/scripts/components/shadow-claw-draw-bitmap-workbench.js";
 import * as barrel from "../.agents/scripts/shadow-claw-draw-element.js";
-import { createDefaultFilters } from "../.agents/scripts/scdraw-filters.js";
+import { createDefaultFilters } from "../.agents/scripts/shadow-claw-draw-filters.js";
 
 test("Pass 2 Barrel & Classes: export cleanly in Node.js", () => {
   assert.ok(ShadowClawDrawFilterPanel);

@@ -59,9 +59,12 @@ for (const tool of TOOLS) {
   }
 }
 
-const metadataPath = resolve(ROOT, ".agents/scripts/scdraw-tools-metadata.js");
+const metadataPath = resolve(
+  ROOT,
+  ".agents/scripts/shadow-claw-draw-tools-metadata.js",
+);
 const metadataContent = `/**
- * .agents/scripts/scdraw-tools-metadata.js
+ * .agents/scripts/shadow-claw-draw-tools-metadata.js
  *
  * Generated automatically from bin/tool-manifest.mjs via bin/generate-tools.mjs.
  * Exposes declarative tool definitions to the WebMCP browser adapter.
@@ -81,13 +84,19 @@ export const TOOLS_METADATA = ${JSON.stringify(
 
 if (!isCheck) {
   writeFileSync(metadataPath, metadataContent, "utf8");
-  console.log(`[GEN] Generated .agents/scripts/scdraw-tools-metadata.js`);
+  console.log(
+    `[GEN] Generated .agents/scripts/shadow-claw-draw-tools-metadata.js`,
+  );
 } else {
   if (!existsSync(metadataPath)) {
-    console.error("[DRIFT] Missing .agents/scripts/scdraw-tools-metadata.js");
+    console.error(
+      "[DRIFT] Missing .agents/scripts/shadow-claw-draw-tools-metadata.js",
+    );
     driftCount++;
   } else if (readFileSync(metadataPath, "utf8") !== metadataContent) {
-    console.error("[DRIFT] Content mismatch in scdraw-tools-metadata.js");
+    console.error(
+      "[DRIFT] Content mismatch in shadow-claw-draw-tools-metadata.js",
+    );
     driftCount++;
   }
 }

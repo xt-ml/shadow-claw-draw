@@ -7,9 +7,9 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { BLEND_MODES } from "../scdraw-schema.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
+import { BLEND_MODES } from "../shadow-claw-draw-schema.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
 
 import {
   BaseElement,

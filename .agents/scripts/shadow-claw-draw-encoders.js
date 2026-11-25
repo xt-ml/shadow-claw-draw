@@ -1,12 +1,12 @@
 /**
- * .agents/scripts/scdraw-encoders.js
+ * .agents/scripts/shadow-claw-draw-encoders.js
  *
  * Unified Animation Encoder & Importer Bridge for ShadowClaw Draw.
  *
  * Local-First (100% Offline):
  * - Native GIF89a (GIMP CIE Lab quantizer + GIMP delta optimizer + LZW via Web Worker)
- * - Pure-JS APNG (`scdraw-apng-codec.js`)
- * - Animated SVG SMIL & CSS (`scdraw-anim-svg.js`)
+ * - Pure-JS APNG (`shadow-claw-draw-apng-codec.js`)
+ * - Animated SVG SMIL & CSS (`shadow-claw-draw-anim-svg.js`)
  * - PNG Sprite Sheet + JSON Atlas
  * - WebM via Canvas captureStream() + MediaRecorder
  *
@@ -16,14 +16,18 @@
  * - @ffmpeg/ffmpeg@0.12.15 + @ffmpeg/core@0.12.10
  */
 
-import { encodeGif, decodeGif } from "./scdraw-gif-codec.js";
+import { encodeGif, decodeGif } from "./shadow-claw-draw-gif-codec.js";
 import {
   encodeApngFromPngFrames,
   decodeApngToPngFrames,
-} from "./scdraw-apng-codec.js";
-import { serializeAnimatedVectorDocumentToSvg } from "./scdraw-anim-svg.js";
-import { clamp, MIN_CANVAS_SIZE, MAX_CANVAS_SIZE } from "./scdraw-schema.js";
-import { selectRecorderMimeType } from "./scdraw-capture.js";
+} from "./shadow-claw-draw-apng-codec.js";
+import { serializeAnimatedVectorDocumentToSvg } from "./shadow-claw-draw-anim-svg.js";
+import {
+  clamp,
+  MIN_CANVAS_SIZE,
+  MAX_CANVAS_SIZE,
+} from "./shadow-claw-draw-schema.js";
+import { selectRecorderMimeType } from "./shadow-claw-draw-capture.js";
 
 export const CDN_URLS = {
   gifskiSingle: "https://cdn.jsdelivr.net/npm/gifski-wasm@2.2.0/dist/encode.js",
@@ -54,9 +58,12 @@ function runNativeGifWorker(payload, onProgress) {
 
     let worker;
     try {
-      worker = new Worker(new URL("./scdraw-gif-worker.js", import.meta.url), {
-        type: "module",
-      });
+      worker = new Worker(
+        new URL("./shadow-claw-draw-gif-worker.js", import.meta.url),
+        {
+          type: "module",
+        },
+      );
     } catch (_) {
       try {
         resolve(encodeGif({ ...payload, onProgress }));

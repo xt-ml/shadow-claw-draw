@@ -8,11 +8,14 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { computeTotalDurationMs, formatTimecode } from "../scdraw-animation.js";
-import { compositeBitmapLayers } from "../scdraw-bitmap.js";
-import { serializeVectorDocumentToSvg } from "../scdraw-svg-codec.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import {
+  computeTotalDurationMs,
+  formatTimecode,
+} from "../shadow-claw-draw-animation.js";
+import { compositeBitmapLayers } from "../shadow-claw-draw-bitmap.js";
+import { serializeVectorDocumentToSvg } from "../shadow-claw-draw-svg-codec.js";
 
 import {
   BaseElement,

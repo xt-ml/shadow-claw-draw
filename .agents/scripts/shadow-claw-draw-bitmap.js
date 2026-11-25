@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-bitmap.js
+ * .agents/scripts/shadow-claw-draw-bitmap.js
  *
  * Pure zero-DOM Multi-Layer Raster Engine for ShadowClaw Draw Bitmap Studio.
  *
@@ -18,13 +18,13 @@ import {
   MAX_CANVAS_SIZE,
   clamp,
   createUid,
-} from "./scdraw-schema.js";
+} from "./shadow-claw-draw-schema.js";
 import {
   DEFAULT_SHADOW_COLOR,
   createDefaultFilters,
   cloneFilters,
   resetFilters,
-} from "./scdraw-filters.js";
+} from "./shadow-claw-draw-filters.js";
 
 export function parseHexColor(color) {
   if (!color || color === "transparent") {

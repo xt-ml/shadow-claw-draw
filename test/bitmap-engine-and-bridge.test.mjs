@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DrawEngine } from "../.agents/scripts/scdraw-engine.js";
+import { DrawEngine } from "../.agents/scripts/shadow-claw-draw-engine.js";
 import { FakeCanvasElement } from "./helpers/fake-canvas-context.mjs";
 
 test("Bitmap Engine: reactive signals, commands, undo/redo, and renderBitmapToContext", () => {

@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-tools-metadata.js
+ * .agents/scripts/shadow-claw-draw-tools-metadata.js
  *
  * Generated automatically from bin/tool-manifest.mjs via bin/generate-tools.mjs.
  * Exposes declarative tool definitions to the WebMCP browser adapter.

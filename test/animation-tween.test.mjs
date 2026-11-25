@@ -8,11 +8,11 @@ import {
   sampleTrajectoryPath,
   interpolateVectorElement,
   interpolateVectorDocuments,
-} from "../.agents/scripts/scdraw-tween.js";
+} from "../.agents/scripts/shadow-claw-draw-tween.js";
 import {
   createVectorDocument,
   normalizeVectorElement,
-} from "../.agents/scripts/scdraw-vector.js";
+} from "../.agents/scripts/shadow-claw-draw-vector.js";
 
 test("Tween: evaluateEasing honors endpoints and monotonicity", () => {
   for (const easing of [

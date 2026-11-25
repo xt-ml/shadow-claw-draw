@@ -6,9 +6,12 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { findAllElements, computeElementBBox } from "../scdraw-vector.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import {
+  findAllElements,
+  computeElementBBox,
+} from "../shadow-claw-draw-vector.js";
 
 import {
   BaseElement,

@@ -8,14 +8,14 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
-import { formatFileSize } from "../scdraw-fs.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
+import { formatFileSize } from "../shadow-claw-draw-fs.js";
 import {
   resolveOutputDimensions,
   qualityToCrf,
   computeVideoBitsPerSecond,
-} from "../scdraw-encoders.js";
+} from "../shadow-claw-draw-encoders.js";
 
 import {
   BaseElement,

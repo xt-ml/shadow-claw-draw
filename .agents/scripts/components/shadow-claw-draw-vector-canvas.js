@@ -7,8 +7,8 @@
  */
 
 import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
-import { scdraw } from "../scdraw-engine.js";
-import { effect } from "../scdraw-signals.js";
+import { scdraw } from "../shadow-claw-draw-engine.js";
+import { effect } from "../shadow-claw-draw-signals.js";
 import {
   snapValue,
   simplifyPoints,
@@ -19,8 +19,8 @@ import {
   computeSelectionBBox,
   hitTestPoint,
   findAllElements,
-} from "../scdraw-vector.js";
-import { serializeVectorDocumentToSvg } from "../scdraw-svg-codec.js";
+} from "../shadow-claw-draw-vector.js";
+import { serializeVectorDocumentToSvg } from "../shadow-claw-draw-svg-codec.js";
 
 import {
   BaseElement,

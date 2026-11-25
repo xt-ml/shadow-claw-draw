@@ -1,5 +1,5 @@
 /**
- * .agents/scripts/scdraw-quantize.js
+ * .agents/scripts/shadow-claw-draw-quantize.js
  *
  * Pure zero-DOM Perceptual Color Quantizer & Ditherer for ShadowClaw Draw.
  *
@@ -10,7 +10,7 @@
  * - Linear-RGB Floyd-Steinberg & low-bleed alpha-aware error diffusion
  */
 
-import { clamp } from "./scdraw-schema.js";
+import { clamp } from "./shadow-claw-draw-schema.js";
 
 const SRGB_TO_LINEAR_LUT = new Float32Array(256);
 for (let i = 0; i < 256; i++) {

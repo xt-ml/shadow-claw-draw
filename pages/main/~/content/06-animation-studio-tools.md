@@ -31,12 +31,12 @@ slug: "animation-studio-tools"
 ### Export Formats & Engines
 
 - **GIF (`.gif`) — Offline Native GIMP Engine (Default)**:
-  - **Quantization (`scdraw-quantize.js`)**: Perceptual CIE L\*a\*b\* box-cut palette (`2–256` colors, default `200`) with transparent index reservation.
+  - **Quantization (`shadow-claw-draw-quantize.js`)**: Perceptual CIE L\*a\*b\* box-cut palette (`2–256` colors, default `200`) with transparent index reservation.
   - **Dithering**: `bayer` (deterministic 8×8 positional dither — minimizes static-region shimmer), `floyd-steinberg`, `floyd-steinberg-low-bleed`, or `none`.
-  - **Delta Optimization (`scdraw-gif-optimize.js`)**: Crops changed bounding boxes with `combine` disposal and automatically promotes preceding frames to `replace` on opaque-to-transparent transitions.
+  - **Delta Optimization (`shadow-claw-draw-gif-optimize.js`)**: Crops changed bounding boxes with `combine` disposal and automatically promotes preceding frames to `replace` on opaque-to-transparent transitions.
   - **Optional CDN Accelerators**: Choose `gifski` (`gifski-wasm@2.2.0`) for cross-frame temporal dithering or set **Gifsicle Lossy** (`> 0`, `gifsicle-wasm-browser@1.5.19`) for lossy `--lossy` + `--resize-touch` post-compression.
-- **APNG (`.apng`)**: Pure-JS lossless 32-bit RGBA (`acTL` / `fcTL` / `IDAT` / `fdAT`) muxer & demuxer (`scdraw-apng-codec.js`).
-- **Animated SVG (`.svg`)**: SMIL (`<animate>`, `<animateTransform>`) or CSS `@keyframes` output with round-trip metadata (`scdraw-anim-svg.js`).
+- **APNG (`.apng`)**: Pure-JS lossless 32-bit RGBA (`acTL` / `fcTL` / `IDAT` / `fdAT`) muxer & demuxer (`shadow-claw-draw-apng-codec.js`).
+- **Animated SVG (`.svg`)**: SMIL (`<animate>`, `<animateTransform>`) or CSS `@keyframes` output with round-trip metadata (`shadow-claw-draw-anim-svg.js`).
 - **WebM / MP4 & PNG Sprite Sheet**: Native `MediaRecorder` WebM (offline, with optional Web Audio muxing), optional `@ffmpeg/ffmpeg` MP4 transcoding (`libx264` + `aac` audio muxing), and PNG Sprite Sheet + JSON atlas packing.
 - **Output Resolution & Quality**: Choose `source`, `360p`, `480p`, `720p`, `1080p`, `square-512`, `square-1080`, or `custom` (`outputWidth` × `outputHeight`), tune `quality` (`1–100`, mapped to FFmpeg CRF and WebM target bitrate), toggle `Include Audio Track`, and set `Audio Bitrate` (`64–320 kbps`).
 
