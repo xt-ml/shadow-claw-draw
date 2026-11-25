@@ -1,13 +1,13 @@
 /**
- * .agents/scripts/components/scdraw-bitmap-canvas.js
+ * .agents/scripts/components/shadow-claw-draw-bitmap-canvas.js
  *
- * Interactive Multi-Layer Raster Canvas (<scdraw-bitmap-canvas>).
+ * Interactive Multi-Layer Raster Canvas (<shadow-claw-draw-bitmap-canvas>).
  * Auto-fits canvas display dimensions to available stage space via ResizeObserver
  * while preserving exact pixel dimensions on the underlying <canvas>,
  * uses safe margin:auto centering, and handles Pointer Events.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import {
@@ -17,7 +17,10 @@ import {
   clampSelectionToDoc,
 } from "../scdraw-bitmap.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function computeFitScale({
   stageWidth = 800,
@@ -75,7 +78,7 @@ export function translateSelectionRect(rect, dx, dy, docWidth, docHeight) {
   };
 }
 
-export class DrawBitmapCanvasElement extends BaseElement {
+export class ShadowClawDrawBitmapCanvas extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -701,7 +704,7 @@ export class DrawBitmapCanvasElement extends BaseElement {
           pointer-events: none;
         }
       </style>
-      <div class="scdraw-bitmap-canvas">
+      <div class="shadow-claw-draw-bitmap-canvas">
         <div
           id="scdraw-bmp-stage-wrap"
           class="scdraw-bitmap-canvas__stage"
@@ -718,9 +721,4 @@ export class DrawBitmapCanvasElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-bitmap-canvas")
-) {
-  customElements.define("scdraw-bitmap-canvas", DrawBitmapCanvasElement);
-}
+defineElement("shadow-claw-draw-bitmap-canvas", ShadowClawDrawBitmapCanvas);

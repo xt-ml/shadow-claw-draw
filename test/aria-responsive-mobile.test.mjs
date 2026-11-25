@@ -13,8 +13,8 @@ async function readComp(name) {
 
 test("Shared Styles & Resize Handle: focus-visible, BEM, ARIA separator, overflow guards, coarse touch targets", async () => {
   const [stylesSrc, handleSrc] = await Promise.all([
-    readComp("scdraw-styles.js"),
-    readComp("scdraw-resize-handle.js"),
+    readComp("shadow-claw-draw-styles.js"),
+    readComp("shadow-claw-draw-resize-handle.js"),
   ]);
 
   assert.match(stylesSrc, /:focus-visible/);
@@ -34,16 +34,15 @@ test("Shared Styles & Resize Handle: focus-visible, BEM, ARIA separator, overflo
   assert.match(stylesSrc, /\.scdraw-panel-toggles/);
   assert.match(stylesSrc, /\.scdraw-panel-toggle/);
 
-  assert.match(handleSrc, /class=["'][^"']*scdraw-resize-handle/);
-  assert.match(handleSrc, /role:\s*["']separator["']/);
-  assert.match(handleSrc, /aria-orientation/);
-  assert.match(handleSrc, /aria-valuenow/);
+  assert.match(handleSrc, /shadow-claw\/components\/shadow-claw-resize-handle/);
+  assert.match(handleSrc, /ShadowClawResizeHandle/);
+  assert.match(handleSrc, /getResizeHandleAriaAttributes/);
 });
 
 test("Toolbox & StatusBar: readable SVG + text labels, horizontal mobile scroll strip, ARIA toolbar, aria-live polite", async () => {
   const [toolboxSrc, statusSrc] = await Promise.all([
-    readComp("scdraw-toolbox.js"),
-    readComp("scdraw-statusbar.js"),
+    readComp("shadow-claw-draw-toolbox.js"),
+    readComp("shadow-claw-draw-status-bar.js"),
   ]);
 
   assert.match(toolboxSrc, /role=["']toolbar["']/);
@@ -58,7 +57,8 @@ test("Toolbox & StatusBar: readable SVG + text labels, horizontal mobile scroll 
   assert.match(toolboxSrc, /touch-action:\s*pan-x/);
   assert.match(toolboxSrc, /@media\s*\(\s*pointer:\s*coarse\s*\)/);
 
-  assert.match(statusSrc, /aria-live=["']polite["']/);
+  assert.match(statusSrc, /shadow-claw\/components\/shadow-claw-status-bar/);
+  assert.match(statusSrc, /<shadow-claw-status-bar/);
   assert.match(statusSrc, /\.scdraw-statusbar__/);
   assert.match(statusSrc, /bitmapSelection/);
   assert.match(statusSrc, /bitmapClipboard/);
@@ -66,8 +66,8 @@ test("Toolbox & StatusBar: readable SVG + text labels, horizontal mobile scroll 
 
 test("Layers & Inspector: ARIA listbox, min-width: 0 slider grid, readable buttons, no alert()", async () => {
   const [layersSrc, inspectorSrc] = await Promise.all([
-    readComp("scdraw-layers-panel.js"),
-    readComp("scdraw-inspector.js"),
+    readComp("shadow-claw-draw-layers-panel.js"),
+    readComp("shadow-claw-draw-inspector.js"),
   ]);
 
   assert.match(layersSrc, /role=["']listbox["']/);
@@ -106,8 +106,8 @@ test("Layers & Inspector: ARIA listbox, min-width: 0 slider grid, readable butto
 
 test("Vector Canvas & Workbench: fit-to-viewport scaling, safe margin:auto centering, compact mobile header, >=144px toolbox dock", async () => {
   const [canvasSrc, wbSrc] = await Promise.all([
-    readComp("scdraw-vector-canvas.js"),
-    readComp("scdraw-vector-workbench.js"),
+    readComp("shadow-claw-draw-vector-canvas.js"),
+    readComp("shadow-claw-draw-vector-workbench.js"),
   ]);
 
   assert.match(canvasSrc, /touch-action:\s*none/);
@@ -128,11 +128,11 @@ test("Vector Canvas & Workbench: fit-to-viewport scaling, safe margin:auto cente
 
   assert.match(
     wbSrc,
-    /@container\s+scdraw-vector-workbench\s*\(\s*min-width:\s*640px\s*\)/,
+    /@container\s+shadow-claw-draw-vector-workbench\s*\(\s*min-width:\s*640px\s*\)/,
   );
   assert.match(
     wbSrc,
-    /@container\s+scdraw-vector-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
+    /@container\s+shadow-claw-draw-vector-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
   );
   assert.match(
     wbSrc,
@@ -172,11 +172,11 @@ test("Vector Canvas & Workbench: fit-to-viewport scaling, safe margin:auto cente
   assert.doesNotMatch(wbSrc, /\balert\s*\(/);
 });
 
-test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-workbench>): ARIA, fit scale, mobile drawer, >=144px toolbox dock", async () => {
+test("Bitmap UI (<shadow-claw-draw-filter-panel>, <shadow-claw-draw-bitmap-canvas>, <shadow-claw-draw-bitmap-workbench>): ARIA, fit scale, mobile drawer, >=144px toolbox dock", async () => {
   const [filterSrc, bmpCanvasSrc, bmpWbSrc] = await Promise.all([
-    readComp("scdraw-filter-panel.js"),
-    readComp("scdraw-bitmap-canvas.js"),
-    readComp("scdraw-bitmap-workbench.js"),
+    readComp("shadow-claw-draw-filter-panel.js"),
+    readComp("shadow-claw-draw-bitmap-canvas.js"),
+    readComp("shadow-claw-draw-bitmap-workbench.js"),
   ]);
 
   assert.match(filterSrc, /<input[^>]+type=["']range["']/);
@@ -224,11 +224,11 @@ test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-w
 
   assert.match(
     bmpWbSrc,
-    /@container\s+scdraw-bitmap-workbench\s*\(\s*min-width:\s*640px\s*\)/,
+    /@container\s+shadow-claw-draw-bitmap-workbench\s*\(\s*min-width:\s*640px\s*\)/,
   );
   assert.match(
     bmpWbSrc,
-    /@container\s+scdraw-bitmap-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
+    /@container\s+shadow-claw-draw-bitmap-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
   );
   assert.match(
     bmpWbSrc,
@@ -290,22 +290,22 @@ test("Bitmap UI (<scdraw-filter-panel>, <scdraw-bitmap-canvas>, <scdraw-bitmap-w
   );
   assert.match(
     themeCss,
-    /\.scdraw-workbench-page--fullscreen[\s\S]*?scdraw-vector-workbench[\s\S]*?scdraw-bitmap-workbench|\.scdraw-workbench-page\.scdraw-workbench-page--fullscreen\s+scdraw-bitmap-workbench/,
+    /\.scdraw-workbench-page--fullscreen[\s\S]*?shadow-claw-draw-vector-workbench[\s\S]*?shadow-claw-draw-bitmap-workbench|\.scdraw-workbench-page\.scdraw-workbench-page--fullscreen\s+shadow-claw-draw-bitmap-workbench/,
   );
   assert.match(
     themeCss,
-    /\.scdraw-workbench-page\.scdraw-workbench-page--fullscreen\s+scdraw-vector-workbench/,
+    /\.scdraw-workbench-page\.scdraw-workbench-page--fullscreen\s+shadow-claw-draw-vector-workbench/,
   );
-  assert.match(themeCss, /scdraw-animation-workbench/);
+  assert.match(themeCss, /shadow-claw-draw-animation-workbench/);
 
-  const animWbSrc = await readComp("scdraw-animation-workbench.js");
+  const animWbSrc = await readComp("shadow-claw-draw-animation-workbench.js");
   assert.match(
     animWbSrc,
-    /@container\s+scdraw-animation-workbench\s*\(\s*min-width:\s*640px\s*\)/,
+    /@container\s+shadow-claw-draw-animation-workbench\s*\(\s*min-width:\s*640px\s*\)/,
   );
   assert.match(
     animWbSrc,
-    /@container\s+scdraw-animation-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
+    /@container\s+shadow-claw-draw-animation-workbench\s*\(\s*min-width:\s*1024px\s*\)/,
   );
   assert.match(animWbSrc, /installPageSwipeGuard/);
   assert.match(animWbSrc, /setupWorkbenchFullscreen/);

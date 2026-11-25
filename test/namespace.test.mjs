@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { checkNamespaceIsolation } from "../bin/check-namespace.mjs";
 
-test("Namespace isolation: verifies scdraw_* / scdraw-* conventions and zero conflicts", () => {
+test("Namespace isolation: verifies scdraw_* / shadow-claw-draw-* conventions and zero conflicts", () => {
   const result = checkNamespaceIsolation();
 
   if (!result.ok) {
@@ -20,7 +20,7 @@ test("Namespace isolation: verifies scdraw_* / scdraw-* conventions and zero con
   );
   assert.ok(
     result.report.elements.length >= 7,
-    "Must define scdraw-* custom elements",
+    "Must define shadow-claw-draw-* custom elements",
   );
   assert.equal(
     result.report.channels.length,

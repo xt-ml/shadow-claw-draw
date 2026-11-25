@@ -1,24 +1,27 @@
 /**
- * .agents/scripts/components/scdraw-animation-stage.js
+ * .agents/scripts/components/shadow-claw-draw-animation-stage.js
  *
- * Animation Stage (<scdraw-animation-stage>) hosting the active Vector or Bitmap
+ * Animation Stage (<shadow-claw-draw-animation-stage>) hosting the active Vector or Bitmap
  * drawing canvas, Onion Skinning overlay, rAF playback loop (GIMP-inspired timing),
  * and drag-and-drop media importer (.gif, .apng, .png, .svg, .webm, .mp4).
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { computePlaybackSequence } from "../scdraw-animation.js";
 import { decodeGifFile, decodeApngFile } from "../scdraw-encoders.js";
 import { parseAnimatedSvgToAnimationDocument } from "../scdraw-anim-svg.js";
 import { extractFramesFromVideoBlob } from "../scdraw-capture.js";
-import "./scdraw-vector-canvas.js";
-import "./scdraw-bitmap-canvas.js";
+import "./shadow-claw-draw-vector-canvas.js";
+import "./shadow-claw-draw-bitmap-canvas.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawAnimationStageElement extends BaseElement {
+export class ShadowClawDrawAnimationStage extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -356,17 +359,12 @@ export class DrawAnimationStageElement extends BaseElement {
         }
       </style>
       <div id="scdraw-stage-host" class="scdraw-anim-stage" role="region" aria-label="Animation Stage">
-        <scdraw-vector-canvas id="scdraw-stage-vector" class="scdraw-anim-stage__canvas"></scdraw-vector-canvas>
-        <scdraw-bitmap-canvas id="scdraw-stage-bitmap" class="scdraw-anim-stage__canvas" hidden></scdraw-bitmap-canvas>
+        <shadow-claw-draw-vector-canvas id="scdraw-stage-vector" class="scdraw-anim-stage__canvas"></shadow-claw-draw-vector-canvas>
+        <shadow-claw-draw-bitmap-canvas id="scdraw-stage-bitmap" class="scdraw-anim-stage__canvas" hidden></shadow-claw-draw-bitmap-canvas>
         <canvas id="scdraw-stage-onion" class="scdraw-anim-stage__onion" aria-hidden="true"></canvas>
       </div>
     `;
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-animation-stage")
-) {
-  customElements.define("scdraw-animation-stage", DrawAnimationStageElement);
-}
+defineElement("shadow-claw-draw-animation-stage", ShadowClawDrawAnimationStage);

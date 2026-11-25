@@ -1,26 +1,27 @@
 /**
- * .agents/scripts/components/scdraw-statusbar.js
+ * .agents/scripts/components/shadow-claw-draw-status-bar.js
  *
- * Accessible live status strip (<scdraw-statusbar mode="vector|bitmap">).
- * Announces tool switches, cursor coordinates, zoom %, selection count, and file notices.
+ * Accessible live status strip (<shadow-claw-draw-status-bar mode="vector|bitmap">).
+ * Delegates status chrome and ARIA live messaging to `<shadow-claw-status-bar>` while
+ * binding Draw engine signals for active tool, cursor coordinates, zoom %, and selection.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import "shadow-claw/components/shadow-claw-status-bar";
+import {
+  ShadowClawElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
-
-export class DrawStatusBarElement extends BaseElement {
+export class ShadowClawDrawStatusBar extends ShadowClawElement {
   static get observedAttributes() {
     return ["mode"];
   }
 
   constructor() {
     super();
-    if (this.attachShadow) {
-      this.attachShadow({ mode: "open" });
-    }
     this._dispose = null;
   }
 
@@ -29,6 +30,7 @@ export class DrawStatusBarElement extends BaseElement {
   }
 
   connectedCallback() {
+    this.disposeCleanups();
     this.render();
     this._dispose = effect(() => {
       const mode = this.mode;
@@ -45,6 +47,12 @@ export class DrawStatusBarElement extends BaseElement {
       const dirty = scdraw.dirty.get();
       this._update(mode, tool, coords, zoom, sel, bmpSel, bmpClip, msg, dirty);
     });
+    this.addCleanup(() => {
+      if (this._dispose) {
+        this._dispose();
+        this._dispose = null;
+      }
+    });
   }
 
   disconnectedCallback() {
@@ -52,19 +60,24 @@ export class DrawStatusBarElement extends BaseElement {
       this._dispose();
       this._dispose = null;
     }
+    super.disconnectedCallback();
   }
 
   _update(mode, tool, coords, zoom, sel, bmpSel, bmpClip, msg, dirty) {
     if (!this.shadowRoot) return;
-    const msgEl = this.shadowRoot.getElementById("scdraw-sb-msg");
+    const sb = this.shadowRoot.getElementById("scdraw-sb");
     const coordsEl = this.shadowRoot.getElementById("scdraw-sb-coords");
     const zoomEl = this.shadowRoot.getElementById("scdraw-sb-zoom");
     const toolEl = this.shadowRoot.getElementById("scdraw-sb-tool");
 
-    if (msgEl) msgEl.textContent = `${dirty ? "● " : ""}${msg}`;
+    if (sb) {
+      sb.setAttribute("message", msg || "");
+      sb.toggleAttribute("dirty", Boolean(dirty));
+    }
     if (toolEl) toolEl.textContent = `${mode.toUpperCase()} · ${tool}`;
-    if (coordsEl)
+    if (coordsEl) {
       coordsEl.textContent = `${Math.round(coords.x)}, ${Math.round(coords.y)} px`;
+    }
     if (zoomEl) zoomEl.textContent = `${Math.round(zoom * 100)}%`;
     const selEl = this.shadowRoot.getElementById("scdraw-sb-sel");
     if (selEl) {
@@ -95,27 +108,6 @@ export class DrawStatusBarElement extends BaseElement {
           flex: 0 0 auto;
           min-width: 0;
         }
-        .scdraw-statusbar {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.5rem;
-          padding: 0.35rem 0.65rem;
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          font-size: 0.74rem;
-          color: var(--text-secondary);
-        }
-        .scdraw-statusbar__message {
-          flex: 1;
-          min-width: 140px;
-          color: var(--text-primary);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
         .scdraw-statusbar__metrics {
           display: flex;
           flex-wrap: wrap;
@@ -124,22 +116,16 @@ export class DrawStatusBarElement extends BaseElement {
           font-family: var(--mono);
         }
       </style>
-      <footer class="scdraw-statusbar" role="status">
-        <span id="scdraw-sb-msg" class="scdraw-statusbar__message" aria-live="polite">Ready</span>
-        <div class="scdraw-statusbar__metrics">
+      <shadow-claw-status-bar id="scdraw-sb" label="Draw studio status" message="Ready">
+        <div slot="metrics" class="scdraw-statusbar__metrics">
           <span id="scdraw-sb-tool" class="scdraw-badge"></span>
           <span id="scdraw-sb-sel" class="scdraw-badge"></span>
           <span id="scdraw-sb-coords" class="scdraw-badge">0, 0 px</span>
           <span id="scdraw-sb-zoom" class="scdraw-badge">100%</span>
         </div>
-      </footer>
+      </shadow-claw-status-bar>
     `;
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-statusbar")
-) {
-  customElements.define("scdraw-statusbar", DrawStatusBarElement);
-}
+defineElement("shadow-claw-draw-status-bar", ShadowClawDrawStatusBar);

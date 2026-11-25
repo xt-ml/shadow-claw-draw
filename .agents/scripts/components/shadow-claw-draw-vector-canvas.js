@@ -1,12 +1,12 @@
 /**
- * .agents/scripts/components/scdraw-vector-canvas.js
+ * .agents/scripts/components/shadow-claw-draw-vector-canvas.js
  *
- * Interactive Live SVG Stage (<scdraw-vector-canvas>).
+ * Interactive Live SVG Stage (<shadow-claw-draw-vector-canvas>).
  * Auto-fits the artboard to available stage dimensions via ResizeObserver,
  * supports zoom & scroll via safe margin:auto centering, and uses Pointer Events.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import {
@@ -22,7 +22,10 @@ import {
 } from "../scdraw-vector.js";
 import { serializeVectorDocumentToSvg } from "../scdraw-svg-codec.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function computeFitScale({
   stageWidth = 800,
@@ -144,7 +147,7 @@ export function processPenPointerDown({
   };
 }
 
-export class DrawVectorCanvasElement extends BaseElement {
+export class ShadowClawDrawVectorCanvas extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -996,7 +999,7 @@ export class DrawVectorCanvasElement extends BaseElement {
           box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
       </style>
-      <div class="scdraw-vector-canvas">
+      <div class="shadow-claw-draw-vector-canvas">
         <div id="scdraw-text-bar" class="scdraw-vector-canvas__text-bar hidden" role="dialog" aria-label="Insert SVG Text">
           <input id="scdraw-text-input" type="text" class="scdraw-input" aria-label="SVG text content" />
           <button type="button" id="scdraw-text-commit" class="scdraw-btn scdraw-btn--primary scdraw-btn--sm">Place Text</button>
@@ -1016,9 +1019,4 @@ export class DrawVectorCanvasElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-vector-canvas")
-) {
-  customElements.define("scdraw-vector-canvas", DrawVectorCanvasElement);
-}
+defineElement("shadow-claw-draw-vector-canvas", ShadowClawDrawVectorCanvas);

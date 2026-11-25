@@ -6,7 +6,7 @@
  *
  * Validates:
  * - All tools start with "scdraw_" and have generated .agents/tools/<name>.json
- * - All custom elements start with "scdraw-"
+ * - All custom elements start with "shadow-claw-draw-"
  * - All broadcast channels start with "scdraw-"
  * - Pinned workbench page is "/pages/main/index.html"
  */
@@ -55,10 +55,10 @@ export function checkNamespaceIsolation() {
   // 2. Custom Elements Namespaces
   report.elements = config.customElements?.allowedElements || [];
   for (const el of report.elements) {
-    if (!el.startsWith("scdraw-")) {
+    if (!el.startsWith("shadow-claw-draw-")) {
       report.namingViolations.push(el);
       issues.push(
-        `Custom element naming violation: "${el}" must start with "scdraw-".`,
+        `Custom element naming violation: "${el}" must start with "shadow-claw-draw-".`,
       );
     }
   }
@@ -79,7 +79,7 @@ export function checkNamespaceIsolation() {
     if (!ch.startsWith("scdraw-")) {
       report.namingViolations.push(ch);
       issues.push(
-        `Broadcast channel naming violation: "${ch}" must start with "scdraw-".`,
+        `Broadcast channel naming violation: "${ch}" must start with "shadow-claw-draw-".`,
       );
     }
   }

@@ -1,13 +1,13 @@
 /**
- * .agents/scripts/components/scdraw-export-panel.js
+ * .agents/scripts/components/shadow-claw-draw-export-panel.js
  *
- * Animation Export & Press Panel (<scdraw-export-panel>).
+ * Animation Export & Press Panel (<shadow-claw-draw-export-panel>).
  * Local-first export (GIMP GIF89a, APNG, SMIL/CSS Animated SVG, WebM, Sprite Sheet)
  * plus optional lazy CDN accelerators (Gifski, Gifsicle lossy, FFmpeg MP4),
  * OPFS save, download, and GIFWorks-ported Web Share API.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { formatFileSize } from "../scdraw-fs.js";
@@ -17,9 +17,12 @@ import {
   computeVideoBitsPerSecond,
 } from "../scdraw-encoders.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawExportPanelElement extends BaseElement {
+export class ShadowClawDrawExportPanel extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -685,9 +688,4 @@ export class DrawExportPanelElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-export-panel")
-) {
-  customElements.define("scdraw-export-panel", DrawExportPanelElement);
-}
+defineElement("shadow-claw-draw-export-panel", ShadowClawDrawExportPanel);

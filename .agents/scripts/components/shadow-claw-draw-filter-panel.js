@@ -1,12 +1,12 @@
 /**
- * .agents/scripts/components/scdraw-filter-panel.js
+ * .agents/scripts/components/shadow-claw-draw-filter-panel.js
  *
  * Vanilla JS Web Component port of <x-canvas-image-manipulation> controls
  * (/packages/kherrick/apps/apps/src/app/pages/playground/x-canvas-image-manipulation/x-canvas-image-manipulation.ts)
  * paired with GIMP-inspired transform/color operations.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import {
@@ -17,7 +17,10 @@ import {
   formatFilterValue,
 } from "../scdraw-filters.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function getFilterControlDescriptors(
   filters,
@@ -64,7 +67,7 @@ export function getFilterControlDescriptors(
   });
 }
 
-export class DrawFilterPanelElement extends BaseElement {
+export class ShadowClawDrawFilterPanel extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -213,7 +216,7 @@ export class DrawFilterPanelElement extends BaseElement {
           }
         }
       </style>
-      <section class="scdraw-panel scdraw-filter-panel" role="region" aria-label="Bitmap Filters and Image Manipulation">
+      <section class="scdraw-panel shadow-claw-draw-filter-panel" role="region" aria-label="Bitmap Filters and Image Manipulation">
         <header class="scdraw-panel__header">
           <span>Filters &amp; Transforms</span>
           <button type="button" id="scdraw-f-reset-filters" class="scdraw-btn scdraw-btn--sm">Clear Filters</button>
@@ -382,9 +385,4 @@ export class DrawFilterPanelElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-filter-panel")
-) {
-  customElements.define("scdraw-filter-panel", DrawFilterPanelElement);
-}
+defineElement("shadow-claw-draw-filter-panel", ShadowClawDrawFilterPanel);

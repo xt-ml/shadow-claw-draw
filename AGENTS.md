@@ -7,9 +7,9 @@
 Three-studio, browser-native **Vector (SVG)**, **Bitmap (Canvas 2D)**, and **Animation** graphical drawing application built for ShadowClaw under `AGPL-3.0`:
 
 - **Assistant Name**: `ShadowClaw Draw`
-- **Page 1 — Vector Studio (Default Pinned Home)**: `pages/main/index.html` (`/main/`) hosting `<scdraw-vector-workbench>` (`iframe: false`)
-- **Page 2 — Bitmap Studio**: `pages/main/~/content/01-bitmap.html` (`/main/bitmap/`) hosting `<scdraw-bitmap-workbench>` (`iframe: false`)
-- **Page 3 — Animation Studio**: `pages/main/~/content/02-animation.html` (`/main/animation/`) hosting `<scdraw-animation-workbench>` (`iframe: false`)
+- **Page 1 — Vector Studio (Default Pinned Home)**: `pages/main/index.html` (`/main/`) hosting `<shadow-claw-draw-vector-workbench>` (`iframe: false`)
+- **Page 2 — Bitmap Studio**: `pages/main/~/content/01-bitmap.html` (`/main/bitmap/`) hosting `<shadow-claw-draw-bitmap-workbench>` (`iframe: false`)
+- **Page 3 — Animation Studio**: `pages/main/~/content/02-animation.html` (`/main/animation/`) hosting `<shadow-claw-draw-animation-workbench>` (`iframe: false`)
 - **Documentation Pages**:
   - `pages/main/~/content/02-architecture-and-tools.md` (`/main/architecture/`)
   - `pages/main/~/content/03-vector-studio-tools.md` (`/main/vector-studio-tools/`)
@@ -36,8 +36,8 @@ Three-studio, browser-native **Vector (SVG)**, **Bitmap (Canvas 2D)**, and **Ani
 2. **Mobile-First Responsive UI, Full Screen, Swipe Guard & WCAG 2.1 AA**:
    - All custom elements in `.agents/scripts/components/scdraw-*.js` use mobile-first `min-width` `@container` queries (`>= 640px`, `>= 1024px`) with `@supports not (container-type: inline-size)` fallbacks, `@media (pointer: coarse)` 44px touch targets (including horizontal scroll strips with `flex: 0 0 auto`), BEM classes (`.scdraw-*__*`), `touch-action: none` + Pointer Events (`setPointerCapture`), keyboard shortcuts, and `aria-live="polite"` status reporting (never `alert()` / `confirm()` / `prompt()`).
    - **Trusted Types Safety**: Dynamic UI state toggles (such as Full Screen button icon switching via `aria-pressed="true"`) must update attributes/text rather than reassigning raw HTML strings on interaction.
-   - **Page Swipe Suppression**: Workbenches call `installPageSwipeGuard(this)` in `scdraw-styles.js` (and mark static markup with `data-no-swipe="true" data-no-nav="true"`) so drawing/panning gestures never swipe away between ShadowClaw pages.
-   - **Full Screen Workbench Controller**: All three workbenches (`<scdraw-vector-workbench>`, `<scdraw-bitmap-workbench>`, and `<scdraw-animation-workbench>`) wire `setupWorkbenchFullscreen` (`scdraw-styles.js`), supporting Fullscreen API plus `100dvw × 100dvh` (`100vw × 100vh` fallback) fixed overlay positioning, temporary host `.page` `transform` neutralization on activation/restoration, and `!e.defaultPrevented` `Escape` ordering so canvas selection/text cancel takes priority over exiting fullscreen.
+   - **Page Swipe Suppression**: Workbenches call `installPageSwipeGuard(this)` in `shadow-claw-draw-styles.js` (and mark static markup with `data-no-swipe="true" data-no-nav="true"`) so drawing/panning gestures never swipe away between ShadowClaw pages.
+   - **Full Screen Workbench Controller**: All three workbenches (`<shadow-claw-draw-vector-workbench>`, `<shadow-claw-draw-bitmap-workbench>`, and `<shadow-claw-draw-animation-workbench>`) wire `setupWorkbenchFullscreen` (`shadow-claw-draw-styles.js`), supporting Fullscreen API plus `100dvw × 100dvh` (`100vw × 100vh` fallback) fixed overlay positioning, temporary host `.page` `transform` neutralization on activation/restoration, and `!e.defaultPrevented` `Escape` ordering so canvas selection/text cancel takes priority over exiting fullscreen.
 
 3. **Declarative Tools, Skills & Docs**:
    - Single source of truth for all 36 tools is `bin/tool-manifest.mjs`. Regenerate `.agents/tools/*.json` and `.agents/scripts/scdraw-tools-metadata.js` via `npm run build:tools` (avoid Prettier formatting `.agents/scripts/scdraw-tools-metadata.js` afterward unless keeping `check:tools` happy) and verify with `npm run check:tools`.

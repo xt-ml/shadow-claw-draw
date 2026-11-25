@@ -7,19 +7,19 @@ slug: "animation-studio-tools"
 
 ## Animation Studio Tools & Export
 
-**Page 3 — Animation Studio (`/main/animation/`)** hosts `<scdraw-animation-workbench>`, uniting **Vector Animation** (SVG keyframe tweening, Inkscape-inspired Bezier path morphing, SMIL/CSS Animated SVG) and **Bitmap Animation** (multi-layer pixel frames, GIMP-inspired perceptual quantization/dithering & delta optimization, APNG, and GIFWorks-ported screen/webcam capture & clip trimming).
+**Page 3 — Animation Studio (`/main/animation/`)** hosts `<shadow-claw-draw-animation-workbench>`, uniting **Vector Animation** (SVG keyframe tweening, Inkscape-inspired Bezier path morphing, SMIL/CSS Animated SVG) and **Bitmap Animation** (multi-layer pixel frames, GIMP-inspired perceptual quantization/dithering & delta optimization, APNG, and GIFWorks-ported screen/webcam capture & clip trimming).
 
 ---
 
 ### Core Workflows
 
 1. **Vector Keyframe & Cel Animation**:
-   - Draw shapes or paths on Frame 1 using all 13 Vector tools (`<scdraw-vector-canvas>`).
+   - Draw shapes or paths on Frame 1 using all 13 Vector tools (`<shadow-claw-draw-vector-canvas>`).
    - Duplicate a frame (`Dup`), move/rotate/recolor elements (or reshape Bezier nodes), and click **Tween +4** (or call `scdraw_animation_tween` with `steps`, `easing`, and optional curved `trajectoryPath`) to auto-generate interpolated frames.
    - Toggle **Onion** (`O` shortcut) to inspect previous and next frame ghosts while animating.
 2. **Bitmap Frame-by-Frame & Capture Animation**:
    - Switch **Mode** to **Bitmap Anim** (or capture a screen/webcam clip in the **Capture** tab with Start Delay `0–30s` and Timer `0–30s`).
-   - Paint on multi-layer raster frames with `<scdraw-bitmap-canvas>`, scrub the horizontal filmstrip, edit per-frame millisecond delays (`20–10000ms`), and trim unwanted frames using the **`[In … Out]`** range sliders (**Trim Range**).
+   - Paint on multi-layer raster frames with `<shadow-claw-draw-bitmap-canvas>`, scrub the horizontal filmstrip, edit per-frame millisecond delays (`20–10000ms`), and trim unwanted frames using the **`[In … Out]`** range sliders (**Trim Range**).
    - Run **Optimize** / **Unopt** (ported from GIMP `animation-optimize.c`) to diff bounding boxes and coalesce delta frames.
 3. **Cross-Studio Bridge**:
    - Click **Send to Anim** in Vector Studio or Bitmap Studio (`scdraw_animation_capture_studio`) to append your current artwork as a timeline frame.
@@ -46,14 +46,14 @@ slug: "animation-studio-tools"
 
 - **Primary Actions**: `Vector` | `Bitmap` | `Animation` switcher, `Play` / `Pause`, `Undo`, `Redo`, `Save` (writes `animation.scdraw-anim.json` to OPFS), **Full Screen** (`#scdraw-anim-fullscreen`), and panel toggles (`Tools`, `Timeline`, `Layers`, `Export`).
 - **Secondary Bar (`More ▾` on mobile/tablet, always open at `>= 1024px`)**: `Mode` (`Vector Anim` / `Bitmap Anim`), `New`, `Import Media`, and `Rasterize → Bitmap` (visible in Vector Anim mode).
-- **Mobile Layout (`< 640px`)**: Switches between `Stage | Timeline | Layers | Export` tabs (with `Export` / `Capture` sub-tabs in the right pane) above `<scdraw-statusbar>`.
+- **Mobile Layout (`< 640px`)**: Switches between `Stage | Timeline | Layers | Export` tabs (with `Export` / `Capture` sub-tabs in the right pane) above `<shadow-claw-draw-status-bar>`.
 
 ---
 
 ### Timeline, Capture & Limits
 
-- **Timeline (`<scdraw-timeline>`)**: Defaults to `800×600` (`Vector Anim`) or `512×512` (`Bitmap Anim`) at `1–60` FPS (`12 fps` / `83 ms` default), `0.25×`–`4×` speed multipliers, `Loop` / `Once` / `Ping-Pong` playback modes, up to `MAX_ANIMATION_FRAMES = 500`, and separate undo/redo stacks (`MAX_HISTORY = 100` for Vector Anim, `MAX_ANIMATION_BITMAP_HISTORY = 25` for Bitmap Anim).
-- **Capture & Clip (`<scdraw-capture-panel>`)**: Provides `Screen`, `Webcam`, and standalone `Mic Only` capture, **Audio Input** (`No Audio`, `Microphone`, `System / Tab Audio`, `Mic + System Audio`), **Microphone** device selection, **Capture Res** (`source`, `480p`, `720p`, `1080p`), `Record`, `Stop`, `PiP`, `Start Delay` (`0–30s`, default `3s`), `Max Timer` (`0–30s`, default `5s`), `Extract FPS` (`1–30`, default `12`), `Max Width` (`64–1920`, default `512`), `Extract Clip → Frames` (auto-attaching captured audio), and `Load Audio` / `Clear Audio` for standalone or imported audio tracks.
+- **Timeline (`<shadow-claw-draw-timeline>`)**: Defaults to `800×600` (`Vector Anim`) or `512×512` (`Bitmap Anim`) at `1–60` FPS (`12 fps` / `83 ms` default), `0.25×`–`4×` speed multipliers, `Loop` / `Once` / `Ping-Pong` playback modes, up to `MAX_ANIMATION_FRAMES = 500`, and separate undo/redo stacks (`MAX_HISTORY = 100` for Vector Anim, `MAX_ANIMATION_BITMAP_HISTORY = 25` for Bitmap Anim).
+- **Capture & Clip (`<shadow-claw-draw-capture-panel>`)**: Provides `Screen`, `Webcam`, and standalone `Mic Only` capture, **Audio Input** (`No Audio`, `Microphone`, `System / Tab Audio`, `Mic + System Audio`), **Microphone** device selection, **Capture Res** (`source`, `480p`, `720p`, `1080p`), `Record`, `Stop`, `PiP`, `Start Delay` (`0–30s`, default `3s`), `Max Timer` (`0–30s`, default `5s`), `Extract FPS` (`1–30`, default `12`), `Max Width` (`64–1920`, default `512`), `Extract Clip → Frames` (auto-attaching captured audio), and `Load Audio` / `Clear Audio` for standalone or imported audio tracks.
 
 ---
 

@@ -1,7 +1,7 @@
 /**
- * .agents/scripts/components/scdraw-vector-workbench.js
+ * .agents/scripts/components/shadow-claw-draw-vector-workbench.js
  *
- * Page 1 Studio Workbench (<scdraw-vector-workbench>).
+ * Page 1 Studio Workbench (<shadow-claw-draw-vector-workbench>).
  * True Mobile-First layout:
  * - Compact 1-row primary header (Vector/Bitmap/Animation switch, Undo, Redo, Save, Full Screen, More toggle)
  * - Hero canvas immediately visible above the fold on mobile
@@ -17,7 +17,7 @@ import {
   installPageSwipeGuard,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
-} from "./scdraw-styles.js";
+} from "./shadow-claw-draw-styles.js";
 export {
   computeWorkspaceGridColumns,
   resolveWorkbenchFullscreenState,
@@ -26,14 +26,17 @@ export {
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { getAppBasePath } from "../scdraw-fs.js";
-import "./scdraw-toolbox.js";
-import "./scdraw-vector-canvas.js";
-import "./scdraw-layers-panel.js";
-import "./scdraw-inspector.js";
-import "./scdraw-statusbar.js";
-import "./scdraw-resize-handle.js";
+import "./shadow-claw-draw-toolbox.js";
+import "./shadow-claw-draw-vector-canvas.js";
+import "./shadow-claw-draw-layers-panel.js";
+import "./shadow-claw-draw-inspector.js";
+import "./shadow-claw-draw-status-bar.js";
+import "./shadow-claw-draw-resize-handle.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function resolveDrawResponsiveLayout({
   containerWidth = 1200,
@@ -87,7 +90,7 @@ export function resolveDrawResponsiveLayout({
   };
 }
 
-export class DrawVectorWorkbenchElement extends BaseElement {
+export class ShadowClawDrawVectorWorkbench extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -262,7 +265,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
   }
 
   _setupResizeObserver() {
-    const toolbox = this.shadowRoot?.querySelector("scdraw-toolbox");
+    const toolbox = this.shadowRoot?.querySelector("shadow-claw-draw-toolbox");
     if (typeof ResizeObserver !== "undefined" && toolbox) {
       this._resizeObserver = new ResizeObserver((entries) => {
         const w =
@@ -290,7 +293,9 @@ export class DrawVectorWorkbenchElement extends BaseElement {
     ) || []) {
       btn.setAttribute("aria-pressed", String(btn.dataset.tab === tab));
     }
-    const inspector = this.shadowRoot?.querySelector("scdraw-inspector");
+    const inspector = this.shadowRoot?.querySelector(
+      "shadow-claw-draw-inspector",
+    );
     if (inspector && typeof inspector.setXmlMode === "function") {
       inspector.setXmlMode(tab === "xml");
     }
@@ -443,7 +448,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
         ${SHARED_STYLES}
         :host {
           container-type: inline-size;
-          container-name: scdraw-vector-workbench;
+          container-name: shadow-claw-draw-vector-workbench;
           display: block;
           width: 100%;
           max-width: 100%;
@@ -567,7 +572,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           display: none;
         }
 
-        @container scdraw-vector-workbench (min-width: 640px) {
+        @container shadow-claw-draw-vector-workbench (min-width: 640px) {
           .scdraw-vector-wb {
             height: calc(100dvh - 180px);
             min-height: 480px;
@@ -612,7 +617,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           }
         }
 
-        @container scdraw-vector-workbench (min-width: 1024px) {
+        @container shadow-claw-draw-vector-workbench (min-width: 1024px) {
           .scdraw-vector-wb__more-toggle {
             display: none;
           }
@@ -642,7 +647,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           }
         }
 
-        @container scdraw-vector-workbench (min-width: 640px) {
+        @container shadow-claw-draw-vector-workbench (min-width: 640px) {
           .scdraw-vector-wb[data-show-toolbox="false"] .scdraw-vector-wb__pane--toolbox {
             display: none;
           }
@@ -772,7 +777,7 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           flex: 1;
           min-height: 0;
         }
-        @container scdraw-vector-workbench (max-width: 639px) {
+        @container shadow-claw-draw-vector-workbench (max-width: 639px) {
           :host(.scdraw-workbench--fullscreen) .scdraw-vector-wb__pane--canvas,
           :host(:fullscreen) .scdraw-vector-wb__pane--canvas,
           :host(.scdraw-workbench--fullscreen) .scdraw-vector-wb__pane--layers,
@@ -880,12 +885,12 @@ export class DrawVectorWorkbenchElement extends BaseElement {
 
         <main class="scdraw-vector-wb__workspace">
           <aside id="scdraw-vec-pane-toolbox" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--toolbox">
-            <scdraw-toolbox mode="vector"></scdraw-toolbox>
+            <shadow-claw-draw-toolbox mode="vector"></shadow-claw-draw-toolbox>
           </aside>
           <section class="scdraw-vector-wb__pane scdraw-vector-wb__pane--canvas">
-            <scdraw-vector-canvas></scdraw-vector-canvas>
+            <shadow-claw-draw-vector-canvas></shadow-claw-draw-vector-canvas>
           </section>
-          <scdraw-resize-handle
+          <shadow-claw-draw-resize-handle
             id="scdraw-layers-handle"
             class="scdraw-vector-wb__handle scdraw-vector-wb__handle--layers"
             orientation="vertical"
@@ -893,11 +898,11 @@ export class DrawVectorWorkbenchElement extends BaseElement {
             value="230"
             min="170"
             max="400"
-            label="Resize Layers Panel"></scdraw-resize-handle>
+            label="Resize Layers Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-vec-pane-layers" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--layers">
-            <scdraw-layers-panel mode="vector"></scdraw-layers-panel>
+            <shadow-claw-draw-layers-panel mode="vector"></shadow-claw-draw-layers-panel>
           </aside>
-          <scdraw-resize-handle
+          <shadow-claw-draw-resize-handle
             id="scdraw-inspector-handle"
             class="scdraw-vector-wb__handle scdraw-vector-wb__handle--inspector"
             orientation="vertical"
@@ -905,9 +910,9 @@ export class DrawVectorWorkbenchElement extends BaseElement {
             value="280"
             min="210"
             max="460"
-            label="Resize Inspector Panel"></scdraw-resize-handle>
+            label="Resize Inspector Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-vec-pane-inspector" class="scdraw-vector-wb__pane scdraw-vector-wb__pane--inspector">
-            <scdraw-inspector></scdraw-inspector>
+            <shadow-claw-draw-inspector></shadow-claw-draw-inspector>
           </aside>
         </main>
 
@@ -918,15 +923,13 @@ export class DrawVectorWorkbenchElement extends BaseElement {
           <button type="button" class="scdraw-btn scdraw-btn--sm scdraw-vector-wb__tab" data-tab="xml" aria-pressed="false">SVG XML</button>
         </nav>
 
-        <scdraw-statusbar mode="vector"></scdraw-statusbar>
+        <shadow-claw-draw-status-bar mode="vector"></shadow-claw-draw-status-bar>
       </div>
     `;
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-vector-workbench")
-) {
-  customElements.define("scdraw-vector-workbench", DrawVectorWorkbenchElement);
-}
+defineElement(
+  "shadow-claw-draw-vector-workbench",
+  ShadowClawDrawVectorWorkbench,
+);

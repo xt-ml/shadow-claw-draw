@@ -5,23 +5,23 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  DrawTimelineElement,
-  DrawAnimationStageElement,
-  DrawExportPanelElement,
-  DrawCapturePanelElement,
-  DrawAnimationWorkbenchElement,
+  ShadowClawDrawTimeline,
+  ShadowClawDrawAnimationStage,
+  ShadowClawDrawExportPanel,
+  ShadowClawDrawCapturePanel,
+  ShadowClawDrawAnimationWorkbench,
   resolveAnimationResponsiveLayout,
-} from "../.agents/scripts/scdraw-element.js";
+} from "../.agents/scripts/shadow-claw-draw-element.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 
 test("Phase 3 Barrel & Classes: all 5 Animation Studio components export cleanly in Node.js", () => {
-  assert.equal(typeof DrawTimelineElement, "function");
-  assert.equal(typeof DrawAnimationStageElement, "function");
-  assert.equal(typeof DrawExportPanelElement, "function");
-  assert.equal(typeof DrawCapturePanelElement, "function");
-  assert.equal(typeof DrawAnimationWorkbenchElement, "function");
+  assert.equal(typeof ShadowClawDrawTimeline, "function");
+  assert.equal(typeof ShadowClawDrawAnimationStage, "function");
+  assert.equal(typeof ShadowClawDrawExportPanel, "function");
+  assert.equal(typeof ShadowClawDrawCapturePanel, "function");
+  assert.equal(typeof ShadowClawDrawAnimationWorkbench, "function");
 });
 
 test("Animation Workbench layout resolver: mobile-first tabs vs tablet/desktop multi-pane", () => {
@@ -63,11 +63,11 @@ test("Animation Workbench layout resolver: mobile-first tabs vs tablet/desktop m
 
 test("Animation UI Components: ARIA, container queries, coarse touch targets, swipe guard, and Trusted Types safety", () => {
   const files = [
-    ".agents/scripts/components/scdraw-timeline.js",
-    ".agents/scripts/components/scdraw-animation-stage.js",
-    ".agents/scripts/components/scdraw-export-panel.js",
-    ".agents/scripts/components/scdraw-capture-panel.js",
-    ".agents/scripts/components/scdraw-animation-workbench.js",
+    ".agents/scripts/components/shadow-claw-draw-timeline.js",
+    ".agents/scripts/components/shadow-claw-draw-animation-stage.js",
+    ".agents/scripts/components/shadow-claw-draw-export-panel.js",
+    ".agents/scripts/components/shadow-claw-draw-capture-panel.js",
+    ".agents/scripts/components/shadow-claw-draw-animation-workbench.js",
   ];
 
   for (const rel of files) {
@@ -81,7 +81,7 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   }
 
   const timelineSrc = readFileSync(
-    resolve(ROOT, ".agents/scripts/components/scdraw-timeline.js"),
+    resolve(ROOT, ".agents/scripts/components/shadow-claw-draw-timeline.js"),
     "utf8",
   );
   assert.match(timelineSrc, /role="listbox"/);
@@ -90,17 +90,23 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(timelineSrc, /44px/);
 
   const wbSrc = readFileSync(
-    resolve(ROOT, ".agents/scripts/components/scdraw-animation-workbench.js"),
+    resolve(
+      ROOT,
+      ".agents/scripts/components/shadow-claw-draw-animation-workbench.js",
+    ),
     "utf8",
   );
-  assert.match(wbSrc, /@container\s+scdraw-animation-workbench/);
+  assert.match(wbSrc, /@container\s+shadow-claw-draw-animation-workbench/);
   assert.match(wbSrc, /@supports\s+not\s*\(container-type:\s*inline-size\)/);
   assert.match(wbSrc, /installPageSwipeGuard/);
   assert.match(wbSrc, /setupWorkbenchFullscreen/);
   assert.match(wbSrc, /prefers-reduced-motion/);
 
   const layersSrc = readFileSync(
-    resolve(ROOT, ".agents/scripts/components/scdraw-layers-panel.js"),
+    resolve(
+      ROOT,
+      ".agents/scripts/components/shadow-claw-draw-layers-panel.js",
+    ),
     "utf8",
   );
   assert.match(layersSrc, /scdraw-layers__body/);
@@ -108,7 +114,10 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(layersSrc, /\.scdraw-layers__body[\s\S]*touch-action:\s*pan-y/);
 
   const exportSrc = readFileSync(
-    resolve(ROOT, ".agents/scripts/components/scdraw-export-panel.js"),
+    resolve(
+      ROOT,
+      ".agents/scripts/components/shadow-claw-draw-export-panel.js",
+    ),
     "utf8",
   );
   assert.match(exportSrc, /scdraw-exp-bg-transparent/);
@@ -144,7 +153,10 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
     /\.scdraw-anim-wb__workspace\s*\{[^}]*flex:\s*1\s+0\s+clamp\(/,
   );
 
-  assert.match(timelineSrc, /class="scdraw-timeline scdraw-scrollable"/);
+  assert.match(
+    timelineSrc,
+    /class="shadow-claw-draw-timeline scdraw-scrollable"/,
+  );
   assert.match(
     timelineSrc,
     /\.scdraw-timeline\s*\{[^}]*height:\s*auto[^}]*overflow-y:\s*auto/,
@@ -155,7 +167,10 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   );
 
   const captureSrc = readFileSync(
-    resolve(ROOT, ".agents/scripts/components/scdraw-capture-panel.js"),
+    resolve(
+      ROOT,
+      ".agents/scripts/components/shadow-claw-draw-capture-panel.js",
+    ),
     "utf8",
   );
   assert.match(captureSrc, /scdraw-cap-mic/);
@@ -163,8 +178,8 @@ test("Animation UI Components: ARIA, container queries, coarse touch targets, sw
   assert.match(captureSrc, /scdraw-cap-mic-device/);
   assert.match(captureSrc, /scdraw-cap-res/);
   for (const [label, src, bodyCls] of [
-    ["scdraw-export-panel.js", exportSrc, "scdraw-export__body"],
-    ["scdraw-capture-panel.js", captureSrc, "scdraw-capture__body"],
+    ["shadow-claw-draw-export-panel.js", exportSrc, "scdraw-export__body"],
+    ["shadow-claw-draw-capture-panel.js", captureSrc, "scdraw-capture__body"],
   ]) {
     assert.match(
       src,

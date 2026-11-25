@@ -9,75 +9,26 @@
 
 import { scdraw } from "./scdraw-engine.js";
 import { TOOLS_METADATA } from "./scdraw-tools-metadata.js";
+import {
+  createToolAdapterBridge,
+  registerNativeWebMcp as registerWebMcpTools,
+} from "shadow-claw/utils/tool-adapter-bridge";
 
-let cmdChannel = null;
-let resChannel = null;
-let stateChannel = null;
-let initialized = false;
-
-export async function init() {
-  if (initialized) return;
-  initialized = true;
-
-  if (typeof BroadcastChannel !== "undefined") {
-    stateChannel = new BroadcastChannel("scdraw-state");
-  }
-
-  if (
-    typeof navigator !== "undefined" &&
-    navigator.locks &&
-    typeof navigator.locks.request === "function"
-  ) {
-    try {
-      navigator.locks.request(
-        "scdraw-engine",
-        { ifAvailable: true },
-        async (lock) => {
-          if (!lock) return;
-          setupLeaderBridge();
-          return new Promise(() => {});
-        },
-      );
-    } catch (_) {
-      setupLeaderBridge();
-    }
-  } else {
-    setupLeaderBridge();
-  }
-
-  await registerNativeWebMcp();
-}
-
-function setupLeaderBridge() {
-  if (typeof BroadcastChannel === "undefined") return;
-  cmdChannel = new BroadcastChannel("scdraw-commands");
-  resChannel = new BroadcastChannel("scdraw-results");
-
-  cmdChannel.addEventListener("message", async (event) => {
-    const msg = event.data;
-    if (!msg || !msg.requestId || !msg.type) return;
-
-    resChannel.postMessage({ requestId: msg.requestId, ack: true });
-
-    try {
-      const result = await handleToolDispatch(msg.type, msg.params || {});
-      resChannel.postMessage({ requestId: msg.requestId, result });
-      broadcastState();
-    } catch (err) {
-      resChannel.postMessage({
-        requestId: msg.requestId,
-        error: err.message || String(err),
-      });
-    }
-  });
-}
-
-function broadcastState() {
-  if (!stateChannel) return;
-  stateChannel.postMessage({
+const bridge = createToolAdapterBridge({
+  lockName: "scdraw-engine",
+  commandsChannel: "scdraw-commands",
+  resultsChannel: "scdraw-results",
+  stateChannel: "scdraw-state",
+  tools: TOOLS_METADATA,
+  dispatch: (name, params) => handleToolDispatch(name, params),
+  getStateSnapshot: () => ({
     type: "snapshot",
     status: scdraw.getStatus(),
-  });
+  }),
+});
+
+export async function init() {
+  return await bridge.init();
 }
 
 export async function handleToolDispatch(name, params = {}) {
@@ -627,34 +578,7 @@ export async function handleToolDispatch(name, params = {}) {
 }
 
 export async function registerNativeWebMcp() {
-  const modelContext =
-    typeof document !== "undefined" && document.modelContext
-      ? document.modelContext
-      : typeof navigator !== "undefined" && navigator.modelContext
-        ? navigator.modelContext
-        : null;
-
-  if (!modelContext || typeof modelContext.registerTool !== "function") {
-    return;
-  }
-
-  for (const tool of TOOLS_METADATA || []) {
-    try {
-      const res = modelContext.registerTool({
-        name: tool.name,
-        title: tool.title || tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema || { type: "object", properties: {} },
-        annotations: tool.annotations || {
-          readOnlyHint: false,
-          consequentialHint: false,
-        },
-        execute: async (input) =>
-          await handleToolDispatch(tool.name, input || {}),
-      });
-      if (res && typeof res.catch === "function") {
-        await res.catch(() => {});
-      }
-    } catch (_) {}
-  }
+  return await registerWebMcpTools(TOOLS_METADATA || [], (name, params) =>
+    handleToolDispatch(name, params),
+  );
 }

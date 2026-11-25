@@ -1,19 +1,22 @@
 /**
- * .agents/scripts/components/scdraw-layers-panel.js
+ * .agents/scripts/components/shadow-claw-draw-layers-panel.js
  *
- * Layer Stack Manager (<scdraw-layers-panel mode="vector|bitmap">).
+ * Layer Stack Manager (<shadow-claw-draw-layers-panel mode="vector|bitmap">).
  * Overflow-free CSS Grid layout with readable controls, accessibility roles,
  * visibility/lock toggles, opacity slider, and GIMP-inspired blend modes.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { BLEND_MODES } from "../scdraw-schema.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawLayersPanelElement extends BaseElement {
+export class ShadowClawDrawLayersPanel extends BaseElement {
   static get observedAttributes() {
     return ["mode"];
   }
@@ -377,9 +380,4 @@ export class DrawLayersPanelElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-layers-panel")
-) {
-  customElements.define("scdraw-layers-panel", DrawLayersPanelElement);
-}
+defineElement("shadow-claw-draw-layers-panel", ShadowClawDrawLayersPanel);

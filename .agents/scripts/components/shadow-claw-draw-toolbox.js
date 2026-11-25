@@ -1,17 +1,20 @@
 /**
- * .agents/scripts/components/scdraw-toolbox.js
+ * .agents/scripts/components/shadow-claw-draw-toolbox.js
  *
- * Dual-mode ARIA Tool Palette (<scdraw-toolbox mode="vector|bitmap">).
+ * Dual-mode ARIA Tool Palette (<shadow-claw-draw-toolbox mode="vector|bitmap">).
  * Renders crisp inline SVG icons alongside readable text labels.
  * Mobile-first horizontal scrollable chip strip switching to a full-width
  * vertical labeled sidebar inside desktop studio docks.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function getToolboxItemsForMode(mode = "vector") {
   if (mode === "bitmap") {
@@ -180,7 +183,7 @@ export function getToolboxItemsForMode(mode = "vector") {
   ];
 }
 
-export class DrawToolboxElement extends BaseElement {
+export class ShadowClawDrawToolbox extends BaseElement {
   static get observedAttributes() {
     return ["mode", "layout"];
   }
@@ -253,7 +256,7 @@ export class DrawToolboxElement extends BaseElement {
         ${SHARED_STYLES}
         :host {
           container-type: inline-size;
-          container-name: scdraw-toolbox;
+          container-name: shadow-claw-draw-toolbox;
           display: block;
           min-width: 0;
           min-height: 0;
@@ -349,7 +352,7 @@ export class DrawToolboxElement extends BaseElement {
         }
 
         /* Vertical sidebar inside narrow desktop dock (156px) or explicit layout="vertical" */
-        @container scdraw-toolbox (max-width: 240px) {
+        @container shadow-claw-draw-toolbox (max-width: 240px) {
           .scdraw-toolbox {
             flex-direction: column;
             align-items: stretch;
@@ -463,7 +466,7 @@ export class DrawToolboxElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-toolbox scdraw-scrollable" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
+      <div class="shadow-claw-draw-toolbox scdraw-scrollable" role="toolbar" aria-label="${mode === "bitmap" ? "Bitmap Tools" : "Vector Tools"}">
         <div class="scdraw-toolbox__colors">
           <div class="scdraw-toolbox__swatch-pair">
             <div class="scdraw-toolbox__swatch-item">
@@ -550,9 +553,4 @@ export class DrawToolboxElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-toolbox")
-) {
-  customElements.define("scdraw-toolbox", DrawToolboxElement);
-}
+defineElement("shadow-claw-draw-toolbox", ShadowClawDrawToolbox);

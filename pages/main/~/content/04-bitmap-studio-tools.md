@@ -7,13 +7,13 @@ slug: "bitmap-studio-tools"
 
 ## Bitmap Studio Tools & Pixel Painting
 
-**ShadowClaw Draw's Bitmap Studio** (`/main/bitmap/`, `<scdraw-bitmap-workbench>`) combines GIMP-inspired multi-layer pixel painting, document-space layer offsets, rectangular/inverted selection masking and clipboard operations with the 10-group real-time Canvas filter pipeline ported from `<x-canvas-image-manipulation>`.
+**ShadowClaw Draw's Bitmap Studio** (`/main/bitmap/`, `<shadow-claw-draw-bitmap-workbench>`) combines GIMP-inspired multi-layer pixel painting, document-space layer offsets, rectangular/inverted selection masking and clipboard operations with the 10-group real-time Canvas filter pipeline ported from `<x-canvas-image-manipulation>`.
 
 ---
 
 ## Tool Overview
 
-All **8 Bitmap Tools** reside in `<scdraw-toolbox mode="bitmap">`, paired with **FG** (`#38bdf8`), **BG** (`#0f172a`), and **⇄ Swap**:
+All **8 Bitmap Tools** reside in `<shadow-claw-draw-toolbox mode="bitmap">`, paired with **FG** (`#38bdf8`), **BG** (`#0f172a`), and **⇄ Swap**:
 
 | Tool             | Label    | Purpose                                                  | Badge |
 | ---------------- | -------- | -------------------------------------------------------- | ----- |
@@ -85,7 +85,7 @@ Whenever **Select** (`M`) is active, a selection exists, or pixels are in the cl
 
 ---
 
-## Multi-Layer Compositing & Blend Modes (`<scdraw-layers-panel mode="bitmap">`)
+## Multi-Layer Compositing & Blend Modes (`<shadow-claw-draw-layers-panel mode="bitmap">`)
 
 Each layer holds independent RGBA `Uint8ClampedArray` pixel data, `offsetX`/`offsetY`, `opacity` (`0–100%`), `visible`, `locked`, and one of **8 GIMP-inspired blend modes**:
 
@@ -104,7 +104,7 @@ Use `+ Add`, `Up`, `Dn`, `Del`, Visibility, Lock, Blend dropdown, and Opacity sl
 
 ---
 
-## Real-Time Filter Pipeline & Transforms (`<scdraw-filter-panel>`)
+## Real-Time Filter Pipeline & Transforms (`<shadow-claw-draw-filter-panel>`)
 
 Ported from `<x-canvas-image-manipulation>`, the non-destructive filter chain applies **10 filter groups** (12 numeric sliders plus Drop Shadow color) live on the composited viewport via `buildCanvasFilterString`, with `computeShadowPadding` preventing drop-shadow clipping:
 
@@ -131,7 +131,7 @@ Transform & pixel buttons at the bottom of the panel:
 ## Full Screen Mode, Mobile Tabs & Cross-Studio Bridge
 
 - **Topbar & Full Screen Mode**: Switch between `Vector` | `Bitmap` | `Animation`, toggle topbar panels (`Tools`, `Layers`, `Filters`), or click **Full Screen** (`#scdraw-bmp-fullscreen`) to hide app navigation and maximize canvas working room across `100dvw × 100dvh`. Pressing `Escape` first clears any active bitmap selection before a second `Escape` exits CSS Full Screen.
-- **Mobile Navigation**: Switches cleanly between `Canvas`, `Filters`, and `Layers` tabs above `<scdraw-statusbar>` (which shows cursor `(x, y px)`, zoom, active tool, `Sel: WxH`, and `Clip: WxH`).
+- **Mobile Navigation**: Switches cleanly between `Canvas`, `Filters`, and `Layers` tabs above `<shadow-claw-draw-status-bar>` (which shows cursor `(x, y px)`, zoom, active tool, `Sel: WxH`, and `Clip: WxH`).
 - **Cross-Studio Bridge**:
   - **Pull Vector** (`scdraw_rasterize_vector_to_bitmap`): Renders Vector Studio SVG into a new Bitmap raster layer.
   - **Send Vector** (`scdraw_embed_bitmap_in_vector`): Flattens Bitmap Studio (including filters) to PNG and embeds it into Vector Studio as an `<image>` layer.
@@ -139,7 +139,7 @@ Transform & pixel buttons at the bottom of the panel:
 
 ---
 
-## Keyboard Shortcuts (`<scdraw-bitmap-canvas>`)
+## Keyboard Shortcuts (`<shadow-claw-draw-bitmap-canvas>`)
 
 | Shortcut                          | Action                                                    |
 | --------------------------------- | --------------------------------------------------------- |

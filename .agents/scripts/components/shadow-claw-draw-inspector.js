@@ -1,18 +1,21 @@
 /**
- * .agents/scripts/components/scdraw-inspector.js
+ * .agents/scripts/components/shadow-claw-draw-inspector.js
  *
  * Vector Properties, Alignment/Distribution, Grouping, Z-Order,
- * and Live SVG XML Inspector (<scdraw-inspector>).
+ * and Live SVG XML Inspector (<shadow-claw-draw-inspector>).
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { findAllElements, computeElementBBox } from "../scdraw-vector.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawInspectorElement extends BaseElement {
+export class ShadowClawDrawInspector extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -384,7 +387,7 @@ export class DrawInspectorElement extends BaseElement {
           resize: vertical;
         }
       </style>
-      <section class="scdraw-panel scdraw-inspector" role="region" aria-label="Properties and SVG XML Inspector">
+      <section class="scdraw-panel shadow-claw-draw-inspector" role="region" aria-label="Properties and SVG XML Inspector">
         <header class="scdraw-panel__header">
           <span>Inspector</span>
           <button
@@ -408,9 +411,4 @@ export class DrawInspectorElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-inspector")
-) {
-  customElements.define("scdraw-inspector", DrawInspectorElement);
-}
+defineElement("shadow-claw-draw-inspector", ShadowClawDrawInspector);

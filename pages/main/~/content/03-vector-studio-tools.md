@@ -7,13 +7,13 @@ slug: "vector-studio-tools"
 
 ## Vector Studio Tools & Pen Editing
 
-**ShadowClaw Draw's Vector Studio** (`/main/`, `<scdraw-vector-workbench>`) provides Inkscape-inspired tools for creating, aligning, layering, and inspecting live W3C SVG graphics. This guide covers all 13 vector tools, Bezier pen and node editing, the Inspector & Layers panels, Full Screen mode, and WebMCP automation.
+**ShadowClaw Draw's Vector Studio** (`/main/`, `<shadow-claw-draw-vector-workbench>`) provides Inkscape-inspired tools for creating, aligning, layering, and inspecting live W3C SVG graphics. This guide covers all 13 vector tools, Bezier pen and node editing, the Inspector & Layers panels, Full Screen mode, and WebMCP automation.
 
 ---
 
 ## Tool Overview
 
-All **13 Vector Tools** appear in `<scdraw-toolbox mode="vector">` (horizontal scroll strip on mobile, `156px` vertical labeled dock at `>= 640px`), paired with **Fill** (`#38bdf8`), **Stroke** (`#0f172a`), and **⇄ Swap**:
+All **13 Vector Tools** appear in `<shadow-claw-draw-toolbox mode="vector">` (horizontal scroll strip on mobile, `156px` vertical labeled dock at `>= 640px`), paired with **Fill** (`#38bdf8`), **Stroke** (`#0f172a`), and **⇄ Swap**:
 
 | Tool             | Label     | Purpose                                            | Badge |
 | ---------------- | --------- | -------------------------------------------------- | ----- |
@@ -39,7 +39,7 @@ All **13 Vector Tools** appear in `<scdraw-toolbox mode="vector">` (horizontal s
 
 The **Pen** tool places discrete anchor points that become an editable SVG `<path>`:
 
-1. Select **Pen** (`P`) in `<scdraw-toolbox>`.
+1. Select **Pen** (`P`) in `<shadow-claw-draw-toolbox>`.
 2. Click on the canvas to place the first anchor. Keep clicking to append segments — the live overlay previews segments with an amber dashed polyline and node handles, and the status bar reports `Pen: N anchor(s) — double-click or press Enter to finish`.
 3. Finish the path by **double-clicking** or pressing **`Enter`** (requires `>= 2` anchors).
 4. Press **`Escape`** while entering inline text or editing to cancel active sub-states cleanly.
@@ -71,21 +71,21 @@ After selecting a `<path>` element, switch to **Node** (`A`) to reshape its curv
 
 ## Inspector, Alignment & Live SVG XML
 
-When **no element is selected**, `<scdraw-inspector>` displays **Artboard** controls:
+When **no element is selected**, `<shadow-claw-draw-inspector>` displays **Artboard** controls:
 
 - **Width** and **Height** (`16–4096 px`, default `1024×768`)
 - **Canvas BG** color picker (`#ffffff` default)
 
-When **one or more elements are selected**, `<scdraw-inspector>` provides:
+When **one or more elements are selected**, `<shadow-claw-draw-inspector>` provides:
 
 - **Style & Transform**: `Fill` color picker + `None` toggle, `Stroke` color picker + `None` toggle, `Stroke W` (`0–100`), `Opacity` (`0–1`), `Rotate (°)` (`-360` to `360`), `Bounds` badge (`x, y · W×H`), and **Typography** (`Text`, `Font Size 6–400`) when editing a `<text>` element.
 - **Align & Distribute**: `Left`, `Center`, `Right`, `Top`, `Middle`, `Bottom`, `Dist H`, `Dist V` (aligns single selection relative to the artboard, or multiple elements relative to their combined selection bounds).
 - **Arrange & Group**: `Front`, `Up`, `Down`, `Back` (z-order within the layer), `Group` (`2+` selected), `Ungroup` (when a `<g>` group is selected), `Duplicate`, and `Delete`.
-- **Live XML Mode**: Switch `<scdraw-inspector>` via the desktop **XML** toggle or mobile **SVG XML** tab to edit raw W3C SVG markup directly and click **Apply SVG XML** (sanitized via `parseSvgToVectorDocument` so unsafe scripts and event handlers are stripped).
+- **Live XML Mode**: Switch `<shadow-claw-draw-inspector>` via the desktop **XML** toggle or mobile **SVG XML** tab to edit raw W3C SVG markup directly and click **Apply SVG XML** (sanitized via `parseSvgToVectorDocument` so unsafe scripts and event handlers are stripped).
 
 ---
 
-## Layers Panel (`<scdraw-layers-panel mode="vector">`)
+## Layers Panel (`<shadow-claw-draw-layers-panel mode="vector">`)
 
 - **Stack Controls**: `+ Add` new layer, `Up` / `Dn` reorder, `Del` remove active layer.
 - **Per-Layer Controls**: Toggle **Visibility** (eye icon) and **Lock** (padlock icon prevent edits), adjust **Blend** across all 8 GIMP-inspired modes (`normal`, `multiply`, `screen`, `overlay`, `darken`, `lighten`, `difference`, `add`), and set **Opacity** (`0–100%`).
@@ -101,7 +101,7 @@ When **one or more elements are selected**, `<scdraw-inspector>` provides:
 
 ---
 
-## Keyboard Shortcuts (`<scdraw-vector-canvas>`)
+## Keyboard Shortcuts (`<shadow-claw-draw-vector-canvas>`)
 
 | Shortcut                          | Action                                               |
 | --------------------------------- | ---------------------------------------------------- |

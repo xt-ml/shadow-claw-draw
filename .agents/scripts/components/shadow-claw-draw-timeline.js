@@ -1,22 +1,25 @@
 /**
- * .agents/scripts/components/scdraw-timeline.js
+ * .agents/scripts/components/shadow-claw-draw-timeline.js
  *
- * Interactive Animation Timeline & GIFWorks-ported Trim Range (<scdraw-timeline>).
+ * Interactive Animation Timeline & GIFWorks-ported Trim Range (<shadow-claw-draw-timeline>).
  * Mobile-first horizontal filmstrip with touch-action: pan-x, 44px coarse targets,
  * keyboard Alt+Arrow frame reordering, ARIA listbox semantics, per-frame delay,
  * onion-skin controls, transport bar, and dual-handle [In...Out] trim range.
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { computeTotalDurationMs, formatTimecode } from "../scdraw-animation.js";
 import { compositeBitmapLayers } from "../scdraw-bitmap.js";
 import { serializeVectorDocumentToSvg } from "../scdraw-svg-codec.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawTimelineElement extends BaseElement {
+export class ShadowClawDrawTimeline extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -601,7 +604,7 @@ export class DrawTimelineElement extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-timeline scdraw-scrollable" role="region" aria-label="Animation Timeline">
+      <div class="shadow-claw-draw-timeline scdraw-scrollable" role="region" aria-label="Animation Timeline">
         <div class="scdraw-timeline__controls">
           <div class="scdraw-timeline__group" role="toolbar" aria-label="Playback transport">
             <button type="button" id="scdraw-tl-first" class="scdraw-btn scdraw-btn--sm" aria-label="First frame">⏮</button>
@@ -656,9 +659,4 @@ export class DrawTimelineElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-timeline")
-) {
-  customElements.define("scdraw-timeline", DrawTimelineElement);
-}
+defineElement("shadow-claw-draw-timeline", ShadowClawDrawTimeline);

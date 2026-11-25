@@ -1,20 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  DrawResizeHandleElement,
+  ShadowClawDrawResizeHandle,
   clampSize,
   computeKeyboardResize,
   getAriaAttributes,
-} from "../.agents/scripts/components/scdraw-resize-handle.js";
+} from "../.agents/scripts/components/shadow-claw-draw-resize-handle.js";
 import {
-  DrawToolboxElement,
+  ShadowClawDrawToolbox,
   getToolboxItemsForMode,
-} from "../.agents/scripts/components/scdraw-toolbox.js";
-import { DrawLayersPanelElement } from "../.agents/scripts/components/scdraw-layers-panel.js";
-import { DrawInspectorElement } from "../.agents/scripts/components/scdraw-inspector.js";
-import { DrawStatusBarElement } from "../.agents/scripts/components/scdraw-statusbar.js";
+} from "../.agents/scripts/components/shadow-claw-draw-toolbox.js";
+import { ShadowClawDrawLayersPanel } from "../.agents/scripts/components/shadow-claw-draw-layers-panel.js";
+import { ShadowClawDrawInspector } from "../.agents/scripts/components/shadow-claw-draw-inspector.js";
+import { ShadowClawDrawStatusBar } from "../.agents/scripts/components/shadow-claw-draw-status-bar.js";
 import {
-  DrawVectorCanvasElement,
+  ShadowClawDrawVectorCanvas,
   PEN_DOUBLE_TAP_DIST_PX,
   PEN_DOUBLE_TAP_MS,
   clientToSvgPoint,
@@ -22,35 +22,38 @@ import {
   computeKeyboardNudge,
   computeFitScale,
   processPenPointerDown,
-} from "../.agents/scripts/components/scdraw-vector-canvas.js";
+} from "../.agents/scripts/components/shadow-claw-draw-vector-canvas.js";
 import {
-  DrawVectorWorkbenchElement,
+  ShadowClawDrawVectorWorkbench,
   computeWorkspaceGridColumns,
   resolveDrawResponsiveLayout,
-} from "../.agents/scripts/components/scdraw-vector-workbench.js";
+} from "../.agents/scripts/components/shadow-claw-draw-vector-workbench.js";
 import {
   installPageSwipeGuard,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
-} from "../.agents/scripts/components/scdraw-styles.js";
-import * as barrel from "../.agents/scripts/scdraw-element.js";
+} from "../.agents/scripts/components/shadow-claw-draw-styles.js";
+import * as barrel from "../.agents/scripts/shadow-claw-draw-element.js";
 
 test("Pass 1 Barrel & Classes: export cleanly in Node.js", () => {
-  assert.ok(DrawResizeHandleElement);
-  assert.ok(DrawToolboxElement);
-  assert.ok(DrawLayersPanelElement);
-  assert.ok(DrawInspectorElement);
-  assert.ok(DrawStatusBarElement);
-  assert.ok(DrawVectorCanvasElement);
-  assert.ok(DrawVectorWorkbenchElement);
+  assert.ok(ShadowClawDrawResizeHandle);
+  assert.ok(ShadowClawDrawToolbox);
+  assert.ok(ShadowClawDrawLayersPanel);
+  assert.ok(ShadowClawDrawInspector);
+  assert.ok(ShadowClawDrawStatusBar);
+  assert.ok(ShadowClawDrawVectorCanvas);
+  assert.ok(ShadowClawDrawVectorWorkbench);
 
-  assert.equal(barrel.DrawVectorWorkbenchElement, DrawVectorWorkbenchElement);
-  assert.equal(barrel.DrawVectorCanvasElement, DrawVectorCanvasElement);
-  assert.equal(barrel.DrawToolboxElement, DrawToolboxElement);
-  assert.equal(barrel.DrawLayersPanelElement, DrawLayersPanelElement);
-  assert.equal(barrel.DrawInspectorElement, DrawInspectorElement);
-  assert.equal(barrel.DrawStatusBarElement, DrawStatusBarElement);
-  assert.equal(barrel.DrawResizeHandleElement, DrawResizeHandleElement);
+  assert.equal(
+    barrel.ShadowClawDrawVectorWorkbench,
+    ShadowClawDrawVectorWorkbench,
+  );
+  assert.equal(barrel.ShadowClawDrawVectorCanvas, ShadowClawDrawVectorCanvas);
+  assert.equal(barrel.ShadowClawDrawToolbox, ShadowClawDrawToolbox);
+  assert.equal(barrel.ShadowClawDrawLayersPanel, ShadowClawDrawLayersPanel);
+  assert.equal(barrel.ShadowClawDrawInspector, ShadowClawDrawInspector);
+  assert.equal(barrel.ShadowClawDrawStatusBar, ShadowClawDrawStatusBar);
+  assert.equal(barrel.ShadowClawDrawResizeHandle, ShadowClawDrawResizeHandle);
 });
 
 test("Resize Handle helpers: clampSize, computeKeyboardResize, and getAriaAttributes", () => {
@@ -395,15 +398,15 @@ test("Vector Workbench layout resolver: mobile-first stacked vs tablet/desktop s
   assert.equal(mobileNoToolbox.showInspector, true);
 });
 
-test("DrawVectorWorkbenchElement exposes togglePanel, panelVisibility, and computeWorkspaceGridColumns for full-width stage", () => {
+test("ShadowClawDrawVectorWorkbench exposes togglePanel, panelVisibility, and computeWorkspaceGridColumns for full-width stage", () => {
   assert.equal(typeof computeWorkspaceGridColumns, "function");
   assert.equal(
-    typeof DrawVectorWorkbenchElement.prototype.togglePanel,
+    typeof ShadowClawDrawVectorWorkbench.prototype.togglePanel,
     "function",
   );
   assert.equal(
     typeof Object.getOwnPropertyDescriptor(
-      DrawVectorWorkbenchElement.prototype,
+      ShadowClawDrawVectorWorkbench.prototype,
       "panelVisibility",
     )?.get,
     "function",
@@ -430,7 +433,7 @@ test("DrawVectorWorkbenchElement exposes togglePanel, panelVisibility, and compu
     "scdraw-vec-toggle-inspector": makeBtn(),
   };
 
-  const wb = new DrawVectorWorkbenchElement();
+  const wb = new ShadowClawDrawVectorWorkbench();
   wb._containerWidth = 1280;
   wb.shadowRoot = {
     querySelector: (sel) => (sel === ".scdraw-vector-wb" ? wbNode : null),
@@ -500,8 +503,8 @@ test("Page swipe guard: ref-counts ancestor data-no-swipe and data-no-nav and re
   const viewer = makeNode(".pages__viewer");
   const rendered = makeNode(".pages__rendered");
   const pageWrapper = makeNode(".scdraw-workbench-page");
-  const host1 = makeNode("scdraw-vector-workbench");
-  const host2 = makeNode("scdraw-bitmap-workbench");
+  const host1 = makeNode("shadow-claw-draw-vector-workbench");
+  const host2 = makeNode("shadow-claw-draw-bitmap-workbench");
 
   for (const host of [host1, host2]) {
     host._closestMap = {
@@ -855,14 +858,14 @@ test("setupWorkbenchFullscreen manages native fullscreen, Escape order, fallback
   assert.equal(Object.keys(docListeners).length, 0);
 });
 
-test("DrawVectorWorkbenchElement exposes toggleFullscreen method and isFullscreen getter", () => {
+test("ShadowClawDrawVectorWorkbench exposes toggleFullscreen method and isFullscreen getter", () => {
   assert.equal(
-    typeof DrawVectorWorkbenchElement.prototype.toggleFullscreen,
+    typeof ShadowClawDrawVectorWorkbench.prototype.toggleFullscreen,
     "function",
   );
   assert.equal(
     typeof Object.getOwnPropertyDescriptor(
-      DrawVectorWorkbenchElement.prototype,
+      ShadowClawDrawVectorWorkbench.prototype,
       "isFullscreen",
     )?.get,
     "function",

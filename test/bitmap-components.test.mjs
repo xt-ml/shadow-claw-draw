@@ -1,44 +1,47 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  DrawFilterPanelElement,
+  ShadowClawDrawFilterPanel,
   getFilterControlDescriptors,
-} from "../.agents/scripts/components/scdraw-filter-panel.js";
+} from "../.agents/scripts/components/shadow-claw-draw-filter-panel.js";
 import {
-  DrawBitmapCanvasElement,
+  ShadowClawDrawBitmapCanvas,
   clientToBitmapPoint,
   computeBrushCursorRadius,
   computeFitScale,
   isPointInsideRect,
   translateSelectionRect,
-} from "../.agents/scripts/components/scdraw-bitmap-canvas.js";
+} from "../.agents/scripts/components/shadow-claw-draw-bitmap-canvas.js";
 import {
-  DrawBitmapWorkbenchElement,
+  ShadowClawDrawBitmapWorkbench,
   computeWorkspaceGridColumns,
   resolveBitmapResponsiveLayout,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
-} from "../.agents/scripts/components/scdraw-bitmap-workbench.js";
-import * as barrel from "../.agents/scripts/scdraw-element.js";
+} from "../.agents/scripts/components/shadow-claw-draw-bitmap-workbench.js";
+import * as barrel from "../.agents/scripts/shadow-claw-draw-element.js";
 import { createDefaultFilters } from "../.agents/scripts/scdraw-filters.js";
 
 test("Pass 2 Barrel & Classes: export cleanly in Node.js", () => {
-  assert.ok(DrawFilterPanelElement);
-  assert.ok(DrawBitmapCanvasElement);
-  assert.ok(DrawBitmapWorkbenchElement);
+  assert.ok(ShadowClawDrawFilterPanel);
+  assert.ok(ShadowClawDrawBitmapCanvas);
+  assert.ok(ShadowClawDrawBitmapWorkbench);
 
-  assert.equal(barrel.DrawFilterPanelElement, DrawFilterPanelElement);
-  assert.equal(barrel.DrawBitmapCanvasElement, DrawBitmapCanvasElement);
-  assert.equal(barrel.DrawBitmapWorkbenchElement, DrawBitmapWorkbenchElement);
+  assert.equal(barrel.ShadowClawDrawFilterPanel, ShadowClawDrawFilterPanel);
+  assert.equal(barrel.ShadowClawDrawBitmapCanvas, ShadowClawDrawBitmapCanvas);
+  assert.equal(
+    barrel.ShadowClawDrawBitmapWorkbench,
+    ShadowClawDrawBitmapWorkbench,
+  );
   assert.equal(typeof resolveWorkbenchFullscreenState, "function");
   assert.equal(typeof setupWorkbenchFullscreen, "function");
   assert.equal(
-    typeof DrawBitmapWorkbenchElement.prototype.toggleFullscreen,
+    typeof ShadowClawDrawBitmapWorkbench.prototype.toggleFullscreen,
     "function",
   );
   assert.equal(
     typeof Object.getOwnPropertyDescriptor(
-      DrawBitmapWorkbenchElement.prototype,
+      ShadowClawDrawBitmapWorkbench.prototype,
       "isFullscreen",
     )?.get,
     "function",
@@ -233,14 +236,14 @@ test("computeWorkspaceGridColumns builds exact CSS grid columns for every panel 
   );
 });
 
-test("DrawBitmapWorkbenchElement exposes togglePanel and panelVisibility to hide/show panels for full-width stage", () => {
+test("ShadowClawDrawBitmapWorkbench exposes togglePanel and panelVisibility to hide/show panels for full-width stage", () => {
   assert.equal(
-    typeof DrawBitmapWorkbenchElement.prototype.togglePanel,
+    typeof ShadowClawDrawBitmapWorkbench.prototype.togglePanel,
     "function",
   );
   assert.equal(
     typeof Object.getOwnPropertyDescriptor(
-      DrawBitmapWorkbenchElement.prototype,
+      ShadowClawDrawBitmapWorkbench.prototype,
       "panelVisibility",
     )?.get,
     "function",
@@ -267,7 +270,7 @@ test("DrawBitmapWorkbenchElement exposes togglePanel and panelVisibility to hide
     "scdraw-bmp-toggle-filters": makeBtn(),
   };
 
-  const wb = new DrawBitmapWorkbenchElement();
+  const wb = new ShadowClawDrawBitmapWorkbench();
   wb._containerWidth = 1280;
   wb.shadowRoot = {
     querySelector: (sel) => (sel === ".scdraw-bitmap-wb" ? wbNode : null),

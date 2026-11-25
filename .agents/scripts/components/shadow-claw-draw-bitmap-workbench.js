@@ -1,7 +1,7 @@
 /**
- * .agents/scripts/components/scdraw-bitmap-workbench.js
+ * .agents/scripts/components/shadow-claw-draw-bitmap-workbench.js
  *
- * Page 2 Studio Workbench (<scdraw-bitmap-workbench>).
+ * Page 2 Studio Workbench (<shadow-claw-draw-bitmap-workbench>).
  * True Mobile-First layout matching Vector Studio:
  * - Compact 1-row primary header (Vector/Bitmap/Animation switch, Undo, Redo, Save, Full Screen, More toggle)
  * - Hero Bitmap Canvas immediately visible above the fold on mobile
@@ -17,7 +17,7 @@ import {
   installPageSwipeGuard,
   resolveWorkbenchFullscreenState,
   setupWorkbenchFullscreen,
-} from "./scdraw-styles.js";
+} from "./shadow-claw-draw-styles.js";
 export {
   computeWorkspaceGridColumns,
   resolveWorkbenchFullscreenState,
@@ -26,14 +26,17 @@ export {
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { getAppBasePath } from "../scdraw-fs.js";
-import "./scdraw-toolbox.js";
-import "./scdraw-bitmap-canvas.js";
-import "./scdraw-layers-panel.js";
-import "./scdraw-filter-panel.js";
-import "./scdraw-statusbar.js";
-import "./scdraw-resize-handle.js";
+import "./shadow-claw-draw-toolbox.js";
+import "./shadow-claw-draw-bitmap-canvas.js";
+import "./shadow-claw-draw-layers-panel.js";
+import "./shadow-claw-draw-filter-panel.js";
+import "./shadow-claw-draw-status-bar.js";
+import "./shadow-claw-draw-resize-handle.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function resolveBitmapResponsiveLayout({
   containerWidth = 1200,
@@ -87,7 +90,7 @@ export function resolveBitmapResponsiveLayout({
   };
 }
 
-export class DrawBitmapWorkbenchElement extends BaseElement {
+export class ShadowClawDrawBitmapWorkbench extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -307,7 +310,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
   }
 
   _setupResizeObserver() {
-    const toolbox = this.shadowRoot?.querySelector("scdraw-toolbox");
+    const toolbox = this.shadowRoot?.querySelector("shadow-claw-draw-toolbox");
     if (typeof ResizeObserver !== "undefined" && toolbox) {
       this._resizeObserver = new ResizeObserver((entries) => {
         const w =
@@ -420,7 +423,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
     });
     fileInput?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0];
-      const canvasEl = root.querySelector("scdraw-bitmap-canvas");
+      const canvasEl = root.querySelector("shadow-claw-draw-bitmap-canvas");
       if (
         file &&
         canvasEl &&
@@ -589,7 +592,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
         ${SHARED_STYLES}
         :host {
           container-type: inline-size;
-          container-name: scdraw-bitmap-workbench;
+          container-name: shadow-claw-draw-bitmap-workbench;
           display: block;
           width: 100%;
           max-width: 100%;
@@ -730,7 +733,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           display: none;
         }
 
-        @container scdraw-bitmap-workbench (min-width: 640px) {
+        @container shadow-claw-draw-bitmap-workbench (min-width: 640px) {
           .scdraw-bitmap-wb {
             height: calc(100dvh - 180px);
             min-height: 480px;
@@ -765,7 +768,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           .scdraw-bitmap-wb__handle--filters { display: inline-flex; }
         }
 
-        @container scdraw-bitmap-workbench (min-width: 1024px) {
+        @container shadow-claw-draw-bitmap-workbench (min-width: 1024px) {
           .scdraw-bitmap-wb__more-toggle { display: none; }
           .scdraw-bitmap-wb__topbar {
             flex-direction: row;
@@ -786,7 +789,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           .scdraw-bitmap-wb__handle { display: inline-flex; }
         }
 
-        @container scdraw-bitmap-workbench (min-width: 640px) {
+        @container shadow-claw-draw-bitmap-workbench (min-width: 640px) {
           .scdraw-bitmap-wb[data-show-toolbox="false"] .scdraw-bitmap-wb__pane--toolbox {
             display: none;
           }
@@ -917,7 +920,7 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           flex: 1;
           min-height: 0;
         }
-        @container scdraw-bitmap-workbench (max-width: 639px) {
+        @container shadow-claw-draw-bitmap-workbench (max-width: 639px) {
           :host(.scdraw-workbench--fullscreen) .scdraw-bitmap-wb__pane--canvas,
           :host(:fullscreen) .scdraw-bitmap-wb__pane--canvas,
           :host(.scdraw-workbench--fullscreen) .scdraw-bitmap-wb__pane--layers,
@@ -1051,12 +1054,12 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
 
         <main class="scdraw-bitmap-wb__workspace">
           <aside id="scdraw-bmp-pane-toolbox" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--toolbox">
-            <scdraw-toolbox mode="bitmap"></scdraw-toolbox>
+            <shadow-claw-draw-toolbox mode="bitmap"></shadow-claw-draw-toolbox>
           </aside>
           <section class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--canvas">
-            <scdraw-bitmap-canvas></scdraw-bitmap-canvas>
+            <shadow-claw-draw-bitmap-canvas></shadow-claw-draw-bitmap-canvas>
           </section>
-          <scdraw-resize-handle
+          <shadow-claw-draw-resize-handle
             id="scdraw-bmp-layers-handle"
             class="scdraw-bitmap-wb__handle scdraw-bitmap-wb__handle--layers"
             orientation="vertical"
@@ -1064,11 +1067,11 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             value="230"
             min="170"
             max="400"
-            label="Resize Bitmap Layers Panel"></scdraw-resize-handle>
+            label="Resize Bitmap Layers Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-bmp-pane-layers" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--layers">
-            <scdraw-layers-panel mode="bitmap"></scdraw-layers-panel>
+            <shadow-claw-draw-layers-panel mode="bitmap"></shadow-claw-draw-layers-panel>
           </aside>
-          <scdraw-resize-handle
+          <shadow-claw-draw-resize-handle
             id="scdraw-bmp-filters-handle"
             class="scdraw-bitmap-wb__handle scdraw-bitmap-wb__handle--filters"
             orientation="vertical"
@@ -1076,9 +1079,9 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
             value="290"
             min="220"
             max="460"
-            label="Resize Filter Panel"></scdraw-resize-handle>
+            label="Resize Filter Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-bmp-pane-filters" class="scdraw-bitmap-wb__pane scdraw-bitmap-wb__pane--filters">
-            <scdraw-filter-panel></scdraw-filter-panel>
+            <shadow-claw-draw-filter-panel></shadow-claw-draw-filter-panel>
           </aside>
         </main>
 
@@ -1088,15 +1091,13 @@ export class DrawBitmapWorkbenchElement extends BaseElement {
           <button type="button" class="scdraw-btn scdraw-btn--sm scdraw-bitmap-wb__tab" data-tab="layers" aria-pressed="false">Layers</button>
         </nav>
 
-        <scdraw-statusbar mode="bitmap"></scdraw-statusbar>
+        <shadow-claw-draw-status-bar mode="bitmap"></shadow-claw-draw-status-bar>
       </div>
     `;
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-bitmap-workbench")
-) {
-  customElements.define("scdraw-bitmap-workbench", DrawBitmapWorkbenchElement);
-}
+defineElement(
+  "shadow-claw-draw-bitmap-workbench",
+  ShadowClawDrawBitmapWorkbench,
+);

@@ -1,7 +1,7 @@
 /**
- * .agents/scripts/components/scdraw-animation-workbench.js
+ * .agents/scripts/components/shadow-claw-draw-animation-workbench.js
  *
- * Page 3 Studio Workbench (<scdraw-animation-workbench>).
+ * Page 3 Studio Workbench (<shadow-claw-draw-animation-workbench>).
  * Mobile-first Animation Studio uniting Vector & Bitmap frame/keyframe authoring,
  * timeline/trimming, onion skinning, screen/webcam capture, and local-first export.
  */
@@ -11,20 +11,23 @@ import {
   computeWorkspaceGridColumns,
   installPageSwipeGuard,
   setupWorkbenchFullscreen,
-} from "./scdraw-styles.js";
+} from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { getAppBasePath } from "../scdraw-fs.js";
-import "./scdraw-toolbox.js";
-import "./scdraw-animation-stage.js";
-import "./scdraw-timeline.js";
-import "./scdraw-layers-panel.js";
-import "./scdraw-export-panel.js";
-import "./scdraw-capture-panel.js";
-import "./scdraw-statusbar.js";
-import "./scdraw-resize-handle.js";
+import "./shadow-claw-draw-toolbox.js";
+import "./shadow-claw-draw-animation-stage.js";
+import "./shadow-claw-draw-timeline.js";
+import "./shadow-claw-draw-layers-panel.js";
+import "./shadow-claw-draw-export-panel.js";
+import "./shadow-claw-draw-capture-panel.js";
+import "./shadow-claw-draw-status-bar.js";
+import "./shadow-claw-draw-resize-handle.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
 export function resolveAnimationResponsiveLayout({
   containerWidth = 1200,
@@ -83,7 +86,7 @@ export function resolveAnimationResponsiveLayout({
   };
 }
 
-export class DrawAnimationWorkbenchElement extends BaseElement {
+export class ShadowClawDrawAnimationWorkbench extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -136,9 +139,9 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
       const modeSel = root.getElementById("scdraw-anim-mode");
       if (modeSel && modeSel.value !== anim.mode) modeSel.value = anim.mode;
 
-      const toolbox = root.querySelector("scdraw-toolbox");
-      const layersPanel = root.querySelector("scdraw-layers-panel");
-      const statusBar = root.querySelector("scdraw-statusbar");
+      const toolbox = root.querySelector("shadow-claw-draw-toolbox");
+      const layersPanel = root.querySelector("shadow-claw-draw-layers-panel");
+      const statusBar = root.querySelector("shadow-claw-draw-status-bar");
       const rastBtn = root.getElementById("scdraw-anim-rasterize");
       if (toolbox && toolbox.getAttribute("mode") !== anim.mode) {
         toolbox.setAttribute("mode", anim.mode);
@@ -311,7 +314,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
   }
 
   _setupResizeObserver() {
-    const toolbox = this.shadowRoot?.querySelector("scdraw-toolbox");
+    const toolbox = this.shadowRoot?.querySelector("shadow-claw-draw-toolbox");
     if (typeof ResizeObserver !== "undefined" && toolbox) {
       this._resizeObserver = new ResizeObserver((entries) => {
         const w =
@@ -437,7 +440,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
     });
     importInput?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0];
-      const stage = root.querySelector("scdraw-animation-stage");
+      const stage = root.querySelector("shadow-claw-draw-animation-stage");
       if (file && stage?.importMediaFile) {
         await stage.importMediaFile(file);
       }
@@ -487,7 +490,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
         ${SHARED_STYLES}
         :host {
           container-type: inline-size;
-          container-name: scdraw-animation-workbench;
+          container-name: shadow-claw-draw-animation-workbench;
           display: block;
           width: 100%;
           max-width: 100%;
@@ -630,7 +633,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           min-height: 0;
           height: 100%;
         }
-        scdraw-statusbar {
+        shadow-claw-draw-status-bar {
           flex: 0 0 auto;
         }
 
@@ -643,7 +646,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           }
         }
 
-        @container scdraw-animation-workbench (min-width: 640px) {
+        @container shadow-claw-draw-animation-workbench (min-width: 640px) {
           .scdraw-anim-wb {
             height: auto;
             min-height: calc(100dvh - 140px);
@@ -688,7 +691,7 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           .scdraw-anim-wb__handle--right { display: inline-flex; }
         }
 
-        @container scdraw-animation-workbench (min-width: 1024px) {
+        @container shadow-claw-draw-animation-workbench (min-width: 1024px) {
           .scdraw-anim-wb__more-toggle { display: none; }
           .scdraw-anim-wb__topbar {
             flex-direction: row;
@@ -840,30 +843,30 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
 
         <main class="scdraw-anim-wb__workspace">
           <aside id="scdraw-anim-pane-toolbox" class="scdraw-anim-wb__pane scdraw-anim-wb__pane--toolbox">
-            <scdraw-toolbox mode="vector"></scdraw-toolbox>
+            <shadow-claw-draw-toolbox mode="vector"></shadow-claw-draw-toolbox>
           </aside>
           <section class="scdraw-anim-wb__pane scdraw-anim-wb__pane--stage">
-            <scdraw-animation-stage></scdraw-animation-stage>
+            <shadow-claw-draw-animation-stage></shadow-claw-draw-animation-stage>
           </section>
-          <scdraw-resize-handle id="scdraw-anim-layers-handle" class="scdraw-anim-wb__handle scdraw-anim-wb__handle--layers" orientation="vertical" invert="true" value="220" min="170" max="380" label="Resize Layers Panel"></scdraw-resize-handle>
+          <shadow-claw-draw-resize-handle id="scdraw-anim-layers-handle" class="scdraw-anim-wb__handle scdraw-anim-wb__handle--layers" orientation="vertical" invert="true" value="220" min="170" max="380" label="Resize Layers Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-anim-pane-layers" class="scdraw-anim-wb__pane scdraw-anim-wb__pane--layers">
-            <scdraw-layers-panel mode="vector"></scdraw-layers-panel>
+            <shadow-claw-draw-layers-panel mode="vector"></shadow-claw-draw-layers-panel>
           </aside>
-          <scdraw-resize-handle id="scdraw-anim-right-handle" class="scdraw-anim-wb__handle scdraw-anim-wb__handle--right" orientation="vertical" invert="true" value="280" min="220" max="440" label="Resize Export and Capture Panel"></scdraw-resize-handle>
+          <shadow-claw-draw-resize-handle id="scdraw-anim-right-handle" class="scdraw-anim-wb__handle scdraw-anim-wb__handle--right" orientation="vertical" invert="true" value="280" min="220" max="440" label="Resize Export and Capture Panel"></shadow-claw-draw-resize-handle>
           <aside id="scdraw-anim-pane-right" class="scdraw-anim-wb__pane scdraw-anim-wb__pane--right">
             <div class="scdraw-anim-wb__right-tabs" role="tablist" aria-label="Right panel mode">
               <button type="button" class="scdraw-btn scdraw-btn--sm scdraw-anim-wb__rtab" data-rtab="export" aria-pressed="true">Export</button>
               <button type="button" class="scdraw-btn scdraw-btn--sm scdraw-anim-wb__rtab" data-rtab="capture" aria-pressed="false">Capture</button>
             </div>
             <div class="scdraw-anim-wb__right-body">
-              <scdraw-export-panel id="scdraw-anim-export-panel"></scdraw-export-panel>
-              <scdraw-capture-panel id="scdraw-anim-capture-panel" hidden></scdraw-capture-panel>
+              <shadow-claw-draw-export-panel id="scdraw-anim-export-panel"></shadow-claw-draw-export-panel>
+              <shadow-claw-draw-capture-panel id="scdraw-anim-capture-panel" hidden></shadow-claw-draw-capture-panel>
             </div>
           </aside>
         </main>
 
         <section class="scdraw-anim-wb__timeline-dock" aria-label="Timeline Dock">
-          <scdraw-timeline></scdraw-timeline>
+          <shadow-claw-draw-timeline></shadow-claw-draw-timeline>
         </section>
 
         <nav class="scdraw-anim-wb__tabs" aria-label="Mobile panel switcher">
@@ -873,18 +876,13 @@ export class DrawAnimationWorkbenchElement extends BaseElement {
           <button type="button" class="scdraw-btn scdraw-btn--sm scdraw-anim-wb__tab" data-tab="export" aria-pressed="false">Export</button>
         </nav>
 
-        <scdraw-statusbar mode="vector"></scdraw-statusbar>
+        <shadow-claw-draw-status-bar mode="vector"></shadow-claw-draw-status-bar>
       </div>
     `;
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-animation-workbench")
-) {
-  customElements.define(
-    "scdraw-animation-workbench",
-    DrawAnimationWorkbenchElement,
-  );
-}
+defineElement(
+  "shadow-claw-draw-animation-workbench",
+  ShadowClawDrawAnimationWorkbench,
+);

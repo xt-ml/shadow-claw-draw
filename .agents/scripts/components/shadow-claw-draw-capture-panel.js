@@ -1,14 +1,14 @@
 /**
- * .agents/scripts/components/scdraw-capture-panel.js
+ * .agents/scripts/components/shadow-claw-draw-capture-panel.js
  *
- * Screen, Webcam & Media Capture Panel (<scdraw-capture-panel>).
+ * Screen, Webcam & Media Capture Panel (<shadow-claw-draw-capture-panel>).
  * Ported from GIFWorks (`GIFWorksRecorder.ts`, `GIFWorksPreferences.ts`):
  * - Screen & Webcam MediaStream capture + PiP
  * - Start Delay (0..30s, default 3s "Ready / Set / Go") & Recording Timer (0..30s, default 5s)
  * - Extract recorded clip or imported video directly into Bitmap Animation frames
  */
 
-import { SHARED_STYLES } from "./scdraw-styles.js";
+import { SHARED_STYLES } from "./shadow-claw-draw-styles.js";
 import { scdraw } from "../scdraw-engine.js";
 import { effect } from "../scdraw-signals.js";
 import { formatFileSize } from "../scdraw-fs.js";
@@ -24,9 +24,12 @@ import {
   extractFramesFromVideoBlob,
 } from "../scdraw-capture.js";
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+import {
+  BaseElement,
+  defineElement,
+} from "shadow-claw/components/shadow-claw-element";
 
-export class DrawCapturePanelElement extends BaseElement {
+export class ShadowClawDrawCapturePanel extends BaseElement {
   constructor() {
     super();
     if (this.attachShadow) {
@@ -525,9 +528,4 @@ export class DrawCapturePanelElement extends BaseElement {
   }
 }
 
-if (
-  typeof customElements !== "undefined" &&
-  !customElements.get("scdraw-capture-panel")
-) {
-  customElements.define("scdraw-capture-panel", DrawCapturePanelElement);
-}
+defineElement("shadow-claw-draw-capture-panel", ShadowClawDrawCapturePanel);

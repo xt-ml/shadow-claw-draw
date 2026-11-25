@@ -138,19 +138,19 @@ test("Site Config: Draw branding, directPages, customElements, and security sand
 
   const allowed = config.customElements?.allowedElements || [];
   for (const tag of [
-    "scdraw-vector-workbench",
-    "scdraw-toolbox",
-    "scdraw-vector-canvas",
-    "scdraw-layers-panel",
-    "scdraw-inspector",
-    "scdraw-statusbar",
-    "scdraw-resize-handle",
+    "shadow-claw-draw-vector-workbench",
+    "shadow-claw-draw-toolbox",
+    "shadow-claw-draw-vector-canvas",
+    "shadow-claw-draw-layers-panel",
+    "shadow-claw-draw-inspector",
+    "shadow-claw-draw-status-bar",
+    "shadow-claw-draw-resize-handle",
   ]) {
     assert.ok(allowed.includes(tag), `allowedElements must include ${tag}`);
   }
 
   const scripts = config.customElements?.scripts || [];
-  const elScript = scripts.find((s) => s.id === "scdraw-element");
+  const elScript = scripts.find((s) => s.id === "shadow-claw-draw-element");
   const adapterScript = scripts.find((s) => s.id === "scdraw-adapter");
   assert.ok(elScript && elScript.global === true && elScript.autoload === true);
   assert.ok(
@@ -176,7 +176,7 @@ test("Site Config: Draw branding, directPages, customElements, and security sand
   );
 });
 
-test("Pages: main index.html hosts scdraw-vector-workbench directly with iframe: false and swipe suppression", () => {
+test("Pages: main index.html hosts shadow-claw-draw-vector-workbench directly with iframe: false and swipe suppression", () => {
   const indexPath = resolve(ROOT, "pages/main/index.html");
   assert.ok(existsSync(indexPath), "pages/main/index.html must exist");
 
@@ -189,7 +189,7 @@ test("Pages: main index.html hosts scdraw-vector-workbench directly with iframe:
   );
   assert.match(
     indexContent,
-    /<scdraw-vector-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/scdraw-vector-workbench>/,
+    /<shadow-claw-draw-vector-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/shadow-claw-draw-vector-workbench>/,
   );
 });
 
@@ -212,7 +212,7 @@ test("Pages: Page 2 Bitmap Studio exists with iframe: false, swipe suppression, 
   );
   assert.match(
     bitmapContent,
-    /<scdraw-bitmap-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/scdraw-bitmap-workbench>/,
+    /<shadow-claw-draw-bitmap-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/shadow-claw-draw-bitmap-workbench>/,
   );
 
   const routes = JSON.parse(
@@ -230,9 +230,9 @@ test("Pages: Page 2 Bitmap Studio exists with iframe: false, swipe suppression, 
     "pages.directPages must include /pages/main/~/content/01-bitmap.html",
   );
   for (const tag of [
-    "scdraw-bitmap-workbench",
-    "scdraw-bitmap-canvas",
-    "scdraw-filter-panel",
+    "shadow-claw-draw-bitmap-workbench",
+    "shadow-claw-draw-bitmap-canvas",
+    "shadow-claw-draw-filter-panel",
   ]) {
     assert.ok(
       config.customElements?.allowedElements?.includes(tag),
@@ -268,7 +268,7 @@ test("Pages: Page 3 Animation Studio exists with iframe: false, swipe suppressio
   );
   assert.match(
     animContent,
-    /<scdraw-animation-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/scdraw-animation-workbench>/,
+    /<shadow-claw-draw-animation-workbench[^>]*\bdata-no-swipe=["']true["'][^>]*\bdata-no-nav=["']true["'][^>]*><\/shadow-claw-draw-animation-workbench>/,
   );
 
   const routes = JSON.parse(
@@ -288,11 +288,11 @@ test("Pages: Page 3 Animation Studio exists with iframe: false, swipe suppressio
     "pages.directPages must include /pages/main/~/content/02-animation.html",
   );
   for (const tag of [
-    "scdraw-animation-workbench",
-    "scdraw-animation-stage",
-    "scdraw-timeline",
-    "scdraw-export-panel",
-    "scdraw-capture-panel",
+    "shadow-claw-draw-animation-workbench",
+    "shadow-claw-draw-animation-stage",
+    "shadow-claw-draw-timeline",
+    "shadow-claw-draw-export-panel",
+    "shadow-claw-draw-capture-panel",
   ]) {
     assert.ok(
       config.customElements?.allowedElements?.includes(tag),
