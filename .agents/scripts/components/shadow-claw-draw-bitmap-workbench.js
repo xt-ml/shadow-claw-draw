@@ -12,6 +12,7 @@
  */
 
 import { consumePendingFileParam } from "shadow-claw/utils/url-file-param";
+import { openDrawFileFromUrl } from "../shadow-claw-draw-url-file.js";
 import {
   SHARED_STYLES,
   computeWorkspaceGridColumns,
@@ -198,15 +199,10 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
     });
   }
 
-  openFileFromUrl(payload) {
-    if (!payload?.content) return;
-    try {
-      scdraw.loadFromText(payload.name, payload.content);
-    } catch (err) {
-      scdraw.statusMessage.set(
-        `Failed to load URL file: ${err?.message || err}`,
-      );
-    }
+  async openFileFromUrl(payload) {
+    return openDrawFileFromUrl(this, payload, {
+      studioLabel: "Bitmap Studio",
+    });
   }
 
   disconnectedCallback() {

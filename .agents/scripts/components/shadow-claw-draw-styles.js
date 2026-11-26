@@ -326,6 +326,52 @@ input[type="range"] {
     min-height: 44px;
   }
 }
+
+.scdraw-dialog {
+  padding: 1.4rem;
+  max-width: 480px;
+  width: 92%;
+  border-radius: 8px;
+  background: var(--shadow-claw-bg-secondary, var(--bg-card, #161b1c));
+  color: var(--shadow-claw-text-primary, var(--scdraw-text, #dde4e4));
+  border: 1px solid var(--shadow-claw-border-color, var(--border, #3f4849));
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.scdraw-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.scdraw-dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.scdraw-dialog__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--shadow-claw-text-primary, var(--scdraw-text, #dde4e4));
+}
+
+.scdraw-dialog__message {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--shadow-claw-text-secondary, var(--scdraw-text-muted, #94a3b8));
+}
+
+.scdraw-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
 `;
 
 export function computeWorkspaceGridColumns({
