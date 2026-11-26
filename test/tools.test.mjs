@@ -482,3 +482,73 @@ test("Adapter: Animation Studio tools execute end-to-end (new, frame CRUD, tween
   assert.equal(animStatus.loopMode, "pingpong");
   assert.equal(animStatus.frameCount, 4);
 });
+
+test("Adapter: restoreVectorStudioIfDefaultPages replaces default ShadowClaw Pages fallback with Vector Studio workbench", async () => {
+  const { restoreVectorStudioIfDefaultPages } =
+    await import("../.agents/scripts/shadow-claw-draw-adapter.js");
+
+  const origDocument = globalThis.document;
+  const createdElements = [];
+  const makeEl = (tag) => {
+    const attrs = {};
+    const children = [];
+    const el = {
+      tagName: tag.toUpperCase(),
+      className: "",
+      children,
+      setAttribute(k, v) {
+        attrs[k] = v;
+      },
+      getAttribute(k) {
+        return attrs[k];
+      },
+      appendChild(c) {
+        children.push(c);
+        return c;
+      },
+    };
+    createdElements.push(el);
+    return el;
+  };
+
+  let replacedWith = null;
+  globalThis.document = {
+    title: "ShadowClaw Pages - ShadowClaw Draw",
+    createElement: makeEl,
+  };
+
+  try {
+    const container = {
+      textContent:
+        "Welcome to ShadowClaw Pages This is the default static page for your workspace.",
+      querySelector(sel) {
+        if (sel === "article h2") {
+          return { textContent: "Welcome to ShadowClaw Pages" };
+        }
+        return null;
+      },
+      replaceChildren(...nodes) {
+        replacedWith = nodes;
+      },
+    };
+
+    const restored = restoreVectorStudioIfDefaultPages(container);
+    assert.equal(restored, true);
+
+    assert.ok(Array.isArray(replacedWith) && replacedWith.length === 1);
+    assert.equal(replacedWith[0].className, "scdraw-workbench-page");
+    assert.equal(replacedWith[0].getAttribute("data-no-swipe"), "true");
+    assert.equal(replacedWith[0].getAttribute("data-no-nav"), "true");
+    assert.equal(replacedWith[0].children.length, 1);
+    assert.equal(
+      replacedWith[0].children[0].tagName,
+      "SHADOW-CLAW-DRAW-VECTOR-WORKBENCH",
+    );
+    // pageFrontmatter.set() is intentionally NOT called — doing so writes a
+    // signal that triggers shadow-claw-pages to re-render, which calls
+    // init(container) again, causing an infinite restore loop.
+    assert.equal(globalThis.document.title, "ShadowClaw Draw — Vector Studio");
+  } finally {
+    globalThis.document = origDocument;
+  }
+});

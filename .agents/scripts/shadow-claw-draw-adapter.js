@@ -27,7 +27,75 @@ const bridge = createToolAdapterBridge({
   }),
 });
 
-export async function init() {
+// Guard: track the last pathname for which we successfully restored the
+// Vector Studio, so repeated init() calls on the same route (caused by
+// signal-driven re-renders inside shadow-claw-pages) don't re-run the DOM
+// replacement and trigger another render cycle.
+let _restoredForPath = null;
+
+export function restoreVectorStudioIfDefaultPages(container) {
+  if (
+    !container ||
+    typeof document === "undefined" ||
+    typeof container.querySelector !== "function" ||
+    typeof container.replaceChildren !== "function"
+  ) {
+    return false;
+  }
+  const hasWorkbench = container.querySelector(
+    "shadow-claw-draw-vector-workbench, shadow-claw-draw-bitmap-workbench, shadow-claw-draw-animation-workbench",
+  );
+  if (hasWorkbench) return false;
+
+  const heading = container.querySelector("article h2");
+  const isDefaultPages =
+    heading?.textContent?.trim() === "Welcome to ShadowClaw Pages" ||
+    (container.textContent?.includes("Welcome to ShadowClaw Pages") &&
+      container.textContent?.includes(
+        "default static page for your workspace",
+      ));
+  if (!isDefaultPages) return false;
+
+  const pageDiv = document.createElement("div");
+  pageDiv.className = "scdraw-workbench-page";
+  pageDiv.setAttribute("data-no-swipe", "true");
+  pageDiv.setAttribute("data-no-nav", "true");
+
+  const wb = document.createElement("shadow-claw-draw-vector-workbench");
+  wb.setAttribute("data-no-swipe", "true");
+  wb.setAttribute("data-no-nav", "true");
+  pageDiv.appendChild(wb);
+  container.replaceChildren(pageDiv);
+
+  // Do NOT call pagesHost.pageFrontmatter.set() here — writing to that signal
+  // triggers shadow-claw-pages to call renderSelectedPage() again, which calls
+  // init(container) again, creating an infinite loop.
+  if (typeof document.title === "string") {
+    document.title = "ShadowClaw Draw — Vector Studio";
+  }
+  return true;
+}
+
+export async function init(container) {
+  // Allow one restore attempt per pathname to prevent re-render loops, but
+  // reset the guard whenever we navigate to a new route — even if that route's
+  // init() call finds no default-pages content (e.g. /main/animation/ already
+  // has its own workbench and returns false).  Without this reset,
+  // _restoredForPath would stay at "/main/" while we visit /main/animation/,
+  // so returning to /main/ would see _restoredForPath === currentPath and
+  // skip the restore, leaving "Welcome to ShadowClaw Pages" visible.
+  const currentPath =
+    typeof location !== "undefined" ? location.pathname : null;
+  if (currentPath !== _restoredForPath) {
+    // Reset first: we have navigated to a new route.  If the restore succeeds
+    // we pin it to the new path; if not it stays null so the next visit here
+    // is always a fresh attempt.
+    _restoredForPath = null;
+    const restored = restoreVectorStudioIfDefaultPages(container);
+    if (restored) {
+      _restoredForPath = currentPath;
+    }
+  }
   return await bridge.init();
 }
 

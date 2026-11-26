@@ -84,3 +84,79 @@ test("openDrawFileFromUrl does not replace document when user cancels", async ()
     globalThis.__scdrawHandledUrlFile = null;
   }
 });
+
+test("openDrawFileFromUrl imports animated SVG into Animation Studio frames when studioLabel is Animation Studio", async () => {
+  globalThis.__scdrawHandledUrlFile = null;
+  const origWindow = globalThis.window;
+
+  scdraw.newVectorDocument({
+    name: "Untouched Vector",
+    width: 200,
+    height: 200,
+  });
+  globalThis.window = {
+    confirm() {
+      return true;
+    },
+    location: {
+      href: "https://xt-ml.github.io/shadow-claw-draw/main/animation/#file=abc&name=anim.svg",
+    },
+  };
+
+  try {
+    const { serializeAnimatedVectorDocumentToSvg } =
+      await import("../.agents/scripts/shadow-claw-draw-anim-svg.js");
+    const { createAnimationDocument, applyAnimationCommand } =
+      await import("../.agents/scripts/shadow-claw-draw-animation.js");
+    const { normalizeVectorElement } =
+      await import("../.agents/scripts/shadow-claw-draw-vector.js");
+
+    let sampleAnim = createAnimationDocument({
+      mode: "vector",
+      width: 120,
+      height: 80,
+      fps: 10,
+      name: "Bounce",
+    });
+    sampleAnim.frames[0].doc.layers[0].items = [
+      normalizeVectorElement({
+        id: "ball",
+        type: "circle",
+        cx: 30,
+        cy: 40,
+        r: 10,
+        fill: "#ff0000",
+      }),
+    ];
+    sampleAnim = applyAnimationCommand(sampleAnim, {
+      type: "duplicate_frame",
+      frameIndex: 0,
+    }).doc;
+
+    const workbench = { isConnected: true, shadowRoot: null };
+    const animSvg = serializeAnimatedVectorDocumentToSvg(sampleAnim, {
+      engine: "smil",
+      interpolate: false,
+    });
+
+    const loaded = await openDrawFileFromUrl(
+      workbench,
+      { name: "anim.svg", content: animSvg },
+      { studioLabel: "Animation Studio" },
+    );
+
+    assert.equal(loaded, true);
+    const anim = scdraw.animationDoc.get();
+    assert.equal(anim.mode, "vector");
+    assert.equal(anim.width, 120);
+    assert.equal(anim.height, 80);
+    assert.equal(anim.frames.length, 2);
+  } finally {
+    if (origWindow === undefined) {
+      delete globalThis.window;
+    } else {
+      globalThis.window = origWindow;
+    }
+    globalThis.__scdrawHandledUrlFile = null;
+  }
+});
