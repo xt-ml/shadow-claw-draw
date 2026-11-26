@@ -48,7 +48,8 @@ test("Animation Workbench layout resolver: mobile-first tabs vs tablet/desktop m
   assert.equal(tablet.showStage, true);
   assert.equal(tablet.showTimeline, true);
   assert.equal(tablet.showToolbox, true);
-  assert.equal(tablet.showRight, true);
+  assert.equal(tablet.showLayers, false);
+  assert.equal(tablet.showRight, false);
 
   const desktop = resolveAnimationResponsiveLayout({
     containerWidth: 1280,
@@ -58,7 +59,8 @@ test("Animation Workbench layout resolver: mobile-first tabs vs tablet/desktop m
   assert.equal(desktop.showToolbox, false);
   assert.equal(desktop.showTimeline, false);
   assert.equal(desktop.showStage, true);
-  assert.equal(desktop.showRight, true);
+  assert.equal(desktop.showLayers, false);
+  assert.equal(desktop.showRight, false);
 });
 
 test("Animation UI Components: ARIA, container queries, coarse touch targets, swipe guard, and Trusted Types safety", () => {

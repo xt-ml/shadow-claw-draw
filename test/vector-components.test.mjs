@@ -360,14 +360,15 @@ test("Vector Workbench layout resolver: mobile-first stacked vs tablet/desktop s
   const tablet = resolveDrawResponsiveLayout({ containerWidth: 768 });
   assert.equal(tablet.tier, "tablet");
   assert.equal(tablet.showCanvas, true);
-  assert.equal(tablet.showInspector, true);
+  assert.equal(tablet.showLayers, false);
+  assert.equal(tablet.showInspector, false);
 
   const desktop = resolveDrawResponsiveLayout({ containerWidth: 1280 });
   assert.equal(desktop.tier, "desktop");
   assert.equal(desktop.showToolbox, true);
   assert.equal(desktop.showCanvas, true);
-  assert.equal(desktop.showLayers, true);
-  assert.equal(desktop.showInspector, true);
+  assert.equal(desktop.showLayers, false);
+  assert.equal(desktop.showInspector, false);
 
   const desktopFullStage = resolveDrawResponsiveLayout({
     containerWidth: 1280,
@@ -386,7 +387,7 @@ test("Vector Workbench layout resolver: mobile-first stacked vs tablet/desktop s
     panelVisibility: { layers: true },
   });
   assert.equal(tabletLayersShown.showLayers, true);
-  assert.equal(tabletLayersShown.showInspector, true);
+  assert.equal(tabletLayersShown.showInspector, false);
 
   const mobileNoToolbox = resolveDrawResponsiveLayout({
     containerWidth: 390,
@@ -444,25 +445,28 @@ test("ShadowClawDrawVectorWorkbench exposes togglePanel, panelVisibility, and co
   wb.togglePanel("layers");
   wb.togglePanel("inspector");
   assert.equal(wbNode.dataset.showToolbox, "false");
-  assert.equal(wbNode.dataset.showLayers, "false");
-  assert.equal(wbNode.dataset.showInspector, "false");
+  assert.equal(wbNode.dataset.showLayers, "true");
+  assert.equal(wbNode.dataset.showInspector, "true");
   assert.equal(
     btns["scdraw-vec-toggle-toolbox"].getAttribute("aria-pressed"),
     "false",
   );
   assert.equal(
     btns["scdraw-vec-toggle-layers"].getAttribute("aria-pressed"),
-    "false",
+    "true",
   );
   assert.equal(
     btns["scdraw-vec-toggle-inspector"].getAttribute("aria-pressed"),
-    "false",
+    "true",
   );
-  assert.equal(props.get("--workspace-columns"), "minmax(0, 1fr)");
+  assert.equal(
+    props.get("--workspace-columns"),
+    "minmax(0, 1fr) auto var(--layers-width) auto var(--inspector-width)",
+  );
   assert.deepEqual(wb.panelVisibility, {
     toolbox: false,
-    layers: false,
-    inspector: false,
+    layers: true,
+    inspector: true,
   });
 
   wb.togglePanel("toolbox", true);

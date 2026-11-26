@@ -73,7 +73,7 @@ export function resolveAnimationResponsiveLayout({
       showStage: true,
       showTimeline: timelineOverride ?? true,
       showLayers: layersOverride ?? false,
-      showRight: rightOverride ?? true,
+      showRight: rightOverride ?? false,
     };
   }
   return {
@@ -81,8 +81,8 @@ export function resolveAnimationResponsiveLayout({
     showToolbox: toolboxOverride ?? true,
     showStage: true,
     showTimeline: timelineOverride ?? true,
-    showLayers: layersOverride ?? true,
-    showRight: rightOverride ?? true,
+    showLayers: layersOverride ?? false,
+    showRight: rightOverride ?? false,
   };
 }
 
@@ -802,7 +802,7 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
           min-height: 280px;
         }
       </style>
-      <div class="scdraw-anim-wb" data-mobile-tab="stage" data-show-toolbox="true" data-show-timeline="true" data-show-layers="true" data-show-right="true" data-no-swipe="true" data-no-nav="true">
+      <div class="scdraw-anim-wb" data-mobile-tab="stage" data-show-toolbox="true" data-show-timeline="true" data-show-layers="false" data-show-right="false" data-no-swipe="true" data-no-nav="true">
         <header class="scdraw-anim-wb__topbar" role="region" aria-label="Animation Studio Toolbar">
           <div class="scdraw-anim-wb__primary-row">
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
@@ -821,8 +821,8 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
               <div class="scdraw-panel-toggles" role="group" aria-label="Panel visibility">
                 <button type="button" id="scdraw-anim-toggle-toolbox" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle" data-panel-toggle="toolbox" aria-pressed="true">Tools</button>
                 <button type="button" id="scdraw-anim-toggle-timeline" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock" data-panel-toggle="timeline" aria-pressed="true">Timeline</button>
-                <button type="button" id="scdraw-anim-toggle-layers" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock" data-panel-toggle="layers" aria-pressed="true">Layers</button>
-                <button type="button" id="scdraw-anim-toggle-right" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock" data-panel-toggle="right" aria-pressed="true">Export</button>
+                <button type="button" id="scdraw-anim-toggle-layers" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock" data-panel-toggle="layers" aria-pressed="false">Layers</button>
+                <button type="button" id="scdraw-anim-toggle-right" class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock" data-panel-toggle="right" aria-pressed="false">Export</button>
               </div>
               <button type="button" id="scdraw-anim-more-toggle" class="scdraw-btn scdraw-btn--sm scdraw-anim-wb__more-toggle" aria-expanded="false" aria-controls="scdraw-anim-secondary-bar">More ▾</button>
             </div>

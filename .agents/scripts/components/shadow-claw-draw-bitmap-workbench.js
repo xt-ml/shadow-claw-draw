@@ -78,15 +78,15 @@ export function resolveBitmapResponsiveLayout({
       showToolbox: toolboxOverride ?? true,
       showCanvas: true,
       showLayers: layersOverride ?? mobileTab === "layers",
-      showFilters: filtersOverride ?? true,
+      showFilters: filtersOverride ?? false,
     };
   }
   return {
     tier,
     showToolbox: toolboxOverride ?? true,
     showCanvas: true,
-    showLayers: layersOverride ?? true,
-    showFilters: filtersOverride ?? true,
+    showLayers: layersOverride ?? false,
+    showFilters: filtersOverride ?? false,
   };
 }
 
@@ -935,7 +935,7 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-bitmap-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="true" data-show-filters="true" data-no-swipe="true" data-no-nav="true">
+      <div class="scdraw-bitmap-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="false" data-show-filters="false" data-no-swipe="true" data-no-nav="true">
         <header class="scdraw-bitmap-wb__topbar" role="region" aria-label="Bitmap Studio Toolbar">
           <div class="scdraw-bitmap-wb__primary-row">
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
@@ -980,7 +980,7 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
                   id="scdraw-bmp-toggle-layers"
                   class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
                   data-panel-toggle="layers"
-                  aria-pressed="true"
+                  aria-pressed="false"
                   aria-controls="scdraw-bmp-pane-layers"
                   aria-label="Layers panel"
                   title="Show or hide Layers panel">
@@ -992,7 +992,7 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
                   id="scdraw-bmp-toggle-filters"
                   class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
                   data-panel-toggle="filters"
-                  aria-pressed="true"
+                  aria-pressed="false"
                   aria-controls="scdraw-bmp-pane-filters"
                   aria-label="Filters &amp; Transforms panel"
                   title="Show or hide Filters &amp; Transforms panel">

@@ -118,21 +118,22 @@ test("Bitmap Workbench layout resolver: mobile tabs vs tablet/desktop multi-pane
   const tablet = resolveBitmapResponsiveLayout({ containerWidth: 768 });
   assert.equal(tablet.tier, "tablet");
   assert.equal(tablet.showCanvas, true);
-  assert.equal(tablet.showFilters, true);
+  assert.equal(tablet.showLayers, false);
+  assert.equal(tablet.showFilters, false);
 
   const desktop = resolveBitmapResponsiveLayout({ containerWidth: 1280 });
   assert.equal(desktop.tier, "desktop");
   assert.equal(desktop.showCanvas, true);
-  assert.equal(desktop.showLayers, true);
-  assert.equal(desktop.showFilters, true);
+  assert.equal(desktop.showLayers, false);
+  assert.equal(desktop.showFilters, false);
 
   const desktopNoToolbox = resolveBitmapResponsiveLayout({
     containerWidth: 1280,
     panelVisibility: { toolbox: false },
   });
   assert.equal(desktopNoToolbox.showToolbox, false);
-  assert.equal(desktopNoToolbox.showLayers, true);
-  assert.equal(desktopNoToolbox.showFilters, true);
+  assert.equal(desktopNoToolbox.showLayers, false);
+  assert.equal(desktopNoToolbox.showFilters, false);
 
   const desktopNoLayers = resolveBitmapResponsiveLayout({
     containerWidth: 1280,
@@ -140,14 +141,14 @@ test("Bitmap Workbench layout resolver: mobile tabs vs tablet/desktop multi-pane
   });
   assert.equal(desktopNoLayers.showToolbox, true);
   assert.equal(desktopNoLayers.showLayers, false);
-  assert.equal(desktopNoLayers.showFilters, true);
+  assert.equal(desktopNoLayers.showFilters, false);
 
   const desktopNoFilters = resolveBitmapResponsiveLayout({
     containerWidth: 1280,
     panelVisibility: { filters: false },
   });
   assert.equal(desktopNoFilters.showToolbox, true);
-  assert.equal(desktopNoFilters.showLayers, true);
+  assert.equal(desktopNoFilters.showLayers, false);
   assert.equal(desktopNoFilters.showFilters, false);
 
   const desktopFullStage = resolveBitmapResponsiveLayout({
@@ -167,7 +168,7 @@ test("Bitmap Workbench layout resolver: mobile tabs vs tablet/desktop multi-pane
     panelVisibility: { layers: true },
   });
   assert.equal(tabletLayersShown.showLayers, true);
-  assert.equal(tabletLayersShown.showFilters, true);
+  assert.equal(tabletLayersShown.showFilters, false);
 
   const tabletPanelsHidden = resolveBitmapResponsiveLayout({
     containerWidth: 768,
@@ -285,23 +286,26 @@ test("ShadowClawDrawBitmapWorkbench exposes togglePanel and panelVisibility to h
   );
 
   wb.togglePanel("layers");
-  assert.equal(wbNode.dataset.showLayers, "false");
+  assert.equal(wbNode.dataset.showLayers, "true");
   assert.equal(
     btns["scdraw-bmp-toggle-layers"].getAttribute("aria-pressed"),
-    "false",
+    "true",
   );
 
   wb.togglePanel("filters");
-  assert.equal(wbNode.dataset.showFilters, "false");
+  assert.equal(wbNode.dataset.showFilters, "true");
   assert.equal(
     btns["scdraw-bmp-toggle-filters"].getAttribute("aria-pressed"),
-    "false",
+    "true",
   );
-  assert.equal(props.get("--workspace-columns"), "minmax(0, 1fr)");
+  assert.equal(
+    props.get("--workspace-columns"),
+    "minmax(0, 1fr) auto var(--layers-width) auto var(--filters-width)",
+  );
   assert.deepEqual(wb.panelVisibility, {
     toolbox: false,
-    layers: false,
-    filters: false,
+    layers: true,
+    filters: true,
   });
 
   wb.togglePanel("toolbox", true);

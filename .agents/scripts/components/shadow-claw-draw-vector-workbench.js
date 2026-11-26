@@ -78,15 +78,15 @@ export function resolveDrawResponsiveLayout({
       showToolbox: toolboxOverride ?? true,
       showCanvas: true,
       showLayers: layersOverride ?? mobileTab === "layers",
-      showInspector: inspectorOverride ?? true,
+      showInspector: inspectorOverride ?? false,
     };
   }
   return {
     tier,
     showToolbox: toolboxOverride ?? true,
     showCanvas: true,
-    showLayers: layersOverride ?? true,
-    showInspector: inspectorOverride ?? true,
+    showLayers: layersOverride ?? false,
+    showInspector: inspectorOverride ?? false,
   };
 }
 
@@ -792,7 +792,7 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
           }
         }
       </style>
-      <div class="scdraw-vector-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="true" data-show-inspector="true" data-no-swipe="true" data-no-nav="true">
+      <div class="scdraw-vector-wb" data-mobile-tab="canvas" data-show-toolbox="true" data-show-layers="false" data-show-inspector="false" data-no-swipe="true" data-no-nav="true">
         <header class="scdraw-vector-wb__topbar" role="region" aria-label="Vector Studio Toolbar">
           <div class="scdraw-vector-wb__primary-row">
             <nav class="scdraw-studio-switch" aria-label="Drawing Studio Switcher">
@@ -837,7 +837,7 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
                   id="scdraw-vec-toggle-layers"
                   class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
                   data-panel-toggle="layers"
-                  aria-pressed="true"
+                  aria-pressed="false"
                   aria-controls="scdraw-vec-pane-layers"
                   aria-label="Layers panel"
                   title="Show or hide Layers panel">
@@ -849,7 +849,7 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
                   id="scdraw-vec-toggle-inspector"
                   class="scdraw-btn scdraw-btn--sm scdraw-panel-toggle scdraw-panel-toggle--dock"
                   data-panel-toggle="inspector"
-                  aria-pressed="true"
+                  aria-pressed="false"
                   aria-controls="scdraw-vec-pane-inspector"
                   aria-label="Inspector panel"
                   title="Show or hide Inspector panel">
