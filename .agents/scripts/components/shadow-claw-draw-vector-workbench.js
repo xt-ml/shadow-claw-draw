@@ -11,6 +11,7 @@
  *   + fitted center stage + resizable Layers & Inspector panes on desktop.
  */
 
+import { consumePendingFileParam } from "shadow-claw/utils/url-file-param";
 import {
   SHARED_STYLES,
   computeWorkspaceGridColumns,
@@ -123,6 +124,14 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
     this._syncPanelVisibility({ applyGrid: initialWidth > 0 });
     this._initFullscreen();
     this._setupResizeObserver();
+    queueMicrotask(() => {
+      const pending = consumePendingFileParam(
+        "shadow-claw-draw-vector-workbench",
+      );
+      if (pending?.content) {
+        this.openFileFromUrl(pending);
+      }
+    });
     this._dispose = effect(() => {
       const canUndo = scdraw.canUndo.get();
       const canRedo = scdraw.canRedo.get();
@@ -142,6 +151,17 @@ export class ShadowClawDrawVectorWorkbench extends BaseElement {
       if (gridBtn) gridBtn.setAttribute("aria-pressed", String(grid));
       if (snapBtn) snapBtn.setAttribute("aria-pressed", String(snap));
     });
+  }
+
+  openFileFromUrl(payload) {
+    if (!payload?.content) return;
+    try {
+      scdraw.loadFromText(payload.name, payload.content);
+    } catch (err) {
+      scdraw.statusMessage.set(
+        `Failed to load URL file: ${err?.message || err}`,
+      );
+    }
   }
 
   disconnectedCallback() {

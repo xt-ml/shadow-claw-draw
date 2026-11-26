@@ -1631,6 +1631,60 @@ export class DrawEngine {
     throw new Error(`Unsupported file format: ${file.name}`);
   }
 
+  /**
+   * Loads an in-memory text payload (SVG or ShadowClaw Draw JSON) such as
+   * one decoded from a `#file=` URL parameter.
+   */
+  loadFromText(name, text) {
+    const lower = String(name || "").toLowerCase();
+    if (
+      lower.endsWith(".svg") ||
+      String(text || "")
+        .trimStart()
+        .startsWith("<svg")
+    ) {
+      const imp = this.importSvg(text);
+      this.dirty.set(false);
+      this.statusMessage.set(`Loaded ${name || "SVG"}`);
+      return { ok: true, format: "svg", ...imp };
+    }
+
+    const data = JSON.parse(text);
+    if (data?.animationDoc) {
+      const hydrated = this._deserializeAnimationProject(data.animationDoc);
+      batch(() => {
+        this.animationDoc.set(hydrated);
+        this.activeFrameIndex.set(0);
+        this._projectActiveFrameToStudioDoc(hydrated, 0);
+        this.dirty.set(false);
+        this.revision.set(this.revision.get() + 1);
+      });
+      this.statusMessage.set(`Loaded ${name || "animation"}`);
+      return { ok: true, format: "scdraw-anim-json" };
+    }
+
+    if (data?.vectorDoc) {
+      this.vectorDoc.set(data.vectorDoc);
+      this.activeLayerId.set(data.vectorDoc.layers?.[0]?.id || "");
+      this.selectedIds.set([]);
+      this.dirty.set(false);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(`Loaded ${name || "vector"}`);
+      return { ok: true, format: "scdraw-json" };
+    }
+
+    if (data?.bitmapDoc) {
+      this.bitmapDoc.set(data.bitmapDoc);
+      this.activeBitmapLayerId.set(data.bitmapDoc.layers?.[0]?.id || "");
+      this.dirty.set(false);
+      this.revision.set(this.revision.get() + 1);
+      this.statusMessage.set(`Loaded ${name || "bitmap"}`);
+      return { ok: true, format: "scdraw-bitmap-json" };
+    }
+
+    throw new Error(`Unsupported file format: ${name}`);
+  }
+
   async listFiles(conversationId = DEFAULT_GROUP_ID) {
     return listWorkspaceFiles(conversationId);
   }

@@ -108,7 +108,12 @@
     "assistantName": "ShadowClaw Draw",
     "defaultToolsProfile": "none",
     "internetAccess": true,
-    "vm_bash_full_internet_access": true
+    "vm_bash_full_internet_access": true,
+    "defaultViewerComponents": {
+      "/": "shadow-claw-draw-vector-workbench",
+      "/main/bitmap/": "shadow-claw-draw-bitmap-workbench",
+      "/main/animation/": "shadow-claw-draw-animation-workbench"
+    }
   },
   "enabledTools": [
     "scdraw_get_status",
