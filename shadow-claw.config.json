@@ -70,7 +70,7 @@
       {
         "id": "shadow-claw-draw-element",
         "name": "shadow-claw-draw-vector-workbench",
-        "src": ".agents/scripts/shadow-claw-draw-element.js",
+        "src": "./.agents/scripts/shadow-claw-draw-element.js",
         "global": true,
         "autoload": true,
         "hasInit": false
@@ -78,7 +78,7 @@
       {
         "id": "shadow-claw-draw-adapter",
         "name": "shadow-claw-draw-adapter",
-        "src": ".agents/scripts/shadow-claw-draw-adapter.js",
+        "src": "./.agents/scripts/shadow-claw-draw-adapter.js",
         "global": true,
         "autoload": true,
         "hasInit": true
