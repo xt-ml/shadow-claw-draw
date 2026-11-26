@@ -90,7 +90,7 @@ function evalCubicPoint(seg, t) {
   };
 }
 
-function nodesToCubicSegments(nodes, closed = false) {
+export function nodesToCubicSegments(nodes, closed = false) {
   if (!Array.isArray(nodes) || nodes.length === 0) return [];
   if (nodes.length === 1) {
     const p = { x: nodes[0].x, y: nodes[0].y };
@@ -114,7 +114,7 @@ function nodesToCubicSegments(nodes, closed = false) {
   return segs;
 }
 
-function subdivideSegmentsToCount(segs, targetCount) {
+export function subdivideSegmentsToCount(segs, targetCount) {
   const out = segs.map((s) => ({
     p0: { ...s.p0 },
     p1: { ...s.p1 },
@@ -145,7 +145,7 @@ function subdivideSegmentsToCount(segs, targetCount) {
   return out;
 }
 
-function cubicSegmentsToNodes(segs, closed = false) {
+export function cubicSegmentsToNodes(segs, closed = false) {
   if (!segs || segs.length === 0) return [];
   const nodes = [];
   const count = closed ? segs.length : segs.length + 1;

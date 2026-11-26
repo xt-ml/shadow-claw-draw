@@ -120,9 +120,42 @@ export class ShadowClawDrawTimeline extends BaseElement {
       );
     }
 
+    // Use shadow root's activeElement so focus check works inside Shadow DOM
+    const shadowActive = root.activeElement;
+
     const fpsInput = root.getElementById("scdraw-tl-fps");
-    if (fpsInput && document.activeElement !== fpsInput) {
+    if (fpsInput && shadowActive !== fpsInput) {
       fpsInput.value = String(anim.fps || 12);
+    }
+
+    // Timecode & frame counter — always update so the counter stays live during playback
+    let elapsedMs = 0;
+    for (let i = 0; i < activeIdx && i < frames.length; i++) {
+      elapsedMs += Math.round(
+        (frames[i].delayMs || 83) / (anim.speedMultiplier || 1),
+      );
+    }
+    const totalMs = computeTotalDurationMs(anim);
+    const readout = root.getElementById("scdraw-tl-readout");
+    if (readout) {
+      readout.textContent = `${formatTimecode(elapsedMs)} / ${formatTimecode(totalMs)} · Frame ${activeIdx + 1}/${frames.length}`;
+    }
+
+    // During playback, only update the active-frame highlight on existing cards
+    // and skip the expensive full filmstrip rebuild to keep the main thread free.
+    if (isPlaying) {
+      const list = root.getElementById("scdraw-tl-strip");
+      if (list) {
+        const maxIdx = Math.max(0, frames.length - 1);
+        list.querySelectorAll(".scdraw-timeline__card").forEach((card) => {
+          const idx = Number(card.dataset.index);
+          const isActive = idx === activeIdx;
+          card.classList.toggle("scdraw-timeline__card--active", isActive);
+          card.setAttribute("aria-selected", String(isActive));
+          card.tabIndex = isActive ? 0 : -1;
+        });
+      }
+      return;
     }
 
     const speedSel = root.getElementById("scdraw-tl-speed");
@@ -150,19 +183,6 @@ export class ShadowClawDrawTimeline extends BaseElement {
 
     const delBtn = root.getElementById("scdraw-tl-del-frame");
     if (delBtn) delBtn.disabled = frames.length <= 1;
-
-    // Timecode & frame counter
-    let elapsedMs = 0;
-    for (let i = 0; i < activeIdx && i < frames.length; i++) {
-      elapsedMs += Math.round(
-        (frames[i].delayMs || 83) / (anim.speedMultiplier || 1),
-      );
-    }
-    const totalMs = computeTotalDurationMs(anim);
-    const readout = root.getElementById("scdraw-tl-readout");
-    if (readout) {
-      readout.textContent = `${formatTimecode(elapsedMs)} / ${formatTimecode(totalMs)} · Frame ${activeIdx + 1}/${frames.length}`;
-    }
 
     // Trim range controls (GIFWorks port)
     const maxIdx = Math.max(0, frames.length - 1);

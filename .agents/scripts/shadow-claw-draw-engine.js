@@ -612,13 +612,32 @@ export class DrawEngine {
       return { ok: true, modeSwitched: true, frameIndex: 0 };
     }
 
+    const isBlankSingleFrame =
+      anim.frames.length === 1 &&
+      (srcMode === "vector"
+        ? findAllElements(anim.frames[0]?.doc || {}).length === 0
+        : false);
+
+    if (
+      isBlankSingleFrame &&
+      snapshot.width &&
+      snapshot.height &&
+      (snapshot.width !== anim.width || snapshot.height !== anim.height)
+    ) {
+      this.dispatchAnimationCommand({
+        type: "resize_animation",
+        width: snapshot.width,
+        height: snapshot.height,
+      });
+    }
+
     const afterIndex = insertAfterActive
       ? this.activeFrameIndex.get()
-      : anim.frames.length - 1;
+      : this.animationDoc.get().frames.length - 1;
     const res = this.dispatchAnimationCommand({
       type: "add_frame",
       afterIndex,
-      name: name || `Studio Frame ${anim.frames.length + 1}`,
+      name: name || `Studio Frame ${this.animationDoc.get().frames.length + 1}`,
       delayMs,
       doc: snapshot,
     });

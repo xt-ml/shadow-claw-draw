@@ -143,6 +143,7 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
       const activeTool = scdraw.activeBitmapTool.get();
       const sel = scdraw.bitmapSelection.get();
       const clip = scdraw.bitmapClipboard?.get();
+      const bmpDoc = scdraw.bitmapDoc.get();
 
       const undoBtn = this.shadowRoot?.getElementById("scdraw-bmp-undo");
       const redoBtn = this.shadowRoot?.getElementById("scdraw-bmp-redo");
@@ -196,6 +197,13 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
           !hasSel || Boolean(sel.inverted) || sel.width < 5 || sel.height < 5;
       }
       if (deselectBtn) deselectBtn.disabled = !hasSel;
+
+      const cwInput = this.shadowRoot?.getElementById("scdraw-bmp-canvas-w");
+      const chInput = this.shadowRoot?.getElementById("scdraw-bmp-canvas-h");
+      if (cwInput && document.activeElement !== cwInput)
+        cwInput.value = String(bmpDoc.width);
+      if (chInput && document.activeElement !== chInput)
+        chInput.value = String(bmpDoc.height);
     });
   }
 
@@ -482,6 +490,25 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
         scdraw.statusMessage.set(`Send to Anim failed: ${err.message}`);
       }
     });
+
+    root
+      .getElementById("scdraw-bmp-resize-canvas")
+      ?.addEventListener("click", () => {
+        const w =
+          Number(root.getElementById("scdraw-bmp-canvas-w")?.value) || 0;
+        const h =
+          Number(root.getElementById("scdraw-bmp-canvas-h")?.value) || 0;
+        if (w < 16 || h < 16) {
+          scdraw.statusMessage.set("Canvas size must be at least 16×16");
+          return;
+        }
+        try {
+          scdraw.dispatchBitmapCommand({ type: "resize", width: w, height: h });
+          scdraw.statusMessage.set(`Canvas resized to ${w}×${h}`);
+        } catch (err) {
+          scdraw.statusMessage.set(`Canvas resize failed: ${err.message}`);
+        }
+      });
 
     root.getElementById("scdraw-bmp-sel-all")?.addEventListener("click", () => {
       scdraw.dispatchBitmapCommand({ type: "select_all" });
@@ -1049,6 +1076,13 @@ export class ShadowClawDrawBitmapWorkbench extends BaseElement {
               <button type="button" id="scdraw-pull-vector" class="scdraw-btn scdraw-btn--sm">Pull Vector</button>
               <button type="button" id="scdraw-push-vector" class="scdraw-btn scdraw-btn--sm">Send Vector</button>
               <button type="button" id="scdraw-bmp-send-anim" class="scdraw-btn scdraw-btn--sm">Send to Anim</button>
+            </div>
+            <div class="scdraw-bitmap-wb__group" role="group" aria-label="Canvas size">
+              <label for="scdraw-bmp-canvas-w" class="scdraw-label">W</label>
+              <input id="scdraw-bmp-canvas-w" type="number" class="scdraw-input" min="16" max="4096" value="${scdraw.bitmapDoc.get().width}" style="width:60px" aria-label="Canvas width" />
+              <label for="scdraw-bmp-canvas-h" class="scdraw-label">H</label>
+              <input id="scdraw-bmp-canvas-h" type="number" class="scdraw-input" min="16" max="4096" value="${scdraw.bitmapDoc.get().height}" style="width:60px" aria-label="Canvas height" />
+              <button type="button" id="scdraw-bmp-resize-canvas" class="scdraw-btn scdraw-btn--sm">Resize Canvas</button>
             </div>
           </div>
         </header>

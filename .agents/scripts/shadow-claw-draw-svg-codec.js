@@ -201,7 +201,7 @@ export function serializeVectorDocumentToSvg(doc, options = {}) {
     doc.background !== "transparent"
   ) {
     lines.push(
-      `  <rect data-scdraw-background="true" x="0" y="0" width="${roundNum(doc.width)}" height="${roundNum(doc.height)}" fill="${escapeXml(doc.background)}" />`,
+      `  <rect data-scdraw-background="true" x="${roundNum(vb.x)}" y="${roundNum(vb.y)}" width="${roundNum(vb.width)}" height="${roundNum(vb.height)}" fill="${escapeXml(doc.background)}" />`,
     );
   }
 

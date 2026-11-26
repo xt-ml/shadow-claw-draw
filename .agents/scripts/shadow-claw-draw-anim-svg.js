@@ -20,7 +20,145 @@ import {
 import {
   computeElementBBox,
   findAllElements,
+  pathDataToNodes,
+  nodesToPathData,
 } from "./shadow-claw-draw-vector.js";
+import {
+  nodesToCubicSegments,
+  subdivideSegmentsToCount,
+  cubicSegmentsToNodes,
+} from "./shadow-claw-draw-tween.js";
+
+function computeElementVisualBBox(el) {
+  if (!el || el.visible === false) return null;
+  if (el.type === "group") {
+    const children = el.children || [];
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    for (const c of children) {
+      const cb = computeElementVisualBBox(c);
+      if (!cb) continue;
+      if (cb.x < minX) minX = cb.x;
+      if (cb.y < minY) minY = cb.y;
+      if (cb.x + cb.width > maxX) maxX = cb.x + cb.width;
+      if (cb.y + cb.height > maxY) maxY = cb.y + cb.height;
+    }
+    if (!Number.isFinite(minX)) return null;
+    const tx = Number(el.transform?.tx ?? 0) || 0;
+    const ty = Number(el.transform?.ty ?? 0) || 0;
+    return {
+      x: minX + tx,
+      y: minY + ty,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }
+
+  const base = computeElementBBox({
+    ...el,
+    transform: { tx: 0, ty: 0 },
+  });
+  const cx = base.x + base.width / 2;
+  const cy = base.y + base.height / 2;
+  const sx = Number(el.transform?.scaleX ?? 1) || 1;
+  const sy = Number(el.transform?.scaleY ?? 1) || 1;
+  const rotRad = ((Number(el.transform?.rotate ?? 0) || 0) * Math.PI) / 180;
+  const tx = Number(el.transform?.tx ?? 0) || 0;
+  const ty = Number(el.transform?.ty ?? 0) || 0;
+  const cos = Math.cos(rotRad);
+  const sin = Math.sin(rotRad);
+
+  const corners = [
+    [base.x, base.y],
+    [base.x + base.width, base.y],
+    [base.x + base.width, base.y + base.height],
+    [base.x, base.y + base.height],
+  ];
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
+  for (const [px, py] of corners) {
+    const dx = (px - cx) * sx;
+    const dy = (py - cy) * sy;
+    const rx = cx + dx * cos - dy * sin + tx;
+    const ry = cy + dx * sin + dy * cos + ty;
+    if (rx < minX) minX = rx;
+    if (ry < minY) minY = ry;
+    if (rx > maxX) maxX = rx;
+    if (ry > maxY) maxY = ry;
+  }
+
+  const strokePad =
+    el.stroke && el.stroke !== "none"
+      ? Math.max(0, Number(el.strokeWidth ?? 0)) / 2
+      : 0;
+  return {
+    x: minX - strokePad,
+    y: minY - strokePad,
+    width: maxX - minX + strokePad * 2,
+    height: maxY - minY + strokePad * 2,
+  };
+}
+
+/**
+ * Compute the effective SVG viewport (x, y, width, height) covering the stage,
+ * any larger frame viewBox, and all visible elements across the playback sequence
+ * so exported animated SVGs never clip artwork against their background.
+ */
+export function computeAnimatedSvgViewport(
+  animDoc,
+  seq = computePlaybackSequence(animDoc),
+) {
+  let minX = 0;
+  let minY = 0;
+  let maxX = Number(animDoc?.width) || 800;
+  let maxY = Number(animDoc?.height) || 600;
+
+  for (const idx of seq) {
+    const doc = animDoc?.frames?.[idx]?.doc;
+    if (!doc) continue;
+    const vb = doc.viewBox;
+    if (
+      vb &&
+      Number.isFinite(vb.width) &&
+      vb.width > 0 &&
+      Number.isFinite(vb.height) &&
+      vb.height > 0
+    ) {
+      const vx = Number(vb.x) || 0;
+      const vy = Number(vb.y) || 0;
+      if (vx < minX) minX = vx;
+      if (vy < minY) minY = vy;
+      if (vx + vb.width > maxX) maxX = vx + vb.width;
+      if (vy + vb.height > maxY) maxY = vy + vb.height;
+    } else if (Number(doc.width) > 0 && Number(doc.height) > 0) {
+      if (doc.width > maxX) maxX = doc.width;
+      if (doc.height > maxY) maxY = doc.height;
+    }
+
+    for (const layer of doc.layers || []) {
+      if (layer.visible === false) continue;
+      for (const el of layer.items || []) {
+        const b = computeElementVisualBBox(el);
+        if (!b) continue;
+        if (b.x < minX) minX = b.x;
+        if (b.y < minY) minY = b.y;
+        if (b.x + b.width > maxX) maxX = b.x + b.width;
+        if (b.y + b.height > maxY) maxY = b.y + b.height;
+      }
+    }
+  }
+
+  return {
+    x: roundNum(minX),
+    y: roundNum(minY),
+    width: Math.max(1, roundNum(maxX - minX)),
+    height: Math.max(1, roundNum(maxY - minY)),
+  };
+}
 
 function easingToKeySpline(easing) {
   switch (easing) {

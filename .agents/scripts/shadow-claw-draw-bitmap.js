@@ -1344,7 +1344,13 @@ export function applyBitmapCommand(doc, cmd) {
         MAX_CANVAS_SIZE,
       );
       for (const layer of next.layers) {
-        const resized = new Uint8ClampedArray(newW * newH * 4);
+        const fillColor =
+          layer.id === "blayer_1" &&
+          next.background &&
+          next.background !== "transparent"
+            ? next.background
+            : "transparent";
+        const resized = createFilledBuffer(newW, newH, fillColor);
         const copyW = Math.min(newW, layer.width);
         const copyH = Math.min(newH, layer.height);
         for (let y = 0; y < copyH; y++) {

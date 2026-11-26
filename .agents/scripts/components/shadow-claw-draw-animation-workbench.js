@@ -169,6 +169,13 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
         playBtn.setAttribute("aria-pressed", String(isPlaying));
         playBtn.textContent = isPlaying ? "Pause" : "Play";
       }
+
+      const cwInput = root.getElementById("scdraw-anim-canvas-w");
+      const chInput = root.getElementById("scdraw-anim-canvas-h");
+      if (cwInput && document.activeElement !== cwInput)
+        cwInput.value = String(anim.width);
+      if (chInput && document.activeElement !== chInput)
+        chInput.value = String(anim.height);
     });
   }
 
@@ -450,6 +457,29 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
         }
       });
 
+    root
+      .getElementById("scdraw-anim-resize-canvas")
+      ?.addEventListener("click", () => {
+        const w =
+          Number(root.getElementById("scdraw-anim-canvas-w")?.value) || 0;
+        const h =
+          Number(root.getElementById("scdraw-anim-canvas-h")?.value) || 0;
+        if (w < 16 || h < 16) {
+          scdraw.statusMessage.set("Stage size must be at least 16×16");
+          return;
+        }
+        try {
+          scdraw.dispatchAnimationCommand({
+            type: "resize_animation",
+            width: w,
+            height: h,
+          });
+          scdraw.statusMessage.set(`Stage resized to ${w}×${h}`);
+        } catch (err) {
+          scdraw.statusMessage.set(`Stage resize failed: ${err.message}`);
+        }
+      });
+
     const importInput = root.getElementById("scdraw-anim-file-input");
     root.getElementById("scdraw-anim-import")?.addEventListener("click", () => {
       importInput?.click();
@@ -561,6 +591,15 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
         }
         .scdraw-anim-wb__secondary-bar--open {
           display: flex;
+        }
+        .scdraw-anim-wb__secondary-sep {
+          display: inline-block;
+          width: 1px;
+          height: 1.4em;
+          background: var(--border-subtle);
+          margin: 0 0.1rem;
+          align-self: center;
+        }
         }
         .scdraw-anim-wb__workspace {
           display: flex;
@@ -854,6 +893,12 @@ export class ShadowClawDrawAnimationWorkbench extends BaseElement {
             <button type="button" id="scdraw-anim-import" class="scdraw-btn scdraw-btn--sm">Import Media</button>
             <input id="scdraw-anim-file-input" type="file" accept=".gif,.apng,.png,.svg,.webm,.mp4,image/gif,image/png,image/svg+xml,video/*" class="hidden" aria-label="Import GIF, APNG, SVG, or Video" />
             <button type="button" id="scdraw-anim-rasterize" class="scdraw-btn scdraw-btn--sm">Rasterize → Bitmap</button>
+            <span class="scdraw-anim-wb__secondary-sep" aria-hidden="true"></span>
+            <label for="scdraw-anim-canvas-w" class="scdraw-label">W</label>
+            <input id="scdraw-anim-canvas-w" type="number" class="scdraw-input" min="16" max="4096" value="${scdraw.animationDoc.get().width}" style="width:60px" aria-label="Animation canvas width" />
+            <label for="scdraw-anim-canvas-h" class="scdraw-label">H</label>
+            <input id="scdraw-anim-canvas-h" type="number" class="scdraw-input" min="16" max="4096" value="${scdraw.animationDoc.get().height}" style="width:60px" aria-label="Animation canvas height" />
+            <button type="button" id="scdraw-anim-resize-canvas" class="scdraw-btn scdraw-btn--sm">Resize Stage</button>
           </div>
         </header>
 
