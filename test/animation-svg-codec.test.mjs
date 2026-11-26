@@ -10,7 +10,7 @@ import {
 } from "../.agents/scripts/shadow-claw-draw-animation.js";
 import { normalizeVectorElement } from "../.agents/scripts/shadow-claw-draw-vector.js";
 
-test("Animated SVG Codec: serializes SMIL animated SVG with interpolation and round-trips", () => {
+test("Animated SVG Codec: serializes SMIL animated SVG with display switching and round-trips", () => {
   let anim = createAnimationDocument({
     mode: "vector",
     width: 300,
@@ -44,8 +44,14 @@ test("Animated SVG Codec: serializes SMIL animated SVG with interpolation and ro
   });
 
   assert.match(svg, /<svg[^>]+data-shadow-claw-draw-animation="true"/);
-  assert.match(svg, /<animateTransform/);
-  assert.match(svg, /<animate[^>]+attributeName="fill"/);
+  // SMIL mode uses <animate attributeName="display"> for cel-frame switching
+  assert.match(svg, /<animate[^>]+attributeName="display"/);
+  assert.match(svg, /calcMode="discrete"/);
+  assert.match(svg, /data-scdraw-frame="0"/);
+  assert.match(svg, /data-scdraw-frame="1"/);
+  // Frame 0 starts visible, frame 1 starts hidden
+  assert.match(svg, /display="inline"/);
+  assert.match(svg, /display="none"/);
 
   const parsed = parseAnimatedSvgToAnimationDocument(svg);
   assert.equal(parsed.mode, "vector");

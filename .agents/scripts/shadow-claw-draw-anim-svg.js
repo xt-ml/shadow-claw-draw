@@ -392,9 +392,12 @@ export function serializeAnimatedVectorDocumentToSvg(
   }
 
   const useCss = engine === "css";
-  const canInterp = Boolean(
-    interpolate && !useCss && canInterpolateTrack(seq, animDoc.frames),
-  );
+  // SMIL property-interpolation only activates when matching IDs exist AND
+  // the user explicitly opts in to true tween interpolation. For standard
+  // cel-frame animations we always use <animate attributeName="display"> so
+  // every frame's artwork is visible for the right duration regardless of
+  // whether element IDs happen to match across frames.
+  const canInterp = false; // reserved for future true-tween SMIL mode
 
   if (useCss) {
     lines.push("  <style>");
@@ -464,17 +467,28 @@ export function serializeAnimatedVectorDocumentToSvg(
       lines.push("  </g>");
     }
   } else {
-    // Cel frame groups
+    // Cel frame groups.
+    // SMIL mode: uses <animate attributeName="display"> for frame switching.
+    //   Initial display="none" (or "inline" for frame 0) prevents flash-of-all-frames.
+    // CSS mode: uses @keyframes opacity; all groups must remain display:inline so
+    //   the CSS animation can control opacity. Initial opacity="0" (or "1" for frame 0)
+    //   prevents flash-of-all-frames while CSS loads.
     for (let sIdx = 0; sIdx < seq.length; sIdx++) {
       const frame = animDoc.frames[seq[sIdx]];
+      const isFirst = sIdx === 0;
+      // Initial visibility attribute differs by mode
+      const initAttr = useCss
+        ? `opacity="${isFirst ? "1" : "0"}"`
+        : `display="${isFirst ? "inline" : "none"}"`;
       lines.push(
-        `  <g data-scdraw-frame="${sIdx}" data-scdraw-delay="${frame.delayMs}">`,
+        `  <g data-scdraw-frame="${sIdx}" data-scdraw-delay="${frame.delayMs}" ${initAttr}>`,
       );
-      if (!useCss && seq.length > 1) {
+      if (seq.length > 1 && !useCss) {
+        // SMIL: animate display switching
         const vals = seq.map((_, i) => (i === sIdx ? "inline" : "none"));
         vals.push(vals[vals.length - 1]);
         lines.push(
-          `    <animate attributeName="display" values="${vals.join(";")}" keyTimes="${keyTimes.join(";")}" calcMode="discrete" dur="${roundNum(totalSec, 3)}s" repeatCount="${repeatCount}" />`,
+          `    <animate attributeName="display" begin="0s" values="${vals.join(";")}" keyTimes="${keyTimes.join(";")}" calcMode="discrete" dur="${roundNum(totalSec, 3)}s" repeatCount="${repeatCount}" fill="freeze" />`,
         );
       }
       lines.push(...formatStaticBodyLines(frame.doc, "    "));

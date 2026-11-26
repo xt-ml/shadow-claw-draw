@@ -363,7 +363,7 @@
       "name": "shadow-claw-draw-anim-svg",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-anim-svg.",
       "url": "../../.agents/scripts/shadow-claw-draw-anim-svg.js",
-      "digest": "sha256:041f88efe70bf26dfd4420b110c0870923f3d73e1abf6b7dd5cb92e731b006c1"
+      "digest": "sha256:6e97459172dba99e60628d3a249eead5c43bf9fdab9aa0d9a9c939492069503d"
     },
     {
       "name": "shadow-claw-draw-animation",
