@@ -477,7 +477,7 @@
       "name": "shadow-claw-draw-url-file",
       "description": "Portable ESM engine logic and tool execution handler for shadow-claw-draw-url-file.",
       "url": "../../.agents/scripts/shadow-claw-draw-url-file.js",
-      "digest": "sha256:4aefa63b4de8f159e80ff9223c8521b7f6db2c85a0f1f4f9bff63e9694ae8498"
+      "digest": "sha256:aeb2737610d1b7014eff09b9adf16a1df4fa3b9edcf5a46814bc09f42202e7da"
     },
     {
       "name": "shadow-claw-draw-vector",

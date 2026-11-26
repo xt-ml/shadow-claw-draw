@@ -1,6 +1,7 @@
 import "shadow-claw/components/shadow-claw-dialog";
 import { clearUrlParam } from "shadow-claw/utils/url-file-param";
 import { scdraw } from "./shadow-claw-draw-engine.js";
+import { parseAnimatedSvgToAnimationDocument } from "./shadow-claw-draw-anim-svg.js";
 
 function getOrCreateConfirmDialog(shadowRoot) {
   if (!shadowRoot) return null;
@@ -147,7 +148,37 @@ export async function openDrawFileFromUrl(
 
     if (confirmed) {
       globalThis.__scdrawHandledUrlFile = payload.content;
-      scdraw.loadFromText(payload.name, payload.content);
+      const isAnimationStudio = studioLabel === "Animation Studio";
+      const isSvgContent =
+        String(payload.name || "")
+          .toLowerCase()
+          .endsWith(".svg") ||
+        String(payload.content || "")
+          .trimStart()
+          .startsWith("<svg");
+      if (isAnimationStudio && isSvgContent) {
+        try {
+          const anim = parseAnimatedSvgToAnimationDocument(payload.content);
+          scdraw.importAnimationFrames({
+            frames: anim.frames.map((f) => ({
+              doc: f.doc,
+              delayMs: f.delayMs,
+              name: f.name,
+            })),
+            width: anim.width,
+            height: anim.height,
+            mode: "vector",
+            replace: true,
+          });
+          scdraw.statusMessage.set(`Loaded ${payload.name || "SVG"}`);
+        } catch (err) {
+          scdraw.statusMessage.set(
+            `Failed to load animated SVG: ${err?.message || err}`,
+          );
+        }
+      } else {
+        scdraw.loadFromText(payload.name, payload.content);
+      }
       clearUrlParam("file");
       clearUrlParam("name");
       return true;
